@@ -1,0 +1,143 @@
+{
+  "updatedAt": "2026-10-25T10:37:00+09:00",
+  "totalSeniors": 24,
+  "jurisdiction": "인천광역시 연수구 송도동 및 연수동",
+  "seniors": [
+    {
+      "id": "ELD-001",
+      "name": "김순자",
+      "age": 81,
+      "gender": "여",
+      "address": "인천 연수구 원인재로 45 (주공아파트 104동)",
+      "livingType": "독거 (1인 가구)",
+      "emergencyContact": "장남 박영호 (010-3342-9811)",
+      "careWorker": "이수민 사회복지사 (연수노인종합복지관)",
+      "healthConditions": ["퇴행성 무릎관절염", "고혈압", "경도인지장애 주의군"],
+      "medications": ["아침 혈압약 1정", "식후 관절염 소염진통제"],
+      "interests": ["나훈아·이미자 트로트", "동네 복지관 노래교실", "손주 이야기"],
+      "baselineScore": 68,
+      "currentScore": 62,
+      "status": "warning",
+      "statusLabel": "인지 저하 의심 · 집중 모니터링",
+      "recentCalls": [
+        {
+          "timestamp": "2026-10-25T10:31:00+09:00",
+          "callDuration": "03:40",
+          "callType": "인바운드 (어르신 발신)",
+          "orientationScore": 60,
+          "memoryScore": 45,
+          "fluencyScore": 75,
+          "overallScore": 58,
+          "keyTranscript": "어제 점심에 뭘 먹었더라... 영 기억이 안 나네. 오늘이 무슨 요일이었지?",
+          "memoryNotes": "식사 메뉴 및 요일 지남력 오류 감지. 무릎 통증 호소.",
+          "riskFlag": false
+        },
+        {
+          "timestamp": "2026-10-23T14:15:00+09:00",
+          "callDuration": "08:12",
+          "callType": "인바운드 (어르신 발신)",
+          "orientationScore": 75,
+          "memoryScore": 60,
+          "fluencyScore": 80,
+          "overallScore": 70,
+          "keyTranscript": "지찬아, 정형외과 다녀왔는데 다리가 영 뻐근하구나.",
+          "memoryNotes": "정형외과 물리치료 내원 확인. 나훈아 노래 언급.",
+          "riskFlag": false
+        }
+      ]
+    },
+    {
+      "id": "ELD-002",
+      "name": "박영복",
+      "age": 78,
+      "gender": "남",
+      "address": "인천 연수구 송도문화로 84 (센트럴파크 앞)",
+      "livingType": "독거 (1인 가구)",
+      "emergencyContact": "딸 박지은 (010-7761-4209)",
+      "careWorker": "김태형 생활지원사",
+      "healthConditions": ["당뇨", "경미한 난청"],
+      "medications": ["식전 인슐린 유도제", "당뇨 관리약"],
+      "interests": ["아침 공원 산책", "장기", "바둑 TV"],
+      "baselineScore": 92,
+      "currentScore": 95,
+      "status": "normal",
+      "statusLabel": "정상 안정",
+      "recentCalls": [
+        {
+          "timestamp": "2026-10-25T08:45:00+09:00",
+          "callDuration": "08:15",
+          "callType": "안부 정기 전화 (아웃바운드)",
+          "orientationScore": 100,
+          "memoryScore": 95,
+          "fluencyScore": 90,
+          "overallScore": 95,
+          "keyTranscript": "오늘 아침에 호박죽 먹고 센트럴파크 한 바퀴 돌고 왔다. 오늘 10월 25일 일요일이지?",
+          "memoryNotes": "시간 지남력 완벽. 아침 식단 정확히 기억.",
+          "riskFlag": false
+        }
+      ]
+    },
+    {
+      "id": "ELD-003",
+      "name": "이정숙",
+      "age": 84,
+      "gender": "여",
+      "address": "인천 연수구 비류대로 182",
+      "livingType": "독거 (1인 가구)",
+      "emergencyContact": "조카 최원석 (010-8812-3001)",
+      "careWorker": "이수민 사회복지사",
+      "healthConditions": ["고혈압", "불면증"],
+      "medications": ["취침 전 수면유도제", "혈압약"],
+      "interests": ["화초 기르기", "성경 필사", "고향 이야기"],
+      "baselineScore": 86,
+      "currentScore": 88,
+      "status": "normal",
+      "statusLabel": "정상 안정",
+      "recentCalls": [
+        {
+          "timestamp": "2026-10-24T21:20:00+09:00",
+          "callDuration": "12:50",
+          "callType": "인바운드 (어르신 발신)",
+          "orientationScore": 90,
+          "memoryScore": 85,
+          "fluencyScore": 90,
+          "overallScore": 88,
+          "keyTranscript": "비가 오니까 방이 너무 적적해서 전화 걸어봤다 지찬아.",
+          "memoryNotes": "야간 고독감 호소. 12분간 옛날 고향 이야기 나누며 정서 안정.",
+          "riskFlag": false
+        }
+      ]
+    },
+    {
+      "id": "ELD-004",
+      "name": "정해운",
+      "age": 87,
+      "gender": "남",
+      "address": "인천 연수구 청학동 청능대로 95",
+      "livingType": "독거 (1인 가구)",
+      "emergencyContact": "차남 정진수 (010-4490-1123)",
+      "careWorker": "박명희 간호사",
+      "healthConditions": ["심부전", "어지럼증", "고위험군"],
+      "medications": ["강심제", "이뇨제"],
+      "interests": ["라디오 청취", "화투 짝맞추기"],
+      "baselineScore": 55,
+      "currentScore": 52,
+      "status": "danger",
+      "statusLabel": "🚨 낙상/응급 고위험군",
+      "recentCalls": [
+        {
+          "timestamp": "2026-10-24T18:10:00+09:00",
+          "callDuration": "04:20",
+          "callType": "인바운드 (어르신 발신)",
+          "orientationScore": 50,
+          "memoryScore": 45,
+          "fluencyScore": 60,
+          "overallScore": 51,
+          "keyTranscript": "어지러워서 침대에서 내려오다 털썩 주저앉았어...",
+          "memoryNotes": "낙상 위험 발화 감지. 즉시 복지사 및 119 출동 지원 완료.",
+          "riskFlag": true
+        }
+      ]
+    }
+  ]
+}
