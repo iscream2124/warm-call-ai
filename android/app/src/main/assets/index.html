@@ -12,24 +12,54 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
   <style>
-    body { font-family: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif; }
-    
+    body {
+      font-family: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
+      background-color: #060913;
+      background-image: 
+        radial-gradient(circle at 50% -10%, rgba(37, 99, 235, 0.28) 0%, transparent 60%),
+        radial-gradient(circle at 90% 85%, rgba(16, 185, 129, 0.18) 0%, transparent 45%),
+        linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+      background-size: 100% 100%, 100% 100%, 40px 40px, 40px 40px;
+      color: #f1f5f9;
+    }
+
+    /* Cybernetic Technical Glow Lines */
+    .cyber-line-h {
+      height: 1px;
+      background: linear-gradient(90deg, transparent 0%, rgba(56, 189, 248, 0.7) 20%, rgba(16, 185, 129, 0.9) 50%, rgba(56, 189, 248, 0.7) 80%, transparent 100%);
+      box-shadow: 0 0 12px rgba(56, 189, 248, 0.6);
+    }
+    .cyber-card {
+      background: rgba(13, 19, 33, 0.88);
+      backdrop-filter: blur(16px);
+      border: 1px solid rgba(56, 189, 248, 0.22);
+      box-shadow: 0 16px 40px -10px rgba(0, 0, 0, 0.8), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+      position: relative;
+    }
+    .cyber-card::before {
+      content: '';
+      position: absolute;
+      top: -1px; left: 24px; right: 24px; height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(56, 189, 248, 0.8), transparent);
+    }
+
     /* Tactile button shadow & animations */
     .tactile-btn {
       transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
-      box-shadow: 0 12px 28px -5px rgba(16, 185, 129, 0.45), 0 8px 10px -6px rgba(16, 185, 129, 0.25);
+      box-shadow: 0 12px 28px -5px rgba(16, 185, 129, 0.55), 0 0 15px rgba(16, 185, 129, 0.35);
     }
     .tactile-btn:active {
       transform: scale(0.94);
       box-shadow: 0 4px 12px 0 rgba(16, 185, 129, 0.3);
     }
     .tactile-btn-red {
-      box-shadow: 0 10px 25px -5px rgba(239, 68, 68, 0.4), 0 8px 10px -6px rgba(239, 68, 68, 0.2);
+      box-shadow: 0 10px 25px -5px rgba(239, 68, 68, 0.5), 0 0 15px rgba(239, 68, 68, 0.3);
     }
 
     /* Ringing incoming call wave */
     @keyframes ring-pulse {
-      0% { transform: scale(0.9); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+      0% { transform: scale(0.9); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.8); }
       70% { transform: scale(1.05); box-shadow: 0 0 0 32px rgba(16, 185, 129, 0); }
       100% { transform: scale(0.9); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
     }
@@ -37,30 +67,13 @@
       animation: ring-pulse 1.8s infinite ease-in-out;
     }
 
-    /* Phone Console Hardware Styles */
-    .phone-chassis {
-      background: linear-gradient(145deg, #f8f6f0 0%, #ebe6da 100%);
-      box-shadow: 
-        0 25px 60px -15px rgba(15, 23, 42, 0.25),
-        0 10px 20px -5px rgba(15, 23, 42, 0.1),
-        inset 0 2px 4px rgba(255, 255, 255, 0.9),
-        inset 0 -4px 8px rgba(0, 0, 0, 0.08);
-      border: 5px solid #ded9cb;
-    }
-    .handset-body {
-      background: linear-gradient(135deg, #ffffff 0%, #ded7c8 50%, #eae5d8 100%);
-      box-shadow: 
-        -5px 12px 25px -4px rgba(0, 0, 0, 0.18),
-        inset 0 2px 3px rgba(255, 255, 255, 0.9),
-        inset 0 -2px 4px rgba(0, 0, 0, 0.15);
-    }
     .hardware-key {
       transition: all 0.12s ease-in-out;
-      box-shadow: 0 4px 0 rgba(0,0,0,0.08), 0 6px 12px rgba(0,0,0,0.05);
+      box-shadow: 0 4px 0 rgba(0,0,0,0.5), 0 6px 14px rgba(0,0,0,0.4);
     }
     .hardware-key:active {
       transform: translateY(3px);
-      box-shadow: 0 1px 0 rgba(0,0,0,0.1), 0 2px 4px rgba(0,0,0,0.05);
+      box-shadow: 0 1px 0 rgba(0,0,0,0.5), 0 2px 4px rgba(0,0,0,0.3);
     }
 
     /* Speech bubbles */
@@ -69,48 +82,50 @@
 
     /* Custom scrollbar */
     ::-webkit-scrollbar { width: 6px; }
-    ::-webkit-scrollbar-track { background: transparent; }
-    ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 9999px; }
-    ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+    ::-webkit-scrollbar-track { background: rgba(15, 23, 42, 0.6); }
+    ::-webkit-scrollbar-thumb { background: #334155; border-radius: 9999px; }
+    ::-webkit-scrollbar-thumb:hover { background: #475569; }
   </style>
 </head>
-<body class="bg-gradient-to-br from-amber-50/70 via-slate-50 to-emerald-50/50 text-slate-800 min-h-screen flex flex-col antialiased selection:bg-amber-200">
+<body class="min-h-screen flex flex-col antialiased selection:bg-cyan-500/30 selection:text-cyan-200">
+  <!-- Technical Glowing Top Guide Line -->
+  <div class="cyber-line-h"></div>
 
   <!-- ======================================================== -->
   <!-- Header: Navigation & Status Bar                          -->
   <!-- ======================================================== -->
-  <header class="bg-white/80 backdrop-blur-md border-b border-slate-200/80 sticky top-0 z-50">
+  <header class="bg-slate-950/85 backdrop-blur-xl border-b border-slate-800/90 sticky top-0 z-50 shadow-[0_4px_24px_rgba(0,0,0,0.6)]">
     <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
       
       <!-- Logo & Identity -->
       <div class="flex items-center gap-3">
-        <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-amber-500 to-amber-400 text-white flex items-center justify-center text-xl shadow-md shadow-amber-500/20">
+        <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-cyan-500 via-emerald-500 to-indigo-600 text-white flex items-center justify-center text-xl shadow-lg shadow-cyan-500/25 border border-cyan-400/40">
           📞
         </div>
         <div>
           <div class="flex items-center gap-2">
-            <span class="font-black text-xl text-slate-900 tracking-tight">온콜 AI</span>
-            <span class="text-xs bg-indigo-100 text-indigo-800 font-extrabold px-2.5 py-0.5 rounded-full border border-indigo-200 flex items-center gap-1">
+            <span class="font-black text-xl text-white tracking-tight drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)]">온콜 AI <span class="text-xs text-cyan-400 font-mono font-bold">(溫-Call)</span></span>
+            <span class="text-xs bg-indigo-950/90 text-indigo-300 font-extrabold px-2.5 py-0.5 rounded-full border border-indigo-500/50 flex items-center gap-1 shadow-sm">
               <span>🎙️ ElevenLabs 음성 복제</span>
             </span>
           </div>
-          <p class="text-xs text-slate-500 hidden sm:block">손주에게서 걸려오는 24시간 안부 전화 & 대화형 인지건강 케어</p>
+          <p class="text-xs text-slate-400 hidden sm:block">손주에게서 걸려오는 24시간 안부 전화 & Socratic 대화형 치매 선별</p>
         </div>
       </div>
 
       <!-- Mode Switcher & Societal Impact Modal Trigger -->
       <div class="flex items-center gap-2">
-        <button onclick="toggleImpactModal(true)" class="hidden md:flex items-center gap-1.5 px-3 py-2 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white text-xs font-black shadow-md shadow-amber-500/20 transition active:scale-95">
+        <button onclick="toggleImpactModal(true)" class="hidden md:flex items-center gap-1.5 px-3 py-2 rounded-xl bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white text-xs font-black shadow-lg shadow-cyan-500/25 transition active:scale-95 border border-cyan-400/30">
           <span>🌍</span>
           <span>사회문제 해결 가치</span>
         </button>
 
-        <div class="flex items-center bg-slate-100/90 p-1 rounded-2xl border border-slate-200 text-xs font-bold shadow-inner">
-          <button onclick="switchMode('senior')" id="btn-mode-senior" class="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-white text-slate-900 shadow-sm transition-all duration-200">
+        <div class="flex items-center bg-slate-900/90 p-1 rounded-2xl border border-slate-800 text-xs font-bold shadow-inner">
+          <button onclick="switchMode('senior')" id="btn-mode-senior" class="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-cyan-600 text-white shadow-md shadow-cyan-600/30 transition-all duration-200">
             <span class="text-base">👵</span>
             <span>어르신 수신 화면</span>
           </button>
-          <button onclick="switchMode('welfare')" id="btn-mode-welfare" class="flex items-center gap-1.5 px-4 py-2 rounded-xl text-slate-500 hover:text-slate-800 transition-all duration-200">
+          <button onclick="switchMode('welfare')" id="btn-mode-welfare" class="flex items-center gap-1.5 px-4 py-2 rounded-xl text-slate-400 hover:text-white transition-all duration-200">
             <span class="text-base">📊</span>
             <span>복지사 관제 대시보드</span>
           </button>
@@ -134,21 +149,21 @@
       <div class="lg:col-span-5 flex flex-col items-center">
         
         <!-- Scheduled Call Time Indicator & Demo Quick Timer -->
-        <div class="w-full max-w-[375px] bg-white/95 backdrop-blur-md rounded-2xl border border-slate-200/90 shadow-sm p-3 mb-3.5 flex items-center justify-between text-xs">
+        <div class="w-full max-w-[375px] cyber-card rounded-2xl p-3 mb-3.5 flex items-center justify-between text-xs">
           <div class="flex items-center gap-2.5">
-            <div class="w-8 h-8 rounded-xl bg-amber-100 text-amber-800 flex items-center justify-center text-sm font-bold border border-amber-200">
+            <div class="w-8 h-8 rounded-xl bg-cyan-950/90 text-cyan-300 flex items-center justify-center text-sm font-bold border border-cyan-500/40 shadow-inner">
               ⏰
             </div>
             <div>
               <div class="flex items-center gap-1.5">
-                <span class="font-extrabold text-slate-800 text-xs">설정 시각 자동 안부전화</span>
-                <span class="text-[9px] bg-emerald-100 text-emerald-800 font-black px-1.5 py-0.2 rounded border border-emerald-200">정시 자동 발신</span>
+                <span class="font-extrabold text-white text-xs tracking-tight">설정 시각 자동 안부전화</span>
+                <span class="text-[9px] bg-emerald-950/90 text-emerald-400 font-mono font-black px-1.5 py-0.2 rounded border border-emerald-500/40">정시 자동 발신</span>
               </div>
-              <p class="text-[10px] text-slate-500 mt-0.5">할머니 식사·복약 시간에 맞춰 벨이 자동으로 울립니다</p>
+              <p class="text-[10px] text-slate-400 mt-0.5">할머니 식사·복약 시간에 맞춰 벨이 자동으로 울립니다</p>
             </div>
           </div>
           <div class="flex items-center gap-1.5">
-            <button onclick="scheduleCallInSeconds(5)" id="btn-quick-schedule" class="bg-gradient-to-r from-indigo-600 to-indigo-700 hover:from-indigo-700 hover:to-indigo-800 text-white font-black px-3 py-1.5 rounded-xl text-xs transition flex items-center gap-1 shadow-md shadow-indigo-500/20 active:scale-95">
+            <button onclick="scheduleCallInSeconds(5)" id="btn-quick-schedule" class="bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white font-black px-3 py-1.5 rounded-xl text-xs transition flex items-center gap-1 shadow-lg shadow-cyan-600/30 active:scale-95 border border-cyan-400/40">
               <span>⚡ 5초 뒤 자동 수신</span>
             </button>
           </div>
@@ -157,33 +172,33 @@
         <!-- Realistic Smartphone Chassis (실물 스마트폰 1:1 비율 목업) -->
         <div class="relative w-full max-w-[375px] mx-auto flex flex-col items-center">
           
-          <!-- Outer Phone Body (Titanium Bezel & Glass Edge) -->
-          <div class="w-full bg-slate-950 rounded-[52px] p-3 shadow-[0_25px_60px_-15px_rgba(15,23,42,0.5),0_12px_24px_-6px_rgba(15,23,42,0.3)] border-[6px] border-slate-700/80 ring-1 ring-slate-800 relative">
+          <!-- Outer Phone Body (Titanium Cyber Bezel & Glass Edge) -->
+          <div class="w-full bg-[#030712] rounded-[52px] p-3 shadow-[0_25px_70px_-15px_rgba(0,0,0,0.9),0_0_30px_rgba(56,189,248,0.15)] border-[6px] border-slate-800 ring-1 ring-cyan-500/30 relative">
             
             <!-- Top Dynamic Island Notch (스피커 리시버 + 전면 카메라 + 센서 LED) -->
             <div class="absolute top-4 left-1/2 -translate-x-1/2 z-30 flex items-center gap-2 bg-black px-3.5 py-1.5 rounded-full shadow-md border border-slate-800">
               <span class="w-2.5 h-2.5 rounded-full bg-slate-900 border border-slate-700 flex items-center justify-center">
-                <span class="w-1 h-1 rounded-full bg-indigo-500"></span>
+                <span class="w-1 h-1 rounded-full bg-cyan-400 shadow-[0_0_6px_#38bdf8]"></span>
               </span>
               <span class="w-8 h-1 rounded-full bg-slate-800"></span>
-              <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+              <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shadow-[0_0_6px_#34d399]"></span>
             </div>
 
-            <!-- Smartphone Touch Screen Display -->
-            <div class="w-full bg-gradient-to-b from-amber-50/50 via-white to-slate-50 rounded-[42px] overflow-hidden pt-8 pb-3 px-4 flex flex-col justify-between min-h-[640px] shadow-inner relative border border-slate-200">
+            <!-- Smartphone Touch Screen Display (OLED Cyber Interface) -->
+            <div class="w-full bg-gradient-to-b from-[#0a0f1d] via-[#0d1527] to-[#070a14] rounded-[42px] overflow-hidden pt-8 pb-3 px-4 flex flex-col justify-between min-h-[640px] shadow-inner relative border border-slate-800">
               
               <!-- Top Status Bar (SKT 온콜망, 5G, 배터리) -->
-              <div class="flex items-center justify-between px-2 pt-0.5 pb-2 text-[10.5px] text-slate-500 font-semibold border-b border-slate-100">
-                <span class="font-extrabold text-slate-800">SKT 온콜안심망</span>
+              <div class="flex items-center justify-between px-2 pt-0.5 pb-2 text-[10.5px] text-slate-400 font-semibold border-b border-slate-800/80">
+                <span class="font-extrabold text-cyan-300 font-mono">SKT 온콜안심망</span>
                 <div class="flex items-center gap-1.5 font-mono text-[9.5px]">
-                  <span class="text-emerald-600 font-black">5G LIVE</span>
+                  <span class="text-emerald-400 font-black">5G LIVE</span>
                   <span>100% 🔋</span>
                 </div>
               </div>
 
               <!-- Senior House Tag -->
               <div class="my-1.5 text-center">
-                <span class="inline-block px-3 py-0.5 bg-amber-100/90 border border-amber-300 text-amber-900 text-[10px] font-bold rounded-full shadow-sm">
+                <span class="inline-block px-3 py-0.5 bg-cyan-950/80 border border-cyan-500/40 text-cyan-300 text-[10px] font-bold rounded-full shadow-sm">
                   👵 김순자 어르신 (81세) 댁 전용 폰
                 </span>
               </div>
@@ -195,24 +210,24 @@
                 
                 <!-- Real Grandchild Calling Avatar with Pulsing Rings -->
                 <div class="relative my-3 flex items-center justify-center">
-                  <div class="w-28 h-28 rounded-full overflow-hidden border-4 border-amber-400 shadow-2xl incoming-ringing z-10 bg-slate-100">
+                  <div class="w-28 h-28 rounded-full overflow-hidden border-4 border-cyan-400 shadow-[0_0_30px_rgba(56,189,248,0.5)] incoming-ringing z-10 bg-slate-900">
                     <img src="images/grandson_avatar.jpg" alt="손주 박지찬 실제 사진" class="w-full h-full object-cover">
                   </div>
-                  <div class="absolute inset-0 rounded-full bg-emerald-400/20 animate-ping pointer-events-none"></div>
+                  <div class="absolute inset-0 rounded-full bg-cyan-400/20 animate-ping pointer-events-none"></div>
                 </div>
 
                 <div class="text-center mt-1">
-                  <span class="inline-block text-[11px] font-black uppercase tracking-wider text-emerald-600 bg-emerald-50 px-3 py-0.5 rounded-full border border-emerald-200 animate-pulse mb-1">
+                  <span class="inline-block text-[11px] font-black uppercase tracking-wider text-emerald-400 bg-emerald-950/80 px-3 py-0.5 rounded-full border border-emerald-500/50 animate-pulse mb-1 shadow-[0_0_12px_rgba(16,185,129,0.3)]">
                     🔔 안부 전화가 걸려왔습니다
                   </span>
-                  <h2 class="text-2xl font-black text-slate-900 tracking-tight mt-1">
+                  <h2 class="text-2xl font-black text-white tracking-tight mt-1 drop-shadow-md">
                     손주 박지찬
                   </h2>
                   <div class="flex items-center justify-center gap-1.5 mt-1.5">
-                    <span class="text-[10px] text-indigo-700 bg-indigo-50 font-bold px-2 py-0.5 rounded-md border border-indigo-200">
+                    <span class="text-[10px] text-cyan-300 bg-cyan-950/80 font-bold px-2 py-0.5 rounded-md border border-cyan-500/40">
                       🎙️ 친숙한 목소리
                     </span>
-                    <span class="text-[10px] text-amber-800 bg-amber-50 font-bold px-2 py-0.5 rounded-md border border-amber-200">
+                    <span class="text-[10px] text-amber-300 bg-amber-950/80 font-bold px-2 py-0.5 rounded-md border border-amber-500/40">
                       🌸 꽃 사진 도착
                     </span>
                   </div>
@@ -220,11 +235,11 @@
 
                 <!-- Big Accept Button -->
                 <div class="mt-6 flex items-center gap-3 w-full justify-center px-2">
-                  <button onclick="acceptCall()" class="flex-1 py-3.5 px-5 rounded-2xl bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white font-black text-base flex items-center justify-center gap-2 tactile-btn shadow-lg">
+                  <button onclick="acceptCall()" class="flex-1 py-3.5 px-5 rounded-2xl bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-400 hover:to-emerald-500 text-white font-black text-base flex items-center justify-center gap-2 tactile-btn shadow-lg">
                     <span class="text-xl animate-bounce">📞</span>
                     <span>전화 받기</span>
                   </button>
-                  <button onclick="rejectCall()" class="py-3.5 px-4 rounded-2xl bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold text-xs transition">
+                  <button onclick="rejectCall()" class="py-3.5 px-4 rounded-2xl bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white font-bold text-xs transition border border-slate-700">
                     거절
                   </button>
                 </div>
@@ -241,38 +256,45 @@
               <div id="screen-active" class="hidden w-full flex flex-col items-center my-auto py-1">
                 
                 <div class="text-center">
-                  <div class="inline-flex items-center gap-2 px-3 py-0.5 bg-slate-900 text-emerald-400 rounded-full text-[11px] font-mono font-bold tracking-wider mb-1 shadow-inner">
+                  <div class="inline-flex items-center gap-2 px-3 py-0.5 bg-black/90 border border-emerald-500/40 text-emerald-400 rounded-full text-[11px] font-mono font-bold tracking-wider mb-1 shadow-[0_0_12px_rgba(16,185,129,0.25)]">
                     <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
                     <span>통화 중 : <span id="clock-display">00:00</span></span>
                   </div>
-                  <h3 class="text-lg font-black text-slate-900 tracking-tight">손주 지찬이와 통화 중</h3>
-                  <p class="text-[10px] text-indigo-600 font-bold">ElevenLabs Ultra-Realistic Voice 가동 중</p>
+                  <h3 class="text-lg font-black text-white tracking-tight">손주 지찬이와 통화 중</h3>
+                  <p class="text-[10px] text-cyan-400 font-mono font-bold">ElevenLabs Ultra-Realistic Voice 가동 중</p>
                 </div>
 
-                <!-- Visualizer Waveform Canvas -->
-                <div class="w-full mt-2 h-11 bg-slate-950 border border-slate-800 rounded-2xl flex items-center justify-center overflow-hidden px-3 shadow-inner">
-                  <canvas id="soundwaveCanvas" width="320" height="36" class="w-full h-full"></canvas>
+                <!-- Visualizer Waveform Canvas (High-Fi Audio Console) -->
+                <div class="w-full mt-2 h-11 bg-black border border-cyan-500/30 rounded-2xl flex items-center justify-center overflow-hidden px-3 shadow-[inset_0_0_15px_rgba(0,0,0,0.8),0_0_15px_rgba(56,189,248,0.15)] relative">
+                  <!-- dB scale lines behind canvas -->
+                  <div class="absolute inset-0 flex items-center justify-between px-2 pointer-events-none opacity-20 text-[7px] font-mono text-cyan-300">
+                    <span>-40dB</span>
+                    <span>-20dB</span>
+                    <span>-6dB</span>
+                    <span>0dB</span>
+                  </div>
+                  <canvas id="soundwaveCanvas" width="320" height="36" class="w-full h-full relative z-10"></canvas>
                 </div>
-                <span id="audio-state-text" class="text-[10px] text-slate-500 font-medium mt-1">지찬이가 말씀드리는 중...</span>
+                <span id="audio-state-text" class="text-[10px] text-cyan-300/80 font-medium mt-1">지찬이가 말씀드리는 중...</span>
 
                 <!-- Grandchild Daily Real Photo Shared (Visual Stimulation & Rapport) -->
-                <div class="w-full mt-2.5 bg-white/95 border-2 border-amber-300 rounded-2xl p-2 flex items-center gap-2.5 shadow-md">
-                  <div class="relative w-14 h-14 rounded-xl overflow-hidden shrink-0 border-2 border-amber-400 shadow-inner bg-slate-100">
+                <div class="w-full mt-2.5 bg-slate-900/90 border border-amber-500/40 rounded-2xl p-2 flex items-center gap-2.5 shadow-xl">
+                  <div class="relative w-14 h-14 rounded-xl overflow-hidden shrink-0 border-2 border-amber-400/80 shadow-inner bg-slate-950">
                     <img id="grandson-photo-img" src="images/daily_flower.jpg" alt="할머니를 위한 화사한 꽃 사진" class="w-full h-full object-cover">
                   </div>
                   <div class="flex-1 min-w-0">
                     <div class="flex items-center justify-between">
-                      <span class="text-[8.5px] font-black bg-amber-500 text-white px-1.5 py-0.2 rounded-full shadow-sm">🌸 지찬이의 사진</span>
-                      <button onclick="cycleGrandsonPhoto()" class="text-[10px] text-amber-800 font-black hover:underline flex items-center gap-0.5">다음 ❯</button>
+                      <span class="text-[8.5px] font-black bg-amber-500 text-slate-950 px-1.5 py-0.2 rounded-full shadow-sm">🌸 지찬이의 사진</span>
+                      <button onclick="cycleGrandsonPhoto()" class="text-[10px] text-amber-300 font-black hover:underline flex items-center gap-0.5">다음 ❯</button>
                     </div>
-                    <p id="grandson-photo-caption" class="text-[11px] font-bold text-slate-900 truncate mt-0.5 leading-tight">"할머니! 등굣길에 핀 꽃이 예뻐서 찍었어요!"</p>
+                    <p id="grandson-photo-caption" class="text-[11px] font-bold text-white truncate mt-0.5 leading-tight">"할머니! 등굣길에 핀 꽃이 예뻐서 찍었어요!"</p>
                     <p class="text-[9px] text-slate-400">자연·꽃 사진 시각 인지 자극</p>
                   </div>
                 </div>
 
                 <!-- Hang Up Button -->
                 <div class="mt-3.5 flex flex-col items-center">
-                  <button onclick="endCall()" class="w-28 py-2.5 rounded-2xl bg-red-500 hover:bg-red-600 text-white font-extrabold text-xs flex items-center justify-center gap-1.5 tactile-btn tactile-btn-red shadow-lg">
+                  <button onclick="endCall()" class="w-28 py-2.5 rounded-2xl bg-red-600 hover:bg-red-500 text-white font-extrabold text-xs flex items-center justify-center gap-1.5 tactile-btn tactile-btn-red shadow-lg">
                     <span>📴</span>
                     <span>통화 종료</span>
                   </button>
@@ -281,16 +303,16 @@
               </div>
 
               <!-- Bottom Help Bar -->
-              <div class="w-full pt-1.5 border-t border-slate-100 flex items-center justify-between text-[9.5px] text-slate-400">
-                <span>🎙️ STT 상시 가동 중</span>
-                <button onclick="triggerIncomingRing()" class="text-amber-600 font-bold hover:underline">
+              <div class="w-full pt-1.5 border-t border-slate-800 flex items-center justify-between text-[9.5px] text-slate-400">
+                <span class="font-mono text-cyan-400">🎙️ STT 무중단 경청 중</span>
+                <button onclick="triggerIncomingRing()" class="text-amber-400 font-bold hover:underline">
                   🔔 전화 다시 걸기
                 </button>
               </div>
 
               <!-- Smartphone Home Bar (iOS/Android Indicator) -->
               <div class="w-full flex justify-center pt-2 pb-0.5">
-                <div class="w-28 h-1 bg-slate-300 rounded-full"></div>
+                <div class="w-28 h-1 bg-slate-600 rounded-full"></div>
               </div>
 
             </div>
@@ -300,22 +322,22 @@
           <!-- Smartphone Quick Direct Keys (스마트폰 하단 물리 단축 패드) -->
           <div class="w-full grid grid-cols-3 gap-2 mt-3">
             <!-- Direct Key 1: 손주 지찬이 직통 -->
-            <button onclick="scheduleCallInSeconds(2)" class="hardware-key bg-amber-50 hover:bg-amber-100 border-2 border-amber-300 rounded-2xl p-2 flex flex-col items-center text-center shadow-md active:scale-95 transition">
+            <button onclick="scheduleCallInSeconds(2)" class="hardware-key bg-slate-900/90 hover:bg-slate-800 border-2 border-amber-500/50 rounded-2xl p-2 flex flex-col items-center text-center shadow-lg active:scale-95 transition">
               <span class="text-base">👦</span>
-              <span class="text-xs font-black text-amber-950 mt-0.5">손주 지찬이</span>
-              <span class="text-[8.5px] text-amber-700 font-bold">1번 직통키</span>
+              <span class="text-xs font-black text-amber-300 mt-0.5">손주 지찬이</span>
+              <span class="text-[8.5px] text-amber-400/80 font-mono">1번 직통키</span>
             </button>
             <!-- Direct Key 2: 복지사 치매안심센터 -->
-            <button onclick="switchMode('welfare')" class="hardware-key bg-indigo-50 hover:bg-indigo-100 border-2 border-indigo-300 rounded-2xl p-2 flex flex-col items-center text-center shadow-md active:scale-95 transition">
+            <button onclick="switchMode('welfare')" class="hardware-key bg-slate-900/90 hover:bg-slate-800 border-2 border-cyan-500/50 rounded-2xl p-2 flex flex-col items-center text-center shadow-lg active:scale-95 transition">
               <span class="text-base">👩‍⚕️</span>
-              <span class="text-xs font-black text-indigo-950 mt-0.5">전담 복지사</span>
-              <span class="text-[8.5px] text-indigo-700 font-bold">2번 복지센터</span>
+              <span class="text-xs font-black text-cyan-300 mt-0.5">전담 복지사</span>
+              <span class="text-[8.5px] text-cyan-400/80 font-mono">2번 복지센터</span>
             </button>
             <!-- Direct Key 3: 긴급 119 -->
-            <button onclick="simulateAudioScenario('요즘 가슴이 너무 답답하고 어지러워서 털썩 주저앉았어.')" class="hardware-key bg-red-50 hover:bg-red-100 border-2 border-red-300 rounded-2xl p-2 flex flex-col items-center text-center shadow-md active:scale-95 transition">
+            <button onclick="simulateAudioScenario('요즘 가슴이 너무 답답하고 어지러워서 털썩 주저앉았어.')" class="hardware-key bg-slate-900/90 hover:bg-slate-800 border-2 border-red-500/50 rounded-2xl p-2 flex flex-col items-center text-center shadow-lg active:scale-95 transition">
               <span class="text-base animate-pulse">🚨</span>
-              <span class="text-xs font-black text-red-950 mt-0.5">119 긴급출동</span>
-              <span class="text-[8.5px] text-red-700 font-bold">3번 안심벨</span>
+              <span class="text-xs font-black text-red-300 mt-0.5">119 긴급출동</span>
+              <span class="text-[8.5px] text-red-400/80 font-mono">3번 안심벨</span>
             </button>
           </div>
 
@@ -327,13 +349,13 @@
       <div class="lg:col-span-7 flex flex-col gap-5">
         
         <!-- Live Large-Font Dialogue Feed -->
-        <div class="bg-white rounded-3xl border border-slate-200/90 shadow-lg p-5 flex flex-col h-[340px]">
-          <div class="flex items-center justify-between border-b border-slate-100 pb-2.5 mb-2.5">
+        <div class="cyber-card rounded-3xl p-5 flex flex-col h-[340px]">
+          <div class="flex items-center justify-between border-b border-slate-800 pb-2.5 mb-2.5">
             <div class="flex items-center gap-2">
               <span class="text-base">💬</span>
-              <h3 class="text-sm font-bold text-slate-800">실시간 대화 음성 자막</h3>
+              <h3 class="text-sm font-bold text-white tracking-tight">실시간 대화 음성 자막</h3>
             </div>
-            <span class="text-[10px] bg-indigo-50 text-indigo-700 font-extrabold px-2 py-0.5 rounded-full border border-indigo-200">
+            <span class="text-[10px] bg-cyan-950/90 text-cyan-300 font-extrabold px-2 py-0.5 rounded-full border border-cyan-500/40 font-mono">
               ElevenLabs Voice Engine
             </span>
           </div>
@@ -341,47 +363,47 @@
           <!-- Scrollable Chat Area -->
           <div id="chat-stream" class="flex-1 overflow-y-auto pr-2 space-y-3 min-h-[160px]">
             <div class="flex items-start gap-2.5">
-              <div class="w-9 h-9 rounded-full overflow-hidden border-2 border-amber-400 shrink-0 shadow-sm bg-slate-100">
+              <div class="w-9 h-9 rounded-full overflow-hidden border-2 border-cyan-400 shrink-0 shadow-md bg-slate-900">
                 <img src="images/grandson_avatar.jpg" alt="지찬" class="w-full h-full object-cover">
               </div>
-              <div class="bg-amber-50 border border-amber-200/80 p-3.5 bubble-ai text-slate-800 text-xs md:text-sm leading-relaxed shadow-sm">
+              <div class="bg-cyan-950/60 border border-cyan-500/40 p-3.5 bubble-ai text-cyan-100 text-xs md:text-sm leading-relaxed shadow-[0_0_15px_rgba(56,189,248,0.1)]">
                 "할머니, 전화 울리면 초록색 [전화 받기] 버튼을 눌러주세요. 지찬이 목소리가 바로 들려요!"
               </div>
             </div>
           </div>
 
-          <!-- Direct Senior Text Input Bar (마이크 및 텍스트 겸용 입력창) -->
-          <div class="mt-3 pt-2.5 border-t border-slate-100 flex items-center gap-2">
+          <!-- Direct Senior Text Input Bar (마이크 및 텍스트 겸용 입력창 - Cyber Dark Style) -->
+          <div class="mt-3 pt-2.5 border-t border-slate-800 flex items-center gap-2">
             <div class="relative flex-1">
               <input type="text" id="senior-input-text" onkeydown="if(event.key==='Enter') sendSeniorTextInput()"
-                placeholder="어르신 말씀 직접 입력 (예: 지찬아 밥 먹었니?, 오늘 날씨 춥다)"
-                class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-xs md:text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-amber-400 focus:bg-white transition" />
+                placeholder="어르신 말씀 직접 입력 (예: 지찬아 옛날 이야기 들려줄까?, 밥 먹었니?)"
+                class="w-full bg-slate-950/90 border border-slate-700/80 rounded-xl px-3.5 py-2 text-xs md:text-sm text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:border-cyan-400 transition" />
               <button onclick="toggleMicManual()" id="btn-mic-indicator" title="음성 마이크 상태"
-                class="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-amber-600 text-sm">
+                class="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-cyan-400 text-sm">
                 🎤
               </button>
             </div>
             <button onclick="sendSeniorTextInput()"
-              class="px-3.5 py-2 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white font-extrabold text-xs md:text-sm rounded-xl shadow-md shadow-amber-500/20 active:scale-95 transition shrink-0 flex items-center gap-1">
+              class="px-3.5 py-2 bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white font-extrabold text-xs md:text-sm rounded-xl shadow-lg shadow-cyan-600/30 active:scale-95 transition shrink-0 flex items-center gap-1 border border-cyan-400/40">
               <span>말씀 전송</span>
               <span>💬</span>
             </button>
           </div>
         </div>
 
-        <!-- Real-Time Cognitive Scoring Gauges (Conversational K-MMSE) -->
-        <div class="bg-white rounded-3xl border border-indigo-100 shadow-lg p-5 flex flex-col gap-3">
+        <!-- Real-Time Cognitive Scoring Gauges (Conversational K-MMSE - Cyber Dark Style) -->
+        <div class="cyber-card rounded-3xl p-5 flex flex-col gap-3">
           <div class="flex items-center justify-between">
             <div class="flex items-center gap-2">
               <span class="text-base">🧠</span>
-              <h3 class="text-sm font-extrabold text-indigo-950">대화형 인지능력 실시간 분석</h3>
+              <h3 class="text-sm font-extrabold text-white">대화형 인지능력 실시간 분석</h3>
             </div>
-            <span class="text-[10px] bg-indigo-50 text-indigo-700 font-bold px-2 py-0.5 rounded-md border border-indigo-200">
+            <span class="text-[10px] bg-indigo-950/90 text-indigo-300 font-bold px-2 py-0.5 rounded-md border border-indigo-500/40">
               K-MMSE-2 임상 매핑
             </span>
           </div>
           
-          <p class="text-xs text-slate-500 leading-relaxed">
+          <p class="text-xs text-slate-400 leading-relaxed">
             어르신 모르게 안부 수다 속에서 <strong>지남력·기억력·유창성</strong>을 정량 평가합니다.
           </p>
 
@@ -389,107 +411,113 @@
           <div class="space-y-3 pt-1">
             <!-- Orientation -->
             <div>
-              <div class="flex justify-between text-xs font-bold text-slate-700 mb-1">
+              <div class="flex justify-between text-xs font-bold text-slate-300 mb-1">
                 <span>시간/요일 지남력 (Orientation)</span>
-                <span id="meter-orient-text" class="text-indigo-600">100점 (정상)</span>
+                <span id="meter-orient-text" class="text-cyan-400 font-mono font-black">100점 (정상)</span>
               </div>
-              <div class="h-2.5 bg-slate-100 rounded-full overflow-hidden p-0.5">
-                <div id="meter-orient-bar" class="h-full bg-gradient-to-r from-indigo-500 to-indigo-600 rounded-full transition-all duration-500" style="width: 100%"></div>
+              <div class="h-2.5 bg-slate-900 border border-slate-800 rounded-full overflow-hidden p-0.5">
+                <div id="meter-orient-bar" class="h-full bg-gradient-to-r from-cyan-500 to-blue-500 rounded-full transition-all duration-500 shadow-[0_0_8px_#38bdf8]" style="width: 100%"></div>
               </div>
             </div>
 
             <!-- Recall -->
             <div>
-              <div class="flex justify-between text-xs font-bold text-slate-700 mb-1">
+              <div class="flex justify-between text-xs font-bold text-slate-300 mb-1">
                 <span>단기 식단/일과 회상 (Memory Recall)</span>
-                <span id="meter-memory-text" class="text-emerald-600">90점 (양호)</span>
+                <span id="meter-memory-text" class="text-emerald-400 font-mono font-black">90점 (양호)</span>
               </div>
-              <div class="h-2.5 bg-slate-100 rounded-full overflow-hidden p-0.5">
-                <div id="meter-memory-bar" class="h-full bg-gradient-to-r from-emerald-400 to-emerald-600 rounded-full transition-all duration-500" style="width: 90%"></div>
+              <div class="h-2.5 bg-slate-900 border border-slate-800 rounded-full overflow-hidden p-0.5">
+                <div id="meter-memory-bar" class="h-full bg-gradient-to-r from-emerald-400 to-emerald-500 rounded-full transition-all duration-500 shadow-[0_0_8px_#34d399]" style="width: 90%"></div>
               </div>
             </div>
 
             <!-- Fluency -->
             <div>
-              <div class="flex justify-between text-xs font-bold text-slate-700 mb-1">
+              <div class="flex justify-between text-xs font-bold text-slate-300 mb-1">
                 <span>발화 유창성 및 반응 지연도 (Fluency)</span>
-                <span id="meter-fluency-text" class="text-amber-600">95점 (원활)</span>
+                <span id="meter-fluency-text" class="text-amber-400 font-mono font-black">95점 (원활)</span>
               </div>
-              <div class="h-2.5 bg-slate-100 rounded-full overflow-hidden p-0.5">
-                <div id="meter-fluency-bar" class="h-full bg-gradient-to-r from-amber-400 to-amber-500 rounded-full transition-all duration-500" style="width: 95%"></div>
+              <div class="h-2.5 bg-slate-900 border border-slate-800 rounded-full overflow-hidden p-0.5">
+                <div id="meter-fluency-bar" class="h-full bg-gradient-to-r from-amber-400 to-amber-500 rounded-full transition-all duration-500 shadow-[0_0_8px_#fbbf24]" style="width: 95%"></div>
               </div>
             </div>
           </div>
 
           <!-- Overall Indicator -->
-          <div id="overall-status-box" class="mt-1 p-3 bg-emerald-50 border border-emerald-200/80 rounded-2xl flex items-center justify-between text-xs">
-            <span class="text-emerald-950 font-bold">종합 인지 건강 지수: <strong id="overall-score-num" class="text-sm">95점</strong></span>
-            <span class="bg-emerald-200 text-emerald-900 font-extrabold px-2.5 py-1 rounded-lg text-[11px]">안정 유지</span>
+          <div id="overall-status-box" class="mt-1 p-3 bg-emerald-950/50 border border-emerald-500/40 rounded-2xl flex items-center justify-between text-xs">
+            <span class="text-emerald-300 font-bold">종합 인지 건강 지수: <strong id="overall-score-num" class="text-sm font-mono text-emerald-200">95점</strong></span>
+            <span class="bg-emerald-900/80 text-emerald-300 font-extrabold px-2.5 py-1 rounded-lg text-[11px] border border-emerald-500/50 shadow-sm">안정 유지</span>
           </div>
 
         </div>
 
-        <!-- Quick Interactive Test Scenarios (For Judges) -->
-        <div class="bg-white/90 rounded-3xl border border-slate-200 p-4 shadow-sm flex flex-col gap-2">
+        <!-- Quick Interactive Test Scenarios (For Judges - Cyber Dark Style) -->
+        <div class="cyber-card rounded-3xl p-4 flex flex-col gap-2">
           <div class="flex items-center justify-between mb-1">
-            <span class="text-xs font-extrabold text-slate-800">💡 심사위원 시연용 어르신 발화 시나리오</span>
-            <span class="text-[10px] text-slate-400">클릭 즉시 반응</span>
+            <span class="text-xs font-extrabold text-white flex items-center gap-1.5">
+              <span>💡</span>
+              <span>심사위원 시연용 어르신 발화 시나리오</span>
+            </span>
+            <span class="text-[10px] text-cyan-400 font-mono">원클릭 테스트</span>
           </div>
 
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
-            <button onclick="simulateAudioScenario('어, 지찬아! 전화 왔네. 오늘 그냥 집이 너무 적적해서 네 생각하고 있었다.')" class="p-2.5 rounded-xl text-left bg-slate-50 hover:bg-amber-50 border border-slate-200 hover:border-amber-300 text-slate-700 transition">
+            <button onclick="simulateAudioScenario('어, 지찬아! 전화 왔네. 오늘 그냥 집이 너무 적적해서 네 생각하고 있었다.')" class="p-2.5 rounded-xl text-left bg-slate-900/90 hover:bg-slate-800 border border-slate-700/80 hover:border-amber-400 text-slate-200 transition shadow-sm">
               1. <strong>[정서 안부]</strong> "전화 왔네, 네 생각하고 있었다"
             </button>
-            <button onclick="simulateAudioScenario('오늘이 10월 25일 일요일 맞지? 요즘 날씨가 참 쌀쌀하구나.')" class="p-2.5 rounded-xl text-left bg-indigo-50/70 hover:bg-indigo-100/70 border border-indigo-200 text-indigo-900 transition">
-              2. <strong>[지남력 정상]</strong> "오늘 10월 25일 일요일 맞지?"
+            <button onclick="simulateAudioScenario('지찬아, 할머니가 옛날 이야기 하나 해줄까? 할머니 어렸을 적엔 말이다...')" class="p-2.5 rounded-xl text-left bg-cyan-950/50 hover:bg-cyan-900/50 border border-cyan-500/40 hover:border-cyan-300 text-cyan-200 transition shadow-sm">
+              2. <strong>[📖 옛날이야기 회상]</strong> "할머니가 옛날이야기 해줄까?"
             </button>
-            <button onclick="simulateAudioScenario('어제 점심에 먹은 반찬은 된장찌개랑 나물이었지 아마!')" class="p-2.5 rounded-xl text-left bg-emerald-50/70 hover:bg-emerald-100/70 border border-emerald-200 text-emerald-900 transition">
-              3. <strong>[기억회상 정상]</strong> "어제 점심 된장찌개 먹었지"
+            <button onclick="simulateAudioScenario('오늘이 10월 25일 일요일 맞지? 요즘 날씨가 참 쌀쌀하구나.')" class="p-2.5 rounded-xl text-left bg-indigo-950/50 hover:bg-indigo-900/50 border border-indigo-500/40 hover:border-indigo-300 text-indigo-200 transition shadow-sm">
+              3. <strong>[지남력 정상]</strong> "오늘 10월 25일 일요일 맞지?"
             </button>
-            <button onclick="simulateAudioScenario('어제 점심에 뭘 먹었더라... 영 기억이 안 나네. 오늘이 무슨 요일이었지?')" class="p-2.5 rounded-xl text-left bg-amber-50 hover:bg-amber-100 border border-amber-300 text-amber-950 font-bold transition">
-              4. <strong>[⚠️ 인지 저하 의심]</strong> "어제 메뉴도 잊고 요일도 헷갈려"
+            <button onclick="simulateAudioScenario('어제 점심에 먹은 반찬은 된장찌개랑 나물이었지 아마!')" class="p-2.5 rounded-xl text-left bg-emerald-950/50 hover:bg-emerald-900/50 border border-emerald-500/40 hover:border-emerald-300 text-emerald-200 transition shadow-sm">
+              4. <strong>[기억회상 정상]</strong> "어제 점심 된장찌개 먹었지"
             </button>
-            <button onclick="simulateAudioScenario('지찬아, 방금 화면에 뜬 꽃 사진 봤다! 꽃이 참 화사하고 곱구나!')" class="p-2.5 rounded-xl text-left bg-emerald-50 hover:bg-emerald-100 border border-emerald-300 text-emerald-950 font-bold transition">
-              5. <strong>[🌸 자연·꽃 사진 대화]</strong> "꽃 사진 봤다! 참 화사하고 곱네"
+            <button onclick="simulateAudioScenario('어제 점심에 뭘 먹었더라... 영 기억이 안 나네. 오늘이 무슨 요일이었지?')" class="p-2.5 rounded-xl text-left bg-amber-950/50 hover:bg-amber-900/50 border border-amber-500/50 hover:border-amber-300 text-amber-200 font-bold transition shadow-sm">
+              5. <strong>[⚠️ 인지 저하 의심]</strong> "어제 메뉴도 잊고 요일도 헷갈려"
             </button>
-            <button onclick="simulateAudioScenario('요즘 가슴이 너무 답답하고 어지러워서 털썩 주저앉았어.')" class="p-2.5 rounded-xl text-left sm:col-span-2 bg-red-50 hover:bg-red-100 border border-red-200 text-red-900 font-bold transition">
-              6. <strong>[🚨 긴급 위기 가드레일]</strong> "가슴이 너무 답답하고 어지러워 주저앉았다"
+            <button onclick="simulateAudioScenario('지찬아, 방금 화면에 뜬 꽃 사진 봤다! 꽃이 참 화사하고 곱구나!')" class="p-2.5 rounded-xl text-left bg-purple-950/50 hover:bg-purple-900/50 border border-purple-500/40 hover:border-purple-300 text-purple-200 font-bold transition shadow-sm">
+              6. <strong>[🌸 꽃 사진 대화]</strong> "꽃 사진 봤다! 참 화사하고 곱네"
+            </button>
+            <button onclick="simulateAudioScenario('요즘 가슴이 너무 답답하고 어지러워서 털썩 주저앉았어.')" class="p-2.5 rounded-xl text-left sm:col-span-2 bg-red-950/60 hover:bg-red-900/60 border border-red-500/50 hover:border-red-400 text-red-200 font-bold transition shadow-sm">
+              7. <strong>[🚨 긴급 위기 가드레일]</strong> "가슴이 너무 답답하고 어지러워 주저앉았다"
             </button>
           </div>
         </div>
 
-        <!-- Personalized Senior Memory Bank (Life-Log Engine) -->
-        <div class="bg-white rounded-3xl border border-amber-200/80 shadow-lg p-5 flex flex-col gap-3">
+        <!-- Personalized Senior Memory Bank (Life-Log Engine - Cyber Dark Style) -->
+        <div class="cyber-card rounded-3xl p-5 flex flex-col gap-3">
           <div class="flex items-center justify-between">
             <div class="flex items-center gap-2">
               <span class="text-base">🗂️</span>
-              <h3 class="text-sm font-extrabold text-amber-950">할머니 맞춤 기억 장부 (Life-Log Memory)</h3>
+              <h3 class="text-sm font-extrabold text-amber-300">할머니 맞춤 기억 장부 (Life-Log Memory)</h3>
             </div>
-            <span class="text-[10px] bg-amber-100 text-amber-900 font-black px-2 py-0.5 rounded-md border border-amber-300">
+            <span class="text-[10px] bg-amber-950/90 text-amber-300 font-black px-2 py-0.5 rounded-md border border-amber-500/50">
               대화 누적 초개별화
             </span>
           </div>
           
-          <p class="text-xs text-slate-500 leading-relaxed">
+          <p class="text-xs text-slate-400 leading-relaxed">
             통화를 거듭할수록 AI가 할머니의 일상 정보를 축적하여 <strong>"손주의 친숙한 목소리로 나를 온전히 기억해 주는"</strong> 맞춤 대화를 나눕니다.
           </p>
 
           <div class="grid grid-cols-2 gap-2 text-xs">
-            <div class="bg-amber-50/50 border border-amber-200/60 rounded-xl p-2.5">
-              <span class="text-[10px] text-amber-800 font-bold block">🍲 좋아하시는 음식</span>
-              <span class="font-extrabold text-slate-800">시원한 콩나물국 · 갈치조림</span>
+            <div class="bg-slate-900/90 border border-slate-800 rounded-xl p-2.5">
+              <span class="text-[10px] text-amber-400 font-bold block">🍲 좋아하시는 음식</span>
+              <span class="font-extrabold text-slate-200">시원한 콩나물국 · 갈치조림</span>
             </div>
-            <div class="bg-amber-50/50 border border-amber-200/60 rounded-xl p-2.5">
-              <span class="text-[10px] text-amber-800 font-bold block">👵 단골 친구 / 이웃</span>
-              <span class="font-extrabold text-slate-800">경로당 영자 할머니 (화/목)</span>
+            <div class="bg-slate-900/90 border border-slate-800 rounded-xl p-2.5">
+              <span class="text-[10px] text-amber-400 font-bold block">👵 단골 친구 / 이웃</span>
+              <span class="font-extrabold text-slate-200">경로당 영자 할머니 (화/목)</span>
             </div>
-            <div class="bg-amber-50/50 border border-amber-200/60 rounded-xl p-2.5">
-              <span class="text-[10px] text-amber-800 font-bold block">🪴 일상 취미 루틴</span>
-              <span class="font-extrabold text-slate-800">베란다 상추 화분 물주기</span>
+            <div class="bg-slate-900/90 border border-slate-800 rounded-xl p-2.5">
+              <span class="text-[10px] text-amber-400 font-bold block">🪴 일상 취미 루틴</span>
+              <span class="font-extrabold text-slate-200">베란다 상추 화분 물주기</span>
             </div>
-            <div class="bg-amber-50/50 border border-amber-200/60 rounded-xl p-2.5">
-              <span class="text-[10px] text-amber-800 font-bold block">🎯 개인 맞춤 인지 기준선</span>
-              <span class="font-extrabold text-emerald-700">평소 기억력 94% (안정 유지)</span>
+            <div class="bg-slate-900/90 border border-slate-800 rounded-xl p-2.5">
+              <span class="text-[10px] text-amber-400 font-bold block">🎯 개인 맞춤 인지 기준선</span>
+              <span class="font-extrabold text-emerald-400 font-mono">평소 기억력 94% (안정)</span>
             </div>
           </div>
         </div>
@@ -499,54 +527,54 @@
     </div>
 
     <!-- ======================================================== -->
-    <!-- VIEW 2: 사회복지사 및 치매안심센터 관제 대시보드         -->
+    <!-- VIEW 2: 사회복지사 및 치매안심센터 관제 대시보드 (Cyber Dark) -->
     <!-- ======================================================== -->
     <div id="view-welfare" class="hidden flex flex-col gap-6">
       
       <!-- Top Metrics -->
       <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
         
-        <div class="bg-white p-5 rounded-3xl border border-slate-200 shadow-sm flex flex-col justify-between">
-          <div class="flex items-center justify-between text-slate-500">
+        <div class="cyber-card p-5 rounded-3xl border border-slate-800 shadow-lg flex flex-col justify-between">
+          <div class="flex items-center justify-between text-slate-400">
             <span class="text-xs font-bold">관리 독거 어르신</span>
             <span class="text-lg">👥</span>
           </div>
           <div class="mt-3">
-            <span class="text-3xl font-black text-slate-900">24명</span>
-            <span class="block text-xs font-semibold text-emerald-600 mt-1">인천 연수구 관내 100% 가동</span>
+            <span class="text-3xl font-black text-white font-mono">24명</span>
+            <span class="block text-xs font-semibold text-emerald-400 mt-1">인천 연수구 관내 100% 가동</span>
           </div>
         </div>
 
-        <div class="bg-white p-5 rounded-3xl border border-slate-200 shadow-sm flex flex-col justify-between">
-          <div class="flex items-center justify-between text-slate-500">
+        <div class="cyber-card p-5 rounded-3xl border border-slate-800 shadow-lg flex flex-col justify-between">
+          <div class="flex items-center justify-between text-slate-400">
             <span class="text-xs font-bold">정기 인커밍 통화 성공률</span>
             <span class="text-lg">📞</span>
           </div>
           <div class="mt-3">
-            <span class="text-3xl font-black text-amber-600">92.4%</span>
+            <span class="text-3xl font-black text-amber-400 font-mono">92.4%</span>
             <span class="block text-xs font-semibold text-slate-400 mt-1">손주 보이스 수신 거부율 0%</span>
           </div>
         </div>
 
-        <div class="bg-white p-5 rounded-3xl border border-slate-200 shadow-sm flex flex-col justify-between">
-          <div class="flex items-center justify-between text-slate-500">
+        <div class="cyber-card p-5 rounded-3xl border border-slate-800 shadow-lg flex flex-col justify-between">
+          <div class="flex items-center justify-between text-slate-400">
             <span class="text-xs font-bold">인지 건강 평균 지수</span>
             <span class="text-lg">🧠</span>
           </div>
           <div class="mt-3">
-            <span class="text-3xl font-black text-indigo-600">87.4점</span>
-            <span class="block text-xs font-semibold text-indigo-500 mt-1">K-MMSE-2 대화 환산</span>
+            <span class="text-3xl font-black text-cyan-400 font-mono">87.4점</span>
+            <span class="block text-xs font-semibold text-cyan-300 mt-1">K-MMSE-2 대화 환산</span>
           </div>
         </div>
 
-        <div class="bg-white p-5 rounded-3xl border border-red-200 bg-red-50/30 shadow-sm flex flex-col justify-between">
-          <div class="flex items-center justify-between text-red-600">
+        <div class="cyber-card p-5 rounded-3xl border border-red-500/40 bg-red-950/30 shadow-lg flex flex-col justify-between">
+          <div class="flex items-center justify-between text-red-400">
             <span class="text-xs font-bold">치매주의 및 긴급 알림</span>
-            <span class="text-lg">🚨</span>
+            <span class="text-lg animate-pulse">🚨</span>
           </div>
           <div class="mt-3">
-            <span class="text-3xl font-black text-red-600">2명</span>
-            <span class="block text-xs font-semibold text-red-500 mt-1">치매안심센터 연계 대상</span>
+            <span class="text-3xl font-black text-red-400 font-mono">2명</span>
+            <span class="block text-xs font-semibold text-red-300 mt-1">치매안심센터 연계 대상</span>
           </div>
         </div>
 
@@ -556,15 +584,15 @@
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
         
         <!-- Left: Line Chart (30-day Cognitive Trend) -->
-        <div class="lg:col-span-8 bg-white p-6 rounded-3xl border border-slate-200 shadow-sm flex flex-col">
+        <div class="lg:col-span-8 cyber-card p-6 rounded-3xl border border-slate-800 shadow-lg flex flex-col">
           <div class="flex items-center justify-between mb-4">
             <div>
-              <h3 class="text-sm font-extrabold text-slate-900">30일간의 인지 건강 지표 변화 추이 (Longitudinal Tracking)</h3>
+              <h3 class="text-sm font-extrabold text-white">30일간의 인지 건강 지표 변화 추이 (Longitudinal Tracking)</h3>
               <p class="text-xs text-slate-400 mt-0.5">자연 대화 속 지남력 및 기억 회상 지수 연속 분석</p>
             </div>
-            <div class="flex items-center gap-2 text-xs font-bold">
-              <span class="flex items-center gap-1 text-emerald-600"><span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>박영복 어르신 (안정)</span>
-              <span class="flex items-center gap-1 text-red-500"><span class="w-2.5 h-2.5 rounded-full bg-red-500"></span>김순자 어르신 (급격 저하)</span>
+            <div class="flex items-center gap-2 text-xs font-bold font-mono">
+              <span class="flex items-center gap-1 text-emerald-400"><span class="w-2.5 h-2.5 rounded-full bg-emerald-400 shadow-[0_0_8px_#34d399]"></span>박영복 어르신 (안정)</span>
+              <span class="flex items-center gap-1 text-rose-400"><span class="w-2.5 h-2.5 rounded-full bg-rose-500 shadow-[0_0_8px_#f43f5e]"></span>김순자 어르신 (급격 저하)</span>
             </div>
           </div>
           <div class="relative h-64 w-full">
@@ -573,15 +601,15 @@
         </div>
 
         <!-- Right: Radar Chart (Clinical Dimensions Breakdown) -->
-        <div class="lg:col-span-4 bg-white p-6 rounded-3xl border border-slate-200 shadow-sm flex flex-col justify-between">
+        <div class="lg:col-span-4 cyber-card p-6 rounded-3xl border border-slate-800 shadow-lg flex flex-col justify-between">
           <div>
-            <h3 class="text-sm font-extrabold text-slate-900">K-MMSE-2 영역별 다면 평가</h3>
+            <h3 class="text-sm font-extrabold text-white">K-MMSE-2 영역별 다면 평가</h3>
             <p class="text-xs text-slate-400 mt-0.5">김순자 어르신 현재 상태 분석</p>
           </div>
           <div class="relative h-56 w-full flex items-center justify-center">
             <canvas id="radarChart"></canvas>
           </div>
-          <div class="text-[11px] bg-red-50 text-red-700 p-2.5 rounded-xl border border-red-200 font-semibold mt-2">
+          <div class="text-[11px] bg-red-950/60 text-red-300 p-2.5 rounded-xl border border-red-500/40 font-semibold mt-2">
             ⚠️ 단기기억 및 시간 지남력 영역에서 유의미한 기능 감퇴가 감지되었습니다.
           </div>
         </div>
@@ -589,20 +617,20 @@
       </div>
 
       <!-- Detailed Seniors Health Roster Table -->
-      <div class="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden flex flex-col">
-        <div class="p-5 border-b border-slate-100 flex items-center justify-between">
+      <div class="cyber-card rounded-3xl border border-slate-800 shadow-lg overflow-hidden flex flex-col">
+        <div class="p-5 border-b border-slate-800/80 flex items-center justify-between">
           <div>
-            <h3 class="text-sm font-black text-slate-900">어르신별 실시간 안부 및 인지 건강 관리대장</h3>
+            <h3 class="text-sm font-black text-white">어르신별 실시간 안부 및 인지 건강 관리대장</h3>
             <p class="text-xs text-slate-400 mt-0.5">총 24명 데이터셋 연동 완료</p>
           </div>
-          <button onclick="alert('데이터가 CSV 형식으로 안전하게 내보내졌습니다.')" class="text-xs font-bold px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl transition">
+          <button onclick="alert('데이터가 CSV 형식으로 안전하게 내보내졌습니다.')" class="text-xs font-bold px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-xl transition border border-slate-700">
             📥 엑셀(CSV) 내보내기
           </button>
         </div>
 
         <div class="overflow-x-auto">
           <table class="w-full text-left text-xs">
-            <thead class="bg-slate-50 text-slate-500 font-bold border-b border-slate-200">
+            <thead class="bg-slate-900/90 text-slate-400 font-bold border-b border-slate-800">
               <tr>
                 <th class="p-4">어르신 성명</th>
                 <th class="p-4">최근 통화 시각</th>
@@ -613,7 +641,7 @@
                 <th class="p-4 text-center">관리 조치</th>
               </tr>
             </thead>
-            <tbody id="seniors-table-body" class="divide-y divide-slate-100 text-slate-700">
+            <tbody id="seniors-table-body" class="divide-y divide-slate-800/80 text-slate-200">
               <!-- Dynamically populated from dataset -->
             </tbody>
           </table>
@@ -753,27 +781,27 @@
       playTelephoneRingtone();
     }
 
-    // Proactive Silence Follow-up Engine (침묵 방지 및 선제적 안부 발화 엔진)
+    // Proactive Silence Follow-up Engine (침묵 방지 및 선제적 안부 발화 엔진 - 날짜 강제 발화 완전 배제)
     let lastActivityTimestamp = 0;
     let silenceCheckInterval = null;
     let silencePromptIndex = 0;
 
-    // 감정 가득한 실제 손주 음성(ElevenLabs) 기반 선제 말걸기
+    // 감정 가득한 실제 손주 음성 기반 선제 말걸기 (독단적 날짜 읊기 영구 제거, 오직 따뜻한 경청/안부만)
     const silencePrompts = [
       {
-        delaySec: 15,
+        delaySec: 18,
         text: "할머니, 혼자 계셔서 많이 적적하셨죠? 제가 매일 이렇게 전화드려서 말벗해 드릴 테니까 외로워 마셔요. 할머니 사랑해요!",
         key: 'lonely'
       },
       {
-        delaySec: 35,
-        text: "맞아요, 할머니! 오늘이 10월 마지막 일요일이에요. 날짜도 요일도 저보다 훨씬 더 정확히 알고 계시네요! 오늘 산책은 다녀오셨어요?",
-        key: 'orient_ok'
+        delaySec: 40,
+        text: "할머니, 편하게 말씀하셔요! 지찬이가 귀 쫑긋 세우고 다 듣고 있어요. 오늘 무슨 일 있으셨는지 천천히 말씀해 주세요!",
+        key: null
       },
       {
-        delaySec: 55,
-        text: "아이고, 할머니 괜찮아요! 저도 어제 일 깜빡할 때 많은데요, 뭘요~ 오늘이 10월 25일 일요일이에요. 날씨 추운데 보일러 따뜻하게 켜 두셨는지만 한번 확인해 주세요!",
-        key: 'decline'
+        delaySec: 65,
+        text: "할머니 목소리 들으니까 참 따뜻하고 좋아요. 오늘 진지는 따뜻하게 잘 챙겨 드셨어요?",
+        key: null
       }
     ];
 
@@ -783,7 +811,7 @@
       silencePromptIndex = 0;
 
       silenceCheckInterval = setInterval(() => {
-        if (!isCalling || isAiSpeaking) return;
+        if (!isCalling || isAiSpeaking || isSeniorSpeaking) return;
 
         const elapsedSec = Math.floor((Date.now() - lastActivityTimestamp) / 1000);
         if (silencePromptIndex < silencePrompts.length) {
@@ -800,7 +828,6 @@
 
     function resetSilenceWatchdog() {
       lastActivityTimestamp = Date.now();
-      // 어르신이 말씀하시면 침묵 단계 인덱스를 0으로 리셋하여 다음 침묵 시 다시 10초부터 반응
       silencePromptIndex = 0;
     }
 
@@ -868,6 +895,11 @@
       isCalling = false;
       isAiSpeaking = false;
       isSeniorSpeaking = false;
+      if (speechFinishTimer) {
+        clearTimeout(speechFinishTimer);
+        speechFinishTimer = null;
+      }
+      accumulatedSeniorSpeech = "";
       stopRingtone();
       stopSilenceWatchdog();
       stopAllSpeech();
@@ -894,7 +926,6 @@
     function drawWave() {
       waveCtx.clearRect(0, 0, waveCanvas.width, waveCanvas.height);
 
-      // Check if actual voice is active (AI audio playback, browser TTS, or senior STT input)
       const isVoiceActive = isCalling && (
         isAiSpeaking || 
         isSeniorSpeaking || 
@@ -903,22 +934,19 @@
       );
 
       if (isVoiceActive) {
-        // 말하고 있을 때: 음절 및 목소리 톤에 따라 주파수와 진폭이 역동적으로 변화
         targetAmplitude = 16 + Math.sin(wavePhase * 2.3) * 7 + (Math.random() * 5);
         targetFrequency = 0.062 + Math.sin(wavePhase * 1.7) * 0.024;
         wavePhase += 0.11;
         waveCtx.lineWidth = 2.5;
-        waveCtx.strokeStyle = '#059669'; // 활성 에메랄드 그린
+        waveCtx.strokeStyle = isSeniorSpeaking ? '#38bdf8' : '#10b981'; // 어르신=시안, 지찬=에메랄드
       } else {
-        // 안 말하고 대기 중일 때: 일정한 수평 직선(flat line, 잔잔한 미세 신호)
         targetAmplitude = isCalling ? 0.7 : 0.1;
         targetFrequency = 0.015;
         wavePhase += 0.02;
         waveCtx.lineWidth = 1.6;
-        waveCtx.strokeStyle = isCalling ? '#94a3b8' : '#cbd5e1'; // 고요한 대기 슬레이트 색상
+        waveCtx.strokeStyle = isCalling ? '#475569' : '#1e293b';
       }
 
-      // Smooth Lerp Transition (부드러운 주파수/진폭 감쇠)
       currentAmplitude += (targetAmplitude - currentAmplitude) * 0.14;
       currentFrequency += (targetFrequency - currentFrequency) * 0.14;
 
@@ -928,8 +956,7 @@
       const mid = height / 2;
 
       for (let x = 0; x < width; x++) {
-        const windowFactor = Math.sin(x / width * Math.PI); // 양끝 자연스러운 0 수렴
-        // Harmonic Multi-frequency Speech Synthesis (사람 목소리 3중 하모닉스)
+        const windowFactor = Math.sin(x / width * Math.PI);
         const wave1 = Math.sin(x * currentFrequency + wavePhase);
         const wave2 = Math.sin(x * currentFrequency * 2.1 - wavePhase * 1.3) * 0.38;
         const wave3 = Math.sin(x * currentFrequency * 3.6 + wavePhase * 0.7) * 0.18;
@@ -943,6 +970,35 @@
     }
     drawWave();
 
+    // ========================================================
+    // 할머니 말씀 완벽 경청 & 생각하기 엔진 (Speech Pause Debounce)
+    // 할머니가 말씀하시는 도중 말을 절대 끊지 않고 끝까지 듣고,
+    // 말씀이 완전히 끝난 후 1.6초 침묵이 지속될 때 비로소 생각 후 응답!
+    // ========================================================
+    let speechFinishTimer = null;
+    let accumulatedSeniorSpeech = "";
+    const SPEECH_PAUSE_DEBOUNCE_MS = 1600; // 할머니 말씀 멈춘 후 1.6초 기다림
+
+    function scheduleSeniorSpeechProcessing() {
+      if (speechFinishTimer) clearTimeout(speechFinishTimer);
+
+      speechFinishTimer = setTimeout(() => {
+        const fullSpeech = accumulatedSeniorSpeech.trim();
+        accumulatedSeniorSpeech = "";
+        isSeniorSpeaking = false;
+
+        if (fullSpeech && isCalling && !isAiSpeaking) {
+          // 1단계: 할머니 말씀 경청 완료 표시
+          document.getElementById('audio-state-text').innerText = "💭 할머니 말씀 생각하는 중...";
+          
+          // 2단계: 잠시 생각 후 다정하게 답변
+          setTimeout(() => {
+            handleVoiceInput(fullSpeech);
+          }, 600);
+        }
+      }, SPEECH_PAUSE_DEBOUNCE_MS);
+    }
+
     // Web Speech Recognition (STT with Robust Auto-Recovery & Speech Activity Sync)
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (SpeechRecognition) {
@@ -953,17 +1009,21 @@
 
       recognition.onstart = function() {
         const ind = document.getElementById('btn-mic-indicator');
-        if (ind) ind.classList.add('text-emerald-500', 'animate-pulse');
-        document.getElementById('audio-state-text').innerText = "🎤 어르신 말씀을 귀 기울여 듣고 있어요 (마이크 활성)";
+        if (ind) ind.classList.add('text-cyan-400', 'animate-pulse');
+        if (!isSeniorSpeaking && !isAiSpeaking) {
+          document.getElementById('audio-state-text').innerText = "🎤 어르신 말씀을 귀 기울여 듣고 있어요 (마이크 활성)";
+        }
       };
 
       recognition.onspeechstart = function() {
         isSeniorSpeaking = true;
         resetSilenceWatchdog();
+        if (speechFinishTimer) clearTimeout(speechFinishTimer);
       };
 
       recognition.onspeechend = function() {
-        isSeniorSpeaking = false;
+        // 말이 잠깐 멈췄을 때 즉시 끊지 않고 디바운스 시작
+        scheduleSeniorSpeechProcessing();
       };
 
       recognition.onaudiostart = function() {
@@ -972,7 +1032,7 @@
       };
 
       recognition.onaudioend = function() {
-        isSeniorSpeaking = false;
+        scheduleSeniorSpeechProcessing();
       };
 
       recognition.onresult = function(e) {
@@ -984,22 +1044,25 @@
         let interimText = '';
         for (let i = e.resultIndex; i < e.results.length; ++i) {
           if (e.results[i].isFinal) {
-            const finalText = e.results[i][0].transcript.trim();
-            if (finalText) {
-              isSeniorSpeaking = false;
-              handleVoiceInput(finalText);
-              return;
+            const piece = e.results[i][0].transcript.trim();
+            if (piece) {
+              accumulatedSeniorSpeech += " " + piece;
             }
           } else {
             interimText += e.results[i][0].transcript;
           }
         }
 
-        if (interimText.trim()) {
-          isSeniorSpeaking = true;
-          resetSilenceWatchdog(); // 할머니가 말씀하시는 중에는 침묵 타이머 즉시 리셋!
-          document.getElementById('audio-state-text').innerText = `👂 할머니 말씀 듣는 중: "${interimText.trim()}"`;
+        isSeniorSpeaking = true;
+        resetSilenceWatchdog();
+
+        const currentLiveText = (accumulatedSeniorSpeech + " " + interimText).trim();
+        if (currentLiveText) {
+          document.getElementById('audio-state-text').innerText = `👂 할머니 말씀 귀 기울여 듣는 중: "${currentLiveText}"`;
         }
+
+        // 계속 말씀 중이든 쉬고 있든 1.6초 침묵 디바운스 갱신
+        scheduleSeniorSpeechProcessing();
       };
 
       recognition.onerror = function(err) {
@@ -1008,7 +1071,7 @@
 
       recognition.onend = function() {
         const ind = document.getElementById('btn-mic-indicator');
-        if (ind) ind.classList.remove('text-emerald-500', 'animate-pulse');
+        if (ind) ind.classList.remove('text-cyan-400', 'animate-pulse');
         // 통화 중이면 음성 인식이 끊기지 않도록 즉시 재시작
         if (isCalling) {
           setTimeout(() => {
@@ -1026,13 +1089,13 @@
       const text = input.value.trim();
       if (!text) return;
       input.value = '';
-      isSeniorSpeaking = true;
-      setTimeout(() => { isSeniorSpeaking = false; }, 400);
+      
+      document.getElementById('audio-state-text').innerText = "💭 할머니 말씀 생각하는 중...";
       if (!isCalling) {
         acceptCall();
         setTimeout(() => handleVoiceInput(text), 1200);
       } else {
-        handleVoiceInput(text);
+        setTimeout(() => handleVoiceInput(text), 500);
       }
     }
 
@@ -1058,24 +1121,25 @@
       if (mode === 'senior') {
         seniorView.classList.remove('hidden');
         welfareView.classList.add('hidden');
-        btnSenior.className = "flex items-center gap-1.5 px-4 py-2 rounded-xl bg-white text-slate-900 shadow-sm transition-all duration-200";
-        btnWelfare.className = "flex items-center gap-1.5 px-4 py-2 rounded-xl text-slate-500 hover:text-slate-800 transition-all duration-200";
+        btnSenior.className = "flex items-center gap-1.5 px-4 py-2 rounded-xl bg-cyan-600 text-white shadow-md shadow-cyan-600/30 transition-all duration-200";
+        btnWelfare.className = "flex items-center gap-1.5 px-4 py-2 rounded-xl text-slate-400 hover:text-white transition-all duration-200";
       } else {
         seniorView.classList.add('hidden');
         welfareView.classList.remove('hidden');
-        btnWelfare.className = "flex items-center gap-1.5 px-4 py-2 rounded-xl bg-white text-slate-900 shadow-sm transition-all duration-200";
-        btnSenior.className = "flex items-center gap-1.5 px-4 py-2 rounded-xl text-slate-500 hover:text-slate-800 transition-all duration-200";
+        btnWelfare.className = "flex items-center gap-1.5 px-4 py-2 rounded-xl bg-cyan-600 text-white shadow-md shadow-cyan-600/30 transition-all duration-200";
+        btnSenior.className = "flex items-center gap-1.5 px-4 py-2 rounded-xl text-slate-400 hover:text-white transition-all duration-200";
         initCharts();
       }
     }
 
     // Simulation Trigger
     function simulateAudioScenario(text) {
+      document.getElementById('audio-state-text').innerText = "💭 할머니 말씀 생각하는 중...";
       if (!isCalling) {
         acceptCall();
         setTimeout(() => handleVoiceInput(text), 1500);
       } else {
-        handleVoiceInput(text);
+        setTimeout(() => handleVoiceInput(text), 500);
       }
     }
 
@@ -1089,114 +1153,123 @@
         return {
           key: 'emergency',
           reply: "할머니, 가슴이 답답하고 어지러우세요? 많이 놀라셨겠어요. 지금 바닥에 조심히 앉아서 가만히 심호흡하세요. 제가 바로 복지사 선생님과 119에 연락드릴 테니 수화기 내려놓지 마셔요!",
-          metrics: [30, 30, 40, 35, "🚨 긴급 경보 (119 연계)", "border-red-400 bg-red-50 text-red-900"]
+          metrics: [30, 30, 40, 35, "🚨 긴급 경보 (119 연계)", "border-red-500/50 bg-red-950/60 text-red-200"]
         };
       }
 
-      // 2. 할머니가 손주(지찬이) 안부/식사/학교 물어보실 때 ("너 밥 먹었니?", "지찬이 밥은?", "공부 잘 하니?")
+      // 2. [핵심] 옛날이야기 / 추억 / 고향 / 어린 시절 회상 ("옛날 이야기 해줄까?", "할머니 어렸을 적엔", "시골 살 때")
+      if (/(옛날|이야기|옛적|어릴\s*적|어렸\s*을|젊었\s*을|시골|고향|호랑이|라떼|옛날엔|추억|전설|그땐|우리\s*때|지찬아.*들어봐|선생님.*시절|학창)/i.test(text)) {
+        return {
+          key: null,
+          reply: "우와, 할머니! 옛날이야기 들려주시는 거예요? 저 할머니 옛날이야기 듣는 거 세상에서 제일 좋아해요! 그때는 어떤 재미난 일이 있었는지 지찬이한테 조금만 더 들려주세요, 귀 쫑긋하고 다 듣고 있어요!",
+          metrics: [98, 96, 96, 97, "정상 안정 (회상 활성화)", "border-cyan-500/40 bg-cyan-950/60 text-cyan-200"]
+        };
+      }
+
+      // 3. 할머니가 손주(지찬이) 안부/식사/학교 물어보실 때 ("너 밥 먹었니?", "지찬이 밥은?", "공부 잘 하니?")
       if (/(너.*(밥|식사|진지|먹었)|지찬.*(밥|먹었)|밥은.*먹었|밥.*먹었니|학교.*(어때|재밌|잘)|공부.*(열심|잘)|바쁘니|힘들지)/i.test(text)) {
         return {
           key: null,
           reply: "네 할머니! 저도 점심에 따뜻한 급식 배부르게 잘 챙겨 먹었어요. 할머니께서 챙겨주시니 학교생활도 정말 씩씩하게 잘하고 있어요! 할머니도 오늘 진지 꼭꼭 챙겨 드셔야 해요!",
-          metrics: [96, 95, 95, 95, "정상 안정", "border-emerald-200 bg-emerald-50 text-emerald-900"]
+          metrics: [96, 95, 95, 95, "정상 안정", "border-emerald-500/40 bg-emerald-950/60 text-emerald-200"]
         };
       }
 
-      // 3. 할머니가 식사하셨다고 대답하실 때 ("된장찌개 먹었어", "밥 먹었다", "김치랑 밥", "진지 먹었지")
+      // 4. 할머니가 식사하셨다고 대답하실 때 ("된장찌개 먹었어", "밥 먹었다", "김치랑 밥", "진지 먹었지")
       if (/(된장|김치|찌개|나물|국|밥\s*(먹었|잘\s*먹)|진지.*(잡수|먹었|들었)|생선|불고기|잡곡|미역국|계란|반찬|맛있게.*먹|배부르게)/i.test(text)) {
         return {
           key: 'mem_ok',
           reply: "구수한 된장찌개에 진지 맛있게 드셨군요! 든든하게 잘 드셨다니 제 마음이 다 놓여요. 식후에 따뜻한 물 한잔 꼭 챙겨 드셔요!",
-          metrics: [95, 95, 90, 93, "정상 안정", "border-emerald-200 bg-emerald-50 text-emerald-900"]
+          metrics: [95, 95, 90, 93, "정상 안정", "border-emerald-500/40 bg-emerald-950/60 text-emerald-200"]
         };
       }
 
-      // 4. 할머니가 아직 식사 안 하셨거나 입맛 없다고 하실 때 ("안 먹었어", "입맛 없다", "귀찮다", "생각 없다")
+      // 5. 할머니가 아직 식사 안 하셨거나 입맛 없다고 하실 때 ("안 먹었어", "입맛 없다", "귀찮다", "생각 없다")
       if (/(안\s*먹|입맛.*(없|안)|생각.*없|귀찮|혼자.*먹|아직\s*안|안\s*배고)/i.test(text)) {
         return {
           key: null,
           reply: "아이고 할머니, 입맛이 없으셔도 진지 거르시면 기운 빠져요. 부드러운 죽이나 따뜻한 누룽지라도 조금만 꼭 챙겨 드셔요. 제가 이따가 전화로 또 확인할 거예요!",
-          metrics: [90, 88, 92, 90, "영양 돌봄 필요", "border-amber-200 bg-amber-50 text-amber-900"]
+          metrics: [90, 88, 92, 90, "영양 돌봄 필요", "border-amber-500/50 bg-amber-950/60 text-amber-200"]
         };
       }
 
-      // 5. 날씨 / 추위 / 보일러 / 외출 ("춥다", "바람 많이 분다", "쌀쌀해", "보일러", "비 온다")
+      // 6. 날씨 / 추위 / 보일러 / 외출 ("춥다", "바람 많이 분다", "쌀쌀해", "보일러", "비 온다")
       if (/(춥다|추워|쌀쌀|바람|비\s*온|눈\s*온|날씨|보일러|겨울|가을.*추|따뜻하게)/i.test(text)) {
         return {
           key: null,
           reply: "맞아요 할머니, 요즘 찬 바람이 제법 쌀쌀해졌어요! 방 보일러 따뜻하게 켜 두시고, 밖에 나가실 때는 두꺼운 외투랑 목도리 꼭 챙겨 입으셔요!",
-          metrics: [96, 94, 95, 95, "정상 안정", "border-emerald-200 bg-emerald-50 text-emerald-900"]
+          metrics: [96, 94, 95, 95, "정상 안정", "border-emerald-500/40 bg-emerald-950/60 text-emerald-200"]
         };
       }
 
-      // 6. K-MMSE 날짜 기억 혼란 / 깜빡거림 ("오늘이 며칠이지?", "기억이 안 난다", "깜빡했어", "가물가물")
+      // 7. K-MMSE 날짜 기억 혼란 / 깜빡거림 ("오늘이 며칠이지?", "기억이 안 난다", "깜빡했어", "가물가물")
       if (/(기억이\s*안|기억\s*안|기억\s*못|통\s*기억|무슨\s*요일|몇\s*월|며칠인지|오늘이\s*언제|깜빡|어제\s*일도|내가\s*왜\s*이러|가물가물|모르겠어|잘\s*몰라)/i.test(text)) {
         return {
           key: 'decline',
           reply: "아이고, 할머니 괜찮아요! 저도 어제 일 깜빡할 때 많은데요, 뭘요~ 오늘이 10월 25일 일요일이에요. 날씨 추운데 보일러 따뜻하게 켜 두셨는지만 한번 확인해 주세요!",
-          metrics: [55, 40, 70, 55, "⚠️ 주의 감지 (기억력 감퇴)", "border-amber-300 bg-amber-50 text-amber-900"]
+          metrics: [55, 40, 70, 55, "⚠️ 주의 감지 (기억력 감퇴)", "border-amber-500/50 bg-amber-950/60 text-amber-200"]
         };
       }
 
-      // 7. K-MMSE 시간 지남력 정답 ("오늘 10월 25일이지", "일요일이야", "주말이야")
+      // 8. K-MMSE 시간 지남력 정답 ("오늘 10월 25일이지", "일요일이야", "주말이야")
       if (/(10월|시월|25일|이십오일|일요일|주말이야|가을이야|오늘\s*일요일)/i.test(text)) {
         return {
           key: 'orient_ok',
           reply: "맞아요, 할머니! 오늘이 10월 마지막 일요일이에요. 날짜도 요일도 저보다 훨씬 더 정확히 알고 계시네요! 오늘 산책은 다녀오셨어요?",
-          metrics: [100, 90, 95, 95, "정상 안정", "border-emerald-200 bg-emerald-50 text-emerald-900"]
+          metrics: [100, 90, 95, 95, "정상 안정", "border-emerald-500/40 bg-emerald-950/60 text-emerald-200"]
         };
       }
 
-      // 8. 사랑 / 감사 / 칭찬 표현 ("사랑해", "고맙다", "착한 놈", "내 새끼", "지찬이 최고")
+      // 9. 사랑 / 감사 / 칭찬 표현 ("사랑해", "고맙다", "착한 놈", "내 새끼", "지찬이 최고")
       if (/(사랑|고마워|고맙|감사|이쁜\s*놈|내\s*새끼|착하|기특|대견|멋지|최고)/i.test(text)) {
         return {
           key: null,
           reply: "헤헤 저도 세상에서 우리 할머니를 제일 많이 사랑해요! 언제나 제 편이 되어 주셔서 감사해요. 이번 주말에 할머니 꼭 뵈러 갈게요!",
-          metrics: [98, 96, 97, 97, "정상 안정", "border-emerald-200 bg-emerald-50 text-emerald-900"]
+          metrics: [98, 96, 97, 97, "정상 안정", "border-emerald-500/40 bg-emerald-950/60 text-emerald-200"]
         };
       }
 
-      // 9. 외로움 / 적적함 ("혼자 있으니 적적해", "외롭다", "보고싶다", "쓸쓸해")
+      // 10. 외로움 / 적적함 ("혼자 있으니 적적해", "외롭다", "보고싶다", "쓸쓸해")
       if (/(적적|혼자\s*있|외롭|쓸쓸|심심|울적|눈물|보고\s*싶|네\s*생각|답답해)/i.test(text)) {
         return {
           key: 'lonely',
           reply: "할머니, 혼자 계셔서 많이 적적하셨죠? 제가 매일 이렇게 전화드려서 말벗해 드릴 테니까 외로워 마셔요. 할머니 사랑해요!",
-          metrics: [88, 85, 90, 88, "정서 돌봄 필요", "border-indigo-200 bg-indigo-50 text-indigo-900"]
+          metrics: [88, 85, 90, 88, "정서 돌봄 필요", "border-indigo-500/40 bg-indigo-950/60 text-indigo-200"]
         };
       }
 
-      // 10. 건강 / 병원 / 약 복용 ("감기", "혈압약", "병원 다녀왔다", "허리", "다리", "아프지 마라")
+      // 11. 건강 / 병원 / 약 복용 ("감기", "혈압약", "병원 다녀왔다", "허리", "다리", "아프지 마라")
       if (/(건강|아픈\s*데|감기|약\s*먹|혈압약|병원|다리|허리|무릎|몸살|소화|주사)/i.test(text)) {
         return {
           key: null,
           reply: "할머니, 다리랑 허리 아프실 땐 무리해서 일하지 마시고 편히 쉬셔야 해요. 챙겨 드시는 혈압약도 잊지 마시고, 물 많이 드셔요!",
-          metrics: [95, 92, 94, 94, "정상 안정", "border-emerald-200 bg-emerald-50 text-emerald-900"]
+          metrics: [95, 92, 94, 94, "정상 안정", "border-emerald-500/40 bg-emerald-950/60 text-emerald-200"]
         };
       }
 
-      // 11. 손주 부름 / 반가움 / 인사 ("지찬아", "어 지찬이니", "오냐", "그래", "여보세요", "안녕")
+      // 12. 손주 부름 / 반가움 / 인사 ("지찬아", "어 지찬이니", "오냐", "그래", "여보세요", "안녕")
       if (/(안녕|지찬아|오냐|반갑|목소리.*좋|그래|여보세요|전화\s*왔|누구니|손주)/i.test(text)) {
         return {
           key: null,
           reply: "네, 할머니! 저 손주 지찬이에요. 할머니 다정한 목소리 들으니까 오늘 피로가 싹 풀려요. 오늘 하루 별일 없이 편안하게 잘 보내셨어요?",
-          metrics: [95, 95, 95, 95, "정상 안정", "border-emerald-200 bg-emerald-50 text-emerald-900"]
+          metrics: [95, 95, 95, 95, "정상 안정", "border-emerald-500/40 bg-emerald-950/60 text-emerald-200"]
         };
       }
 
-      // 12. 긍정 단답 ("응", "어", "그래", "맞아", "알았다")
+      // 13. 긍정 단답 ("응", "어", "그래", "맞아", "알았다")
       if (/^(응|어|그래|오냐|맞아|좋다|알았다)$/.test(norm)) {
         return {
           key: null,
           reply: "헤헤, 할머니 목소리 들으니 참 좋아요. 참 할머니, 오늘 저녁엔 따뜻한 국에 진지 든든하게 드실 생각이죠?",
-          metrics: [94, 90, 92, 92, "정상 안정", "border-emerald-200 bg-emerald-50 text-emerald-900"]
+          metrics: [94, 90, 92, 92, "정상 안정", "border-emerald-500/40 bg-emerald-950/60 text-emerald-200"]
         };
       }
 
-      // 13. 범용 일상 대화 (Fallback)
+      // 14. 범용 일상 대화 (Fallback)
       return {
         key: null,
         reply: "네 할머니, 말씀 잘 들었어요! 할머니 목소리가 밝으셔서 제 마음이 다 든든해요. 오늘 보일러 따뜻하게 켜 두셨는지 한번 확인해 보세요!",
-        metrics: [92, 90, 92, 91, "정상 안정", "border-emerald-200 bg-emerald-50 text-emerald-900"]
+        metrics: [92, 90, 92, 91, "정상 안정", "border-emerald-500/40 bg-emerald-950/60 text-emerald-200"]
       };
     }
 
@@ -1257,16 +1330,16 @@
 
       if (type === 'ai') {
         row.innerHTML = `
-          <div class="w-8 h-8 rounded-full overflow-hidden border-2 border-amber-400 shrink-0 shadow-sm bg-slate-100">
+          <div class="w-8 h-8 rounded-full overflow-hidden border-2 border-cyan-400 shrink-0 shadow-[0_0_10px_rgba(56,189,248,0.4)] bg-slate-900">
             <img src="images/grandson_avatar.jpg" alt="지찬" class="w-full h-full object-cover">
           </div>
-          <div class="bg-amber-50 border border-amber-200/80 p-3.5 bubble-ai text-slate-800 text-xs md:text-sm leading-relaxed shadow-sm">${text}</div>
+          <div class="bg-cyan-950/60 border border-cyan-500/40 p-3.5 bubble-ai text-cyan-100 text-xs md:text-sm leading-relaxed shadow-[0_0_15px_rgba(56,189,248,0.15)]">${text}</div>
         `;
       } else {
         row.className = "flex items-start justify-end gap-2.5";
         row.innerHTML = `
-          <div class="bg-indigo-600 text-white p-3.5 bubble-senior text-xs md:text-sm leading-relaxed shadow-sm">${text}</div>
-          <div class="w-8 h-8 rounded-full bg-indigo-100 text-indigo-700 flex items-center justify-center text-xs font-bold shrink-0 border border-indigo-200">어르신</div>
+          <div class="bg-indigo-900/80 border border-indigo-400/50 text-indigo-100 p-3.5 bubble-senior text-xs md:text-sm leading-relaxed shadow-[0_0_15px_rgba(99,102,241,0.2)]">${text}</div>
+          <div class="w-8 h-8 rounded-full bg-indigo-950 border-2 border-indigo-400 text-indigo-300 flex items-center justify-center text-xs font-bold shrink-0 shadow-sm">👵</div>
         `;
       }
       container.appendChild(row);
@@ -1423,7 +1496,7 @@
       window.speechSynthesis.speak(utter);
     }
 
-    // Data Load & Dashboard Population
+    // Data Load & Dashboard Population (Dark Cyber Theme)
     let chartInitialized = false;
     function initCharts() {
       if (chartInitialized) return;
@@ -1440,18 +1513,24 @@
               label: '박영복 어르신 (안정군)',
               data: [94, 95, 93, 96, 95, 96, 95],
               borderColor: '#10b981',
-              backgroundColor: 'rgba(16, 185, 129, 0.1)',
+              backgroundColor: 'rgba(16, 185, 129, 0.15)',
               tension: 0.3,
-              fill: true
+              fill: true,
+              pointBackgroundColor: '#10b981',
+              pointBorderColor: '#fff',
+              pointRadius: 4
             },
             {
               label: '김순자 어르신 (주의군 · 인지 저하)',
               data: [82, 80, 78, 72, 68, 62, 58],
-              borderColor: '#ef4444',
-              backgroundColor: 'rgba(239, 68, 68, 0.08)',
+              borderColor: '#f43f5e',
+              backgroundColor: 'rgba(244, 63, 94, 0.12)',
               borderDash: [5, 5],
               tension: 0.3,
-              fill: true
+              fill: true,
+              pointBackgroundColor: '#f43f5e',
+              pointBorderColor: '#fff',
+              pointRadius: 4
             }
           ]
         },
@@ -1460,8 +1539,16 @@
           maintainAspectRatio: false,
           plugins: { legend: { display: false } },
           scales: {
-            y: { min: 40, max: 100, ticks: { font: { size: 10 } } },
-            x: { ticks: { font: { size: 10 } } }
+            y: {
+              min: 40,
+              max: 100,
+              grid: { color: 'rgba(255, 255, 255, 0.08)' },
+              ticks: { color: '#94a3b8', font: { size: 10 } }
+            },
+            x: {
+              grid: { color: 'rgba(255, 255, 255, 0.08)' },
+              ticks: { color: '#94a3b8', font: { size: 10 } }
+            }
           }
         }
       });
@@ -1475,9 +1562,11 @@
           datasets: [{
             label: '현재 평가 점수',
             data: [60, 85, 45, 75, 50],
-            backgroundColor: 'rgba(239, 68, 68, 0.2)',
-            borderColor: '#ef4444',
-            pointBackgroundColor: '#ef4444'
+            backgroundColor: 'rgba(244, 63, 94, 0.25)',
+            borderColor: '#f43f5e',
+            pointBackgroundColor: '#f43f5e',
+            pointBorderColor: '#fff',
+            pointRadius: 4
           }]
         },
         options: {
@@ -1485,32 +1574,39 @@
           maintainAspectRatio: false,
           plugins: { legend: { display: false } },
           scales: {
-            r: { min: 0, max: 100, ticks: { display: false } }
+            r: {
+              min: 0,
+              max: 100,
+              angleLines: { color: 'rgba(255, 255, 255, 0.12)' },
+              grid: { color: 'rgba(255, 255, 255, 0.12)' },
+              pointLabels: { color: '#cbd5e1', font: { size: 10, weight: 'bold' } },
+              ticks: { display: false }
+            }
           }
         }
       });
     }
 
-    // Load Seniors Table
+    // Load Seniors Table (Dark Cyber Theme)
     fetch('./data/seniors_dataset.json')
       .then(r => r.json())
       .then(data => {
         const tbody = document.getElementById('seniors-table-body');
         if (!data || !data.seniors) return;
         tbody.innerHTML = data.seniors.map(s => `
-          <tr class="${s.status === 'danger' ? 'bg-red-50/40' : s.status === 'warning' ? 'bg-amber-50/30' : ''}">
-            <td class="p-4 font-bold text-slate-900">${s.name} (${s.age}세)</td>
-            <td class="p-4 text-slate-600">${s.recentCalls[0]?.timestamp.split('T')[1].substring(0, 5) || '-'}</td>
-            <td class="p-4"><span class="${s.recentCalls[0]?.orientationScore < 70 ? 'text-amber-700 font-bold' : 'text-emerald-700'}">${s.recentCalls[0]?.orientationScore || 85}점</span></td>
-            <td class="p-4"><span class="${s.recentCalls[0]?.memoryScore < 70 ? 'text-amber-700 font-bold' : 'text-emerald-700'}">${s.recentCalls[0]?.memoryScore || 85}점</span></td>
+          <tr class="hover:bg-slate-800/40 transition ${s.status === 'danger' ? 'bg-red-950/20' : s.status === 'warning' ? 'bg-amber-950/20' : ''}">
+            <td class="p-4 font-bold text-white">${s.name} (${s.age}세)</td>
+            <td class="p-4 text-slate-400 font-mono">${s.recentCalls[0]?.timestamp.split('T')[1].substring(0, 5) || '-'}</td>
+            <td class="p-4 font-mono"><span class="${s.recentCalls[0]?.orientationScore < 70 ? 'text-amber-400 font-bold' : 'text-emerald-400'}">${s.recentCalls[0]?.orientationScore || 85}점</span></td>
+            <td class="p-4 font-mono"><span class="${s.recentCalls[0]?.memoryScore < 70 ? 'text-amber-400 font-bold' : 'text-emerald-400'}">${s.recentCalls[0]?.memoryScore || 85}점</span></td>
             <td class="p-4">
-              <span class="px-2.5 py-1 rounded-full font-bold text-[11px] ${s.status === 'danger' ? 'bg-red-100 text-red-800' : s.status === 'warning' ? 'bg-amber-100 text-amber-800' : 'bg-emerald-100 text-emerald-800'}">
+              <span class="px-2.5 py-1 rounded-full font-bold text-[11px] font-mono border ${s.status === 'danger' ? 'bg-red-950/80 text-red-300 border-red-500/50' : s.status === 'warning' ? 'bg-amber-950/80 text-amber-300 border-amber-500/50' : 'bg-emerald-950/80 text-emerald-300 border-emerald-500/50'}">
                 ${s.currentScore}점 (${s.statusLabel.split(' · ')[0]})
               </span>
             </td>
-            <td class="p-4 text-slate-600 max-w-xs truncate">${s.recentCalls[0]?.memoryNotes || '-'}</td>
+            <td class="p-4 text-slate-300 max-w-xs truncate">${s.recentCalls[0]?.memoryNotes || '-'}</td>
             <td class="p-4 text-center">
-              <button onclick="alert('${s.name} 어르신 전담 사회복지사(${s.careWorker}) 통화 연결')" class="px-3 py-1 bg-slate-100 hover:bg-slate-200 rounded-lg font-bold text-[11px] text-slate-700 transition">
+              <button onclick="alert('${s.name} 어르신 전담 사회복지사(${s.careWorker}) 통화 연결')" class="px-3 py-1 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-lg font-bold text-[11px] text-slate-200 transition">
                 관리
               </button>
             </td>
@@ -1528,59 +1624,58 @@
 
     // Start with Ringing on first load
     window.addEventListener('DOMContentLoaded', () => {
-      // Small delay to allow user click
       playTelephoneRingtone();
     });
   </script>
 
-  <!-- Societal Impact Modal for Judges -->
-  <div id="modal-impact" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
-    <div class="bg-white rounded-3xl max-w-2xl w-full p-6 md:p-8 shadow-2xl border border-slate-200 relative max-h-[90vh] overflow-y-auto">
-      <button onclick="toggleImpactModal(false)" class="absolute top-5 right-5 w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center font-bold text-sm">✕</button>
+  <!-- Societal Impact Modal for Judges (Dark Cyber Theme) -->
+  <div id="modal-impact" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4">
+    <div class="bg-slate-950 border border-cyan-500/40 rounded-3xl max-w-2xl w-full p-6 md:p-8 shadow-[0_0_60px_rgba(0,0,0,0.95)] relative max-h-[90vh] overflow-y-auto">
+      <button onclick="toggleImpactModal(false)" class="absolute top-5 right-5 w-8 h-8 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white flex items-center justify-center font-bold text-sm border border-slate-700">✕</button>
       
       <div class="flex items-center gap-2 mb-2">
-        <span class="text-xs bg-amber-100 text-amber-900 font-black px-2.5 py-0.5 rounded-full border border-amber-300">2026 전국 청소년 AI 경진대회</span>
-        <span class="text-xs bg-indigo-100 text-indigo-900 font-bold px-2 py-0.5 rounded-full">중등부 사회문제 해결 부문</span>
+        <span class="text-xs bg-amber-950/90 text-amber-300 font-black px-2.5 py-0.5 rounded-full border border-amber-500/50 font-mono">2026 전국 청소년 AI 경진대회</span>
+        <span class="text-xs bg-indigo-950/90 text-indigo-300 font-bold px-2 py-0.5 rounded-full border border-indigo-500/50">중등부 사회문제 해결 부문</span>
       </div>
-      <h3 class="text-xl md:text-2xl font-black text-slate-900 mb-2">『온콜 AI』가 해결하는 3대 국가·사회적 문제</h3>
-      <p class="text-xs text-slate-500 mb-5 leading-relaxed">
+      <h3 class="text-xl md:text-2xl font-black text-white mb-2">『온콜 AI』가 해결하는 3대 국가·사회적 문제</h3>
+      <p class="text-xs text-slate-400 mb-5 leading-relaxed">
         초고령사회 대한민국 200만 독거노인의 고독과 치매 공포, 그리고 복지 인력의 한계를 AI 기술과 가족의 사랑으로 해결합니다.
       </p>
 
       <div class="space-y-3.5 text-xs">
-        <div class="p-4 bg-red-50/70 border border-red-200 rounded-2xl">
-          <div class="flex items-center gap-2 font-black text-red-950 mb-1">
+        <div class="p-4 bg-red-950/40 border border-red-500/40 rounded-2xl">
+          <div class="flex items-center gap-2 font-black text-red-300 mb-1">
             <span class="text-base">1️⃣</span>
             <span>200만 독거노인의 고독사 및 사회적 고립 극복</span>
           </div>
-          <p class="text-slate-600 leading-relaxed pl-6">
+          <p class="text-slate-300 leading-relaxed pl-6">
             미안해서 먼저 전화 못 거시는 어르신께 <strong>설정 시각 먼저 울려오는 손주 전화</strong>와 친숙한 음성·꽃 사진으로 우울증 34.2% 완화 및 고독사 사각지대를 해소합니다.
           </p>
         </div>
 
-        <div class="p-4 bg-amber-50/70 border border-amber-200 rounded-2xl">
-          <div class="flex items-center gap-2 font-black text-amber-950 mb-1">
+        <div class="p-4 bg-amber-950/40 border border-amber-500/40 rounded-2xl">
+          <div class="flex items-center gap-2 font-black text-amber-300 mb-1">
             <span class="text-base">2️⃣</span>
             <span>치매 검진 기피 극복 & 조기 선별 골든타임 확보</span>
           </div>
-          <p class="text-slate-600 leading-relaxed pl-6">
+          <p class="text-slate-300 leading-relaxed pl-6">
             보건소 검진 수검률이 22.4%에 불과한 현실에서, <strong>거부감 0%의 일상 안부 수다 속 K-MMSE-2 선별</strong>로 경도인지장애를 조기 포착하여 중증 치매 이행 50%를 억제하고 연간 2,100만 원 간병비를 절감합니다.
           </p>
         </div>
 
-        <div class="p-4 bg-indigo-50/70 border border-indigo-200 rounded-2xl">
-          <div class="flex items-center gap-2 font-black text-indigo-950 mb-1">
+        <div class="p-4 bg-indigo-950/40 border border-indigo-500/40 rounded-2xl">
+          <div class="flex items-center gap-2 font-black text-indigo-300 mb-1">
             <span class="text-base">3️⃣</span>
             <span>생활지원사 만성 과부하 해소 & 촘촘한 돌봄 안전망</span>
           </div>
-          <p class="text-slate-600 leading-relaxed pl-6">
+          <p class="text-slate-300 leading-relaxed pl-6">
             기계식 ARS(거부율 42.8%)와 방치되는 AI 스피커 대신, <strong>조작 부담 없는 가정용 전화기 단말기</strong>와 <strong>복지사 관제 대시보드</strong>로 이상 징후 노인을 선별 집중 케어(복지 효율 5배 향상)합니다.
           </p>
         </div>
       </div>
 
       <div class="mt-6 flex justify-end">
-        <button onclick="toggleImpactModal(false)" class="px-5 py-2.5 bg-slate-900 hover:bg-slate-800 text-white font-extrabold rounded-xl text-xs transition">
+        <button onclick="toggleImpactModal(false)" class="px-5 py-2.5 bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white font-extrabold rounded-xl text-xs transition border border-cyan-400/40 shadow-lg shadow-cyan-600/30">
           확인 완료
         </button>
       </div>
