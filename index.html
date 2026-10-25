@@ -122,10 +122,10 @@
           <!-- ======================================== -->
           <div id="screen-incoming" class="w-full flex flex-col items-center my-4 py-2">
             
-            <!-- Grandchild Calling Avatar with Pulsing Rings -->
+            <!-- Real Grandchild Calling Avatar with Pulsing Rings -->
             <div class="relative my-3 flex items-center justify-center">
-              <div class="w-28 h-28 md:w-32 md:h-32 rounded-full bg-gradient-to-tr from-amber-400 to-amber-500 text-white flex items-center justify-center text-5xl shadow-xl incoming-ringing z-10">
-                👦
+              <div class="w-28 h-28 md:w-32 md:h-32 rounded-full overflow-hidden border-4 border-amber-400 shadow-2xl incoming-ringing z-10 bg-slate-100">
+                <img src="images/grandson_avatar.jpg" alt="손주 박지찬 실제 사진" class="w-full h-full object-cover">
               </div>
               <div class="absolute inset-0 rounded-full bg-emerald-400/20 animate-ping pointer-events-none"></div>
             </div>
@@ -184,18 +184,18 @@
             </div>
             <span id="audio-state-text" class="text-[11px] text-slate-500 font-medium mt-1">지찬이의 친숙한 목소리가 말씀드리는 중...</span>
 
-            <!-- Grandchild Daily Photo Shared (Visual Stimulation & Rapport) -->
-            <div class="w-full mt-3 bg-amber-50/90 border border-amber-200/90 rounded-2xl p-2.5 flex items-center gap-3 shadow-sm">
-              <div class="relative w-16 h-16 rounded-xl bg-amber-200 overflow-hidden shrink-0 border border-amber-300 shadow-inner flex items-center justify-center">
-                <span id="photo-emoji" class="text-3xl">🏅</span>
+            <!-- Grandchild Daily Real Photo Shared (Visual Stimulation & Rapport) -->
+            <div class="w-full mt-3 bg-white/95 border-2 border-amber-300 rounded-2xl p-3 flex items-center gap-3 shadow-md">
+              <div class="relative w-20 h-20 rounded-xl overflow-hidden shrink-0 border-2 border-amber-400 shadow-inner bg-slate-100">
+                <img id="grandson-photo-img" src="images/daily_award.jpg" alt="지찬이의 오늘 실제 사진" class="w-full h-full object-cover">
               </div>
               <div class="flex-1 min-w-0">
                 <div class="flex items-center justify-between">
-                  <span class="text-[10px] font-black bg-amber-200 text-amber-900 px-1.5 py-0.5 rounded">📸 지찬이가 보낸 오늘 사진</span>
-                  <button onclick="cycleGrandsonPhoto()" class="text-[10px] text-amber-700 font-bold hover:underline">다음 사진 ❯</button>
+                  <span class="text-[10px] font-black bg-amber-500 text-white px-2 py-0.5 rounded-full shadow-sm">📸 지찬이가 보낸 실제 사진</span>
+                  <button onclick="cycleGrandsonPhoto()" class="text-xs text-amber-800 font-black hover:underline flex items-center gap-0.5">다음 사진 ❯</button>
                 </div>
-                <p id="grandson-photo-caption" class="text-xs font-bold text-slate-800 truncate mt-1">"할머니! 오늘 학교 과학대회에서 상장 탔어요!"</p>
-                <p class="text-[10px] text-slate-500">사진을 보며 함께 나누는 손주와의 일상 수다</p>
+                <p id="grandson-photo-caption" class="text-xs font-bold text-slate-900 truncate mt-1 leading-snug">"할머니! 오늘 학교 과학대회에서 상장 탔어요!"</p>
+                <p class="text-[10px] text-slate-500 mt-0.5">화면의 실물 사진을 보며 나누는 따뜻한 일상 대화</p>
               </div>
             </div>
 
@@ -239,8 +239,8 @@
           <!-- Scrollable Chat Area -->
           <div id="chat-stream" class="flex-1 overflow-y-auto pr-2 space-y-3">
             <div class="flex items-start gap-2.5">
-              <div class="w-8 h-8 rounded-full bg-amber-500 text-white flex items-center justify-center text-sm font-bold shrink-0 shadow-sm">
-                지찬
+              <div class="w-9 h-9 rounded-full overflow-hidden border-2 border-amber-400 shrink-0 shadow-sm bg-slate-100">
+                <img src="images/grandson_avatar.jpg" alt="지찬" class="w-full h-full object-cover">
               </div>
               <div class="bg-amber-50 border border-amber-200/80 p-3.5 bubble-ai text-slate-800 text-xs md:text-sm leading-relaxed shadow-sm">
                 "할머니, 전화 울리면 초록색 [전화 받기] 버튼을 눌러주세요. 지찬이 목소리가 바로 들려요!"
@@ -517,16 +517,16 @@
     let ringtoneInterval = null;
     let audioCtx = null;
 
-    // Photos Shared by Grandchild
+    // Real Photos Shared by Grandchild
     const grandsonPhotos = [
-      { emoji: "🏅", caption: '"할머니! 오늘 학교 과학대회에서 상장 탔어요!"' },
-      { emoji: "🐶", caption: '"할머니, 우리 강아지 복실이랑 공원 산책 다녀왔어요!"' },
-      { emoji: "💌", caption: '"할머니 사랑해요! 중간고사 끝나고 주말에 꼭 뵈러 갈게요"' }
+      { img: "images/daily_award.jpg", caption: '"할머니! 오늘 학교 과학대회에서 상장 탔어요!"' },
+      { img: "images/daily_dog.jpg", caption: '"할머니, 우리 강아지 복실이랑 공원 산책 다녀왔어요!"' },
+      { img: "images/daily_letter.jpg", caption: '"할머니 사랑해요! 중간고사 끝나고 주말에 꼭 뵈러 갈게요"' }
     ];
     let currentPhotoIndex = 0;
     function cycleGrandsonPhoto() {
       currentPhotoIndex = (currentPhotoIndex + 1) % grandsonPhotos.length;
-      document.getElementById('photo-emoji').innerText = grandsonPhotos[currentPhotoIndex].emoji;
+      document.getElementById('grandson-photo-img').src = grandsonPhotos[currentPhotoIndex].img;
       document.getElementById('grandson-photo-caption').innerText = grandsonPhotos[currentPhotoIndex].caption;
     }
 
@@ -773,7 +773,9 @@
 
       if (type === 'ai') {
         row.innerHTML = `
-          <div class="w-8 h-8 rounded-full bg-amber-500 text-white flex items-center justify-center text-sm font-bold shrink-0 shadow-sm">지찬</div>
+          <div class="w-8 h-8 rounded-full overflow-hidden border-2 border-amber-400 shrink-0 shadow-sm bg-slate-100">
+            <img src="images/grandson_avatar.jpg" alt="지찬" class="w-full h-full object-cover">
+          </div>
           <div class="bg-amber-50 border border-amber-200/80 p-3.5 bubble-ai text-slate-800 text-xs md:text-sm leading-relaxed shadow-sm">${text}</div>
         `;
       } else {
