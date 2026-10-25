@@ -208,15 +208,15 @@
             <!-- Grandchild Daily Real Photo Shared (Visual Stimulation & Rapport) -->
             <div class="w-full mt-3 bg-white/95 border-2 border-amber-300 rounded-2xl p-3 flex items-center gap-3 shadow-md">
               <div class="relative w-20 h-20 rounded-xl overflow-hidden shrink-0 border-2 border-amber-400 shadow-inner bg-slate-100">
-                <img id="grandson-photo-img" src="images/daily_award.jpg" alt="지찬이의 오늘 실제 사진" class="w-full h-full object-cover">
+                <img id="grandson-photo-img" src="images/daily_flower.jpg" alt="할머니를 위한 화사한 꽃 사진" class="w-full h-full object-cover">
               </div>
               <div class="flex-1 min-w-0">
                 <div class="flex items-center justify-between">
-                  <span class="text-[10px] font-black bg-amber-500 text-white px-2 py-0.5 rounded-full shadow-sm">📸 지찬이가 보낸 실제 사진</span>
+                  <span class="text-[10px] font-black bg-amber-500 text-white px-2 py-0.5 rounded-full shadow-sm">🌸 지찬이가 보낸 꽃 사진</span>
                   <button onclick="cycleGrandsonPhoto()" class="text-xs text-amber-800 font-black hover:underline flex items-center gap-0.5">다음 사진 ❯</button>
                 </div>
-                <p id="grandson-photo-caption" class="text-xs font-bold text-slate-900 truncate mt-1 leading-snug">"할머니! 오늘 학교 과학대회에서 상장 탔어요!"</p>
-                <p class="text-[10px] text-slate-500 mt-0.5">화면의 실물 사진을 보며 나누는 따뜻한 일상 대화</p>
+                <p id="grandson-photo-caption" class="text-xs font-bold text-slate-900 truncate mt-1 leading-snug">"할머니! 오늘 등굣길에 활짝 핀 꽃이 너무 예뻐서 찍었어요!"</p>
+                <p class="text-[10px] text-slate-500 mt-0.5">할머니가 좋아하시는 자연·꽃 사진을 보며 나누는 대화</p>
               </div>
             </div>
 
@@ -350,8 +350,8 @@
             <button onclick="simulateAudioScenario('어제 점심에 뭘 먹었더라... 영 기억이 안 나네. 오늘이 무슨 요일이었지?')" class="p-2.5 rounded-xl text-left bg-amber-50 hover:bg-amber-100 border border-amber-300 text-amber-950 font-bold transition">
               4. <strong>[⚠️ 인지 저하 의심]</strong> "어제 메뉴도 잊고 요일도 헷갈려"
             </button>
-            <button onclick="simulateAudioScenario('지찬아, 방금 화면에 뜬 상장 사진 봤다! 우리 지찬이 너무 기특하고 자랑스럽네!')" class="p-2.5 rounded-xl text-left bg-emerald-50 hover:bg-emerald-100 border border-emerald-300 text-emerald-950 font-bold transition">
-              5. <strong>[📸 손주 사진 대화]</strong> "상장 사진 봤다! 너무 자랑스럽네"
+            <button onclick="simulateAudioScenario('지찬아, 방금 화면에 뜬 꽃 사진 봤다! 꽃이 참 화사하고 곱구나!')" class="p-2.5 rounded-xl text-left bg-emerald-50 hover:bg-emerald-100 border border-emerald-300 text-emerald-950 font-bold transition">
+              5. <strong>[🌸 자연·꽃 사진 대화]</strong> "꽃 사진 봤다! 참 화사하고 곱네"
             </button>
             <button onclick="simulateAudioScenario('요즘 가슴이 너무 답답하고 어지러워서 털썩 주저앉았어.')" class="p-2.5 rounded-xl text-left sm:col-span-2 bg-red-50 hover:bg-red-100 border border-red-200 text-red-900 font-bold transition">
               6. <strong>[🚨 긴급 위기 가드레일]</strong> "가슴이 너무 답답하고 어지러워 주저앉았다"
@@ -538,11 +538,11 @@
     let ringtoneInterval = null;
     let audioCtx = null;
 
-    // Real Photos Shared by Grandchild
+    // Real Photos Shared by Grandchild (Flowers, Nature, Awards, Pet)
     const grandsonPhotos = [
+      { img: "images/daily_flower.jpg", caption: '"할머니! 오늘 등굣길에 활짝 핀 꽃이 예뻐서 할머니 보여드리려고 찍었어요!"' },
       { img: "images/daily_award.jpg", caption: '"할머니! 오늘 학교 과학대회에서 상장 탔어요!"' },
-      { img: "images/daily_dog.jpg", caption: '"할머니, 우리 강아지 복실이랑 공원 산책 다녀왔어요!"' },
-      { img: "images/daily_letter.jpg", caption: '"할머니 사랑해요! 중간고사 끝나고 주말에 꼭 뵈러 갈게요"' }
+      { img: "images/daily_dog.jpg", caption: '"할머니, 우리 강아지 복실이랑 공원 산책 다녀왔어요!"' }
     ];
     let currentPhotoIndex = 0;
     function cycleGrandsonPhoto() {
@@ -791,9 +791,10 @@
       } else if (text.includes("된장찌개") || text.includes("나물") || text.includes("밥 잘")) {
         updateMeters(95, 95, 90, 93, "정상 안정", "border-emerald-200 bg-emerald-50 text-emerald-900");
         reply = "구수한 된장찌개에 진지 맛있게 드셨군요! 든든하게 잘 드셨다니 제 마음이 다 놓여요. 식후에 따뜻한 물 한잔 꼭 챙겨 드셔요!";
-      } else if (text.includes("사진") || text.includes("상장") || text.includes("기특") || text.includes("자랑")) {
+      } else if (text.includes("꽃") || text.includes("자연") || text.includes("화사") || text.includes("사진") || text.includes("상장")) {
         updateMeters(98, 95, 96, 96, "정상 안정", "border-emerald-200 bg-emerald-50 text-emerald-900");
-        reply = "헤헤 할머니가 사진 보고 기뻐해 주시니 제가 더 좋아요! 할머니 생각하면서 열심히 공부했거든요. 할머니도 오늘 활짝 웃으시니까 제 마음이 정말 놓여요!";
+        reply = "헤헤 할머니가 꽃 좋아하시잖아요! 길 가다 꽃 보는데 우리 할머니 생각나서 얼른 찍었어요. 오늘 꽃 보시고 활짝 웃으시는 하루 보내셔요!";
+        audioKey = "mem_ok";
       } else if (text.includes("가슴") || text.includes("답답") || text.includes("어지러") || text.includes("주저앉")) {
         reply = "할머니, 가슴이 답답하고 어지러우세요? 많이 놀라셨겠어요. 지금 바닥에 조심히 앉아서 가만히 심호흡하세요. 제가 바로 복지사 선생님과 119에 연락드릴 테니 수화기 내려놓지 마셔요!";
       } else {
@@ -807,9 +808,10 @@
         audioKey = "orient_ok";
       } else if (text.includes("된장찌개") || text.includes("나물") || text.includes("밥 잘")) {
         audioKey = "mem_ok";
-      } else if (text.includes("사진") || text.includes("상장") || text.includes("기특") || text.includes("자랑")) {
+      } else if (text.includes("꽃") || text.includes("자연") || text.includes("화사") || text.includes("사진") || text.includes("상장")) {
         updateMeters(98, 95, 96, 96, "정상 안정", "border-emerald-200 bg-emerald-50 text-emerald-900");
-        reply = "헤헤 할머니가 사진 보고 기뻐해 주시니 제가 더 좋아요! 할머니 생각하면서 열심히 공부했거든요. 할머니도 오늘 활짝 웃으시니까 제 마음이 정말 놓여요!";
+        reply = "헤헤 할머니가 꽃 좋아하시잖아요! 길 가다 꽃 보는데 우리 할머니 생각나서 얼른 찍었어요. 오늘 꽃 보시고 활짝 웃으시는 하루 보내셔요!";
+        audioKey = "mem_ok";
       } else if (text.includes("가슴") || text.includes("답답") || text.includes("어지러") || text.includes("주저앉")) {
         audioKey = "emergency";
       }
