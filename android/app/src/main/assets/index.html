@@ -234,12 +234,12 @@
                 </div>
 
                 <!-- Big Accept Button -->
-                <div class="mt-6 flex items-center gap-3 w-full justify-center px-2">
-                  <button id="btn-accept-call" onclick="acceptCall()" class="flex-1 py-3.5 px-5 rounded-2xl bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-400 hover:to-emerald-500 text-white font-black text-base flex items-center justify-center gap-2 tactile-btn shadow-lg cursor-pointer">
+                <div class="mt-6 flex items-center gap-3 w-full justify-center px-2 relative z-30">
+                  <button id="btn-accept-call" onclick="acceptCall(event)" class="flex-1 py-3.5 px-5 rounded-2xl bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-400 hover:to-emerald-500 text-white font-black text-base flex items-center justify-center gap-2 tactile-btn shadow-lg cursor-pointer relative z-30">
                     <span class="text-xl animate-bounce">📞</span>
                     <span>전화 받기</span>
                   </button>
-                  <button id="btn-reject-call" onclick="rejectCall()" class="py-3.5 px-4 rounded-2xl bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white font-bold text-xs transition border border-slate-700 cursor-pointer">
+                  <button id="btn-reject-call" onclick="rejectCall(event)" class="py-3.5 px-4 rounded-2xl bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white font-bold text-xs transition border border-slate-700 cursor-pointer relative z-30">
                     거절
                   </button>
                 </div>
@@ -777,8 +777,16 @@
     function triggerIncomingRing() {
       if (isCalling) endCall();
       isRinging = true;
-      document.getElementById('screen-incoming').classList.remove('hidden');
-      document.getElementById('screen-active').classList.add('hidden');
+      const incScreen = document.getElementById('screen-incoming');
+      if (incScreen) {
+        incScreen.classList.remove('hidden');
+        incScreen.style.display = 'flex';
+      }
+      const actScreen = document.getElementById('screen-active');
+      if (actScreen) {
+        actScreen.classList.add('hidden');
+        actScreen.style.display = 'none';
+      }
       playTelephoneRingtone();
     }
 
@@ -853,23 +861,32 @@
     }
 
     // Accept Incoming Call (완벽한 무결성 보장)
-    function acceptCall() {
+    function acceptCall(e) {
+      if (e && e.preventDefault) e.preventDefault();
+      if (e && e.stopPropagation) e.stopPropagation();
+
       try {
         stopRingtone();
-      } catch(e) { console.warn('stopRingtone err:', e); }
+      } catch(err) { console.warn('stopRingtone err:', err); }
 
       try {
         stopAllSpeech();
-      } catch(e) { console.warn('stopAllSpeech err:', e); }
+      } catch(err) { console.warn('stopAllSpeech err:', err); }
 
       isCalling = true;
       secondsElapsed = 0;
 
-      // 1. 화면 즉시 전환 (어떤 에러가 발생해도 1순위로 즉시 화면 전환)
+      // 1. 화면 즉시 전환 (클래스 + 인라인 스타일 2중 적용으로 100% 즉시 전환)
       const incScreen = document.getElementById('screen-incoming');
-      if (incScreen) incScreen.classList.add('hidden');
+      if (incScreen) {
+        incScreen.classList.add('hidden');
+        incScreen.style.display = 'none';
+      }
       const actScreen = document.getElementById('screen-active');
-      if (actScreen) actScreen.classList.remove('hidden');
+      if (actScreen) {
+        actScreen.classList.remove('hidden');
+        actScreen.style.display = 'flex';
+      }
 
       const stateText = document.getElementById('audio-state-text');
       if (stateText) stateText.innerText = "통화 연결됨 · 지찬이 음성 출력 중";
@@ -887,7 +904,7 @@
       // 3. 침묵 감시 타이머 시작
       try {
         startSilenceWatchdog();
-      } catch(e) { console.warn('startSilenceWatchdog err:', e); }
+      } catch(err) { console.warn('startSilenceWatchdog err:', err); }
 
       // 4. Grandchild Opening Speech (손주 지찬이 단일 음성으로 일관되게 시작)
       const opening = "할머니, 안녕하세요! 손주 지찬이에요. 오늘 날씨가 부쩍 쌀쌀하던데, 점심 진지는 따뜻하게 잘 챙겨 드셨어요? 어제 드셨던 국은 뭐였는지 기억나셔요?";
@@ -897,15 +914,17 @@
       try {
         speakGrandsonVoice(opening, () => {
           if (recognition && isCalling) {
-            try { recognition.start(); } catch(e){}
+            try { recognition.start(); } catch(err){}
           }
         });
-      } catch(e) {
-        console.warn('speakGrandsonVoice err:', e);
+      } catch(err) {
+        console.warn('speakGrandsonVoice err:', err);
       }
     }
 
-    function rejectCall() {
+    function rejectCall(e) {
+      if (e && e.preventDefault) e.preventDefault();
+      if (e && e.stopPropagation) e.stopPropagation();
       stopRingtone();
       stopAllSpeech();
       alert('안부 전화가 거절되었습니다. 15분 후 다시 자동 안부 콜이 예약됩니다.');
@@ -928,8 +947,16 @@
         try { recognition.stop(); } catch(e){}
       }
 
-      document.getElementById('screen-incoming').classList.remove('hidden');
-      document.getElementById('screen-active').classList.add('hidden');
+      const incScreen = document.getElementById('screen-incoming');
+      if (incScreen) {
+        incScreen.classList.remove('hidden');
+        incScreen.style.display = 'flex';
+      }
+      const actScreen = document.getElementById('screen-active');
+      if (actScreen) {
+        actScreen.classList.add('hidden');
+        actScreen.style.display = 'none';
+      }
     }
 
     // Dynamic Soundwave Visualizer (Voice Activity Responsive)
