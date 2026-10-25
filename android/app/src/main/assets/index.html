@@ -818,9 +818,9 @@
           const target = silencePrompts[silencePromptIndex];
           if (elapsedSec >= target.delaySec) {
             silencePromptIndex++;
-            // 지찬이가 먼저 다정하게 말을 건넴!
-            appendChat("지찬 (온콜 AI · ElevenLabs)", target.text, "ai");
-            playElevenLabsAudioKey(target.key, target.text);
+            // 지찬이가 단 하나의 일관된 목소리로 먼저 다정하게 말을 건넴!
+            appendChat("지찬 (온콜 AI · 손주 음성)", target.text, "ai");
+            speakGrandsonVoice(target.text);
           }
         }
       }, 1000);
@@ -873,12 +873,12 @@
       // Start Silence Watchdog
       startSilenceWatchdog();
 
-      // Grandchild Opening Speech (ElevenLabs tone)
+      // Grandchild Opening Speech (손주 지찬이 단일 음성으로 일관되게 시작)
       const opening = "할머니, 안녕하세요! 손주 지찬이에요. 오늘 날씨가 부쩍 쌀쌀하던데, 점심 진지는 따뜻하게 잘 챙겨 드셨어요? 어제 드셨던 국은 뭐였는지 기억나셔요?";
-      appendChat("지찬 (온콜 AI · ElevenLabs)", opening, "ai");
+      appendChat("지찬 (온콜 AI · 손주 음성)", opening, "ai");
       
       // 오프닝 음성이 완전히 끝난 뒤에만 STT 마이크를 켜서 스피커 소리가 마이크로 재인식되는 하울링 방지!
-      playElevenLabsAudioKey("opening", opening, () => {
+      speakGrandsonVoice(opening, () => {
         if (recognition && isCalling) {
           try { recognition.start(); } catch(e){}
         }
@@ -1298,8 +1298,8 @@
       }
 
       setTimeout(() => {
-        appendChat("지찬 (온콜 AI · ElevenLabs)", analysis.reply, "ai");
-        playElevenLabsAudioKey(analysis.key, analysis.reply, () => {
+        appendChat("지찬 (온콜 AI · 손주 음성)", analysis.reply, "ai");
+        speakGrandsonVoice(analysis.reply, () => {
           setTimeout(() => { isHandlingInput = false; }, 200);
         });
       }, 300);
@@ -1346,71 +1346,67 @@
       container.scrollTop = container.scrollHeight;
     }
 
-    // Current active Audio element
-    let currentAudio = null;
+    // ========================================================
+    // 단일 손주 보이스 엔진 (Single Unified Grandson Voice Engine)
+    // 통화 시작(오프닝)부터 일상 대화, 시나리오까지 100% 동일한 손주 지찬이 목소리 고정
+    // 여성 음성(유나 등) 완전 배제, 느낌표/물음표 문장부호 읽기 원천 차단
+    // ========================================================
+    let cachedGrandsonVoice = null;
 
-    const audioMap = {
-      'opening': './audio/opening_grandson.mp3',
-      'lonely': './audio/scenario_lonely.mp3',
-      'orient_ok': './audio/scenario_orientation_ok.mp3',
-      'mem_ok': './audio/scenario_memory_ok.mp3',
-      'decline': './audio/scenario_cognitive_decline.mp3',
-      'emergency': './audio/scenario_emergency.mp3'
-    };
+    function getGrandsonVoice() {
+      if (cachedGrandsonVoice) return cachedGrandsonVoice;
+      if (!('speechSynthesis' in window)) return null;
 
-    function playElevenLabsAudioKey(key, fallbackText, callback) {
-      document.getElementById('audio-state-text').innerText = "🎙️ 지찬이 음성 출력 중...";
-      
-      // 기존 재생 중인 모든 오디오/TTS 즉시 중단 (단일 목소리 보장)
-      stopAllSpeech();
+      const voices = window.speechSynthesis.getVoices();
+      if (!voices || voices.length === 0) return null;
 
-      const audioSrc = key ? audioMap[key] : null;
-      if (audioSrc) {
-        currentAudio = new Audio(audioSrc);
-        isAiSpeaking = true;
-        currentAudio.onplay = function() {
-          isAiSpeaking = true;
-        };
-        currentAudio.onended = function() {
-          setTimeout(() => {
-            isAiSpeaking = false;
-            document.getElementById('audio-state-text').innerText = "어르신 말씀을 귀 기울여 듣고 있어요 (마이크 활성)";
-            if (callback) callback();
-          }, 350);
-        };
-        currentAudio.onerror = function(err) {
-          isAiSpeaking = false;
-          console.warn('Audio playback error, falling back to speech synthesis:', err);
-          fallbackTTS(fallbackText, callback);
-        };
-        currentAudio.play().catch(e => {
-          isAiSpeaking = false;
-          console.warn('Autoplay prevented, fallback:', e);
-          fallbackTTS(fallbackText, callback);
-        });
-      } else {
-        fallbackTTS(fallbackText, callback);
-      }
+      const koVoices = voices.filter(v => v.lang && (v.lang.includes('ko') || v.lang.includes('KO')));
+      if (koVoices.length === 0) return null;
+
+      // 1순위: 'Eddy' 소년 음성 (Apple 한국어 소년 캐릭터, 밝고 씩씩한 중학생 손주 톤)
+      let found = koVoices.find(v => v.name.includes('Eddy'));
+      if (found) { cachedGrandsonVoice = found; return found; }
+
+      // 2순위: 'Rocko', 'Reed', 'Flo' 등 남성/소년 캐릭터
+      found = koVoices.find(v => v.name.includes('Rocko') || v.name.includes('Reed') || v.name.includes('Flo'));
+      if (found) { cachedGrandsonVoice = found; return found; }
+
+      // 3순위: 여성 음성(유나, 혜미 등) 제외한 한국어 음성
+      const femaleKeywords = ['유나', 'yuna', 'heami', '혜미', 'sunhi', 'seoyeon', 'sandy', 'shelley', 'grandma', 'female'];
+      found = koVoices.find(v => {
+        const lower = v.name.toLowerCase();
+        return !femaleKeywords.some(f => lower.includes(f));
+      });
+      if (found) { cachedGrandsonVoice = found; return found; }
+
+      // 4순위: 불가피한 경우 첫 번째 음성
+      cachedGrandsonVoice = koVoices[0];
+      return cachedGrandsonVoice;
+    }
+
+    // 브라우저 음성 로드 이벤트 즉시 바인딩
+    if ('speechSynthesis' in window) {
+      window.speechSynthesis.onvoiceschanged = () => {
+        getGrandsonVoice();
+      };
+      // 초기 로드 시점에도 시도
+      setTimeout(getGrandsonVoice, 100);
     }
 
     // 발화 텍스트 정제 (문장부호 '느낌표', '물음표', '쉼표' 등을 글자 그대로 읽는 현상 완벽 차단)
     function cleanSpeechText(text) {
       if (!text) return "";
       let clean = text
-        // 1. 이모지 및 특수 기호 제거
         .replace(/[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{1F1E0}-\u{1F1FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{FE00}-\u{FE0F}]/gu, ' ')
-        // 2. 느낌표, 물결표, 물음표 등 발음 유발 기호 제거 (마침표나 공백으로 안전하게 변환)
         .replace(/[!！]/g, '. ')
         .replace(/[~～]/g, ' ')
         .replace(/[?？]/g, '. ')
         .replace(/[\^＊*※#@$%&+=_|\/\\<>{}[\]()（）"'`·•]/g, ' ')
-        // 3. 연속된 마침표, 쉼표, 공백 정리
         .replace(/\.{2,}/g, '. ')
         .replace(/,{2,}/g, ', ')
         .replace(/\s+/g, ' ')
         .trim();
 
-      // 혹시 텍스트 내에 '느낌표', '물음표', '물결표' 단어가 그대로 포함된 경우 제거
       clean = clean
         .replace(/\s*느낌표\s*/g, '. ')
         .replace(/\s*물음표\s*/g, '. ')
@@ -1420,79 +1416,53 @@
       return clean;
     }
 
-    // 손주 지찬이(남자 중학생) 음성 탐색 (Yuna/Heami 등 여성 목소리 완전 배제)
-    function getGrandsonVoice() {
-      if (!('speechSynthesis' in window)) return null;
-      const voices = window.speechSynthesis.getVoices();
-      const koVoices = voices.filter(v => v.lang && (v.lang.includes('ko') || v.lang.includes('KO')));
-      if (koVoices.length === 0) return null;
-
-      // 여성 음성 제외 목록 (Yuna, Heami, SunHi, Seoyeon 등 여성 음성 완전 배제)
-      const femaleKeywords = ['yuna', 'heami', 'sunhi', 'seoyeon', 'sandy', 'shelley', 'grandma', 'female', 'woman', '여성', '유나', '혜미'];
-      // 남성/소년 캐릭터 우선순위 (Eddy: 애플 소년 음성, Rocko, Reed, Minho, InJoon, BongJin 등)
-      const maleKeywords = ['eddy', 'rocko', 'reed', 'minho', 'injoon', 'bongjin', 'grandpa', 'male', 'man', 'boy', '남성', '민호', '인준', '봉진'];
-
-      // 1순위: 한국어 음성 중 남성/소년 키워드 매칭
-      const maleVoice = koVoices.find(v => {
-        const nameLower = v.name.toLowerCase();
-        return maleKeywords.some(k => nameLower.includes(k));
-      });
-      if (maleVoice) return maleVoice;
-
-      // 2순위: 여성 블랙리스트에 해당하지 않는 한국어 음성 (예: Google 한국의)
-      const neutralVoice = koVoices.find(v => {
-        const nameLower = v.name.toLowerCase();
-        return !femaleKeywords.some(k => nameLower.includes(k));
-      });
-      if (neutralVoice) return neutralVoice;
-
-      // 3순위: 불가피한 경우 첫 번째 한국어 음성
-      return koVoices[0];
-    }
-
-    function fallbackTTS(text, callback) {
+    // 단 하나의 일관된 손주 발화 함수 (통화 중 음성 바뀜 0%)
+    function speakGrandsonVoice(text, callback) {
       if (!('speechSynthesis' in window)) {
         isAiSpeaking = false;
         if (callback) callback();
         return;
       }
+
       stopAllSpeech();
       isAiSpeaking = true;
+      document.getElementById('audio-state-text').innerText = "🎙️ 지찬이가 말씀드리는 중...";
 
-      // 발화 텍스트에서 느낌표/특수문자/이모지 제거 정제
-      const safeText = cleanSpeechText(text);
-
-      const utter = new SpeechSynthesisUtterance(safeText);
+      const cleanText = cleanSpeechText(text);
+      const utter = new SpeechSynthesisUtterance(cleanText);
       utter.lang = 'ko-KR';
-      utter.rate = 0.95; // 어르신이 알아듣기 편한 차분한 속도
+      utter.rate = 0.94; // 어르신이 편안하게 들으시는 따뜻한 대화 속도
 
-      // 손주 지찬이(남자 중학생) 음성 배정
-      const grandsonVoice = getGrandsonVoice();
-      if (grandsonVoice) {
-        utter.voice = grandsonVoice;
-        const vName = grandsonVoice.name.toLowerCase();
-        // 만약 선택된 음성이 불가피하게 여성 음성만 남은 환경이라면 피치를 대폭 낮춰 소년 중저음으로 보정
-        const isFemale = ['yuna', 'heami', 'sunhi', 'seoyeon', 'sandy', 'female', '여성', '유나'].some(k => vName.includes(k));
-        utter.pitch = isFemale ? 0.82 : 1.0;
+      const voice = getGrandsonVoice();
+      if (voice) {
+        utter.voice = voice;
+        const vName = voice.name.toLowerCase();
+        const isFemale = ['유나', 'yuna', 'heami', '혜미', 'sunhi', 'seoyeon', 'sandy', 'female'].some(f => vName.includes(f));
+        utter.pitch = isFemale ? 0.82 : 1.05; // 소년 톤 유지
       } else {
-        utter.pitch = 1.0;
+        utter.pitch = 1.05;
       }
 
       utter.onstart = function() {
         isAiSpeaking = true;
       };
+
       utter.onend = function() {
         setTimeout(() => {
           isAiSpeaking = false;
-          document.getElementById('audio-state-text').innerText = "어르신 말씀을 귀 기울여 듣고 있어요 (마이크 활성)";
+          if (isCalling) {
+            document.getElementById('audio-state-text').innerText = "👂 어르신 말씀을 귀 기울여 듣고 있어요 (마이크 활성)";
+          }
           if (callback) callback();
-        }, 350);
+        }, 300);
       };
-      utter.onerror = function() {
+
+      utter.onerror = function(err) {
+        console.warn('TTS Error:', err);
         isAiSpeaking = false;
-        document.getElementById('audio-state-text').innerText = "어르신 말씀을 귀 기울여 듣고 있어요 (마이크 활성)";
         if (callback) callback();
       };
+
       window.speechSynthesis.speak(utter);
     }
 
