@@ -531,7 +531,7 @@
       // Grandchild Opening Speech (ElevenLabs tone)
       const opening = "할머니, 안녕하세요! 손주 지찬이에요. 오늘 날씨가 부쩍 쌀쌀하던데, 점심 진지는 따뜻하게 잘 챙겨 드셨어요? 어제 드셨던 국은 뭐였는지 기억나셔요?";
       appendChat("지찬 (온콜 AI · ElevenLabs)", opening, "ai");
-      speakElevenLabsAudio(opening, () => {
+      playElevenLabsAudioKey("opening", opening, () => {
         if (recognition && isCalling) {
           try { recognition.start(); } catch(e){}
         }
@@ -653,9 +653,20 @@
         reply = "네, 할머니 목소리 들으니 참 좋아요. 제가 매일 이렇게 전화드릴 테니까 밥 잘 챙겨 드시고 건강하셔야 해요!";
       }
 
+      let audioKey = "lonely";
+      if (text.includes("기억이 안") || text.includes("기억 안") || text.includes("무슨 요일") || text.includes("통 기억")) {
+        audioKey = "decline";
+      } else if (text.includes("10월 25일") || text.includes("일요일")) {
+        audioKey = "orient_ok";
+      } else if (text.includes("된장찌개") || text.includes("나물") || text.includes("밥 잘")) {
+        audioKey = "mem_ok";
+      } else if (text.includes("가슴") || text.includes("답답") || text.includes("어지러") || text.includes("주저앉")) {
+        audioKey = "emergency";
+      }
+
       setTimeout(() => {
         appendChat("지찬 (온콜 AI · ElevenLabs)", reply, "ai");
-        speakElevenLabsAudio(reply);
+        playElevenLabsAudioKey(audioKey, reply);
       }, 500);
     }
 
@@ -698,10 +709,47 @@
       container.scrollTop = container.scrollHeight;
     }
 
-    // ElevenLabs Voice Engine (Fallback to Enhanced Web Speech with natural cadence)
-    function speakElevenLabsAudio(text, callback) {
-      document.getElementById('audio-state-text').innerText = "ElevenLabs 초실감 음성 재생 중...";
+    // Current active Audio element
+    let currentAudio = null;
 
+    const audioMap = {
+      'opening': './audio/opening_grandson.mp3',
+      'lonely': './audio/scenario_lonely.mp3',
+      'orient_ok': './audio/scenario_orientation_ok.mp3',
+      'mem_ok': './audio/scenario_memory_ok.mp3',
+      'decline': './audio/scenario_cognitive_decline.mp3',
+      'emergency': './audio/scenario_emergency.mp3'
+    };
+
+    function playElevenLabsAudioKey(key, fallbackText, callback) {
+      document.getElementById('audio-state-text').innerText = "🎙️ ElevenLabs 실감형 손주 보이스 출력 중...";
+      
+      if (currentAudio) {
+        currentAudio.pause();
+        currentAudio.currentTime = 0;
+      }
+
+      const audioSrc = audioMap[key];
+      if (audioSrc) {
+        currentAudio = new Audio(audioSrc);
+        currentAudio.onended = function() {
+          document.getElementById('audio-state-text').innerText = "어르신 말씀을 귀 기울여 듣고 있어요 (마이크 활성)";
+          if (callback) callback();
+        };
+        currentAudio.onerror = function(err) {
+          console.warn('Audio playback error, falling back to speech synthesis:', err);
+          fallbackTTS(fallbackText, callback);
+        };
+        currentAudio.play().catch(e => {
+          console.warn('Autoplay prevented, fallback:', e);
+          fallbackTTS(fallbackText, callback);
+        });
+      } else {
+        fallbackTTS(fallbackText, callback);
+      }
+    }
+
+    function fallbackTTS(text, callback) {
       if (!('speechSynthesis' in window)) {
         if (callback) callback();
         return;
@@ -709,14 +757,10 @@
       window.speechSynthesis.cancel();
       const utter = new SpeechSynthesisUtterance(text);
       utter.lang = 'ko-KR';
-      utter.rate = 0.88; // Natural warm cadence
-      utter.pitch = 1.08; // Youthful grandson pitch
-
+      utter.rate = 0.88;
+      utter.pitch = 1.08;
       utter.onend = function() {
         document.getElementById('audio-state-text').innerText = "어르신 말씀을 귀 기울여 듣고 있어요 (마이크 활성)";
-        if (callback) callback();
-      };
-      utter.onerror = function() {
         if (callback) callback();
       };
       window.speechSynthesis.speak(utter);

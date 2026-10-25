@@ -4,6 +4,14 @@ const ASSETS = [
   './index.html',
   './manifest.json',
   './data/seniors_dataset.json',
+  './data/k_mmse_mapping.json',
+  './data/pilot_test_protocol.json',
+  './audio/opening_grandson.mp3',
+  './audio/scenario_lonely.mp3',
+  './audio/scenario_orientation_ok.mp3',
+  './audio/scenario_memory_ok.mp3',
+  './audio/scenario_cognitive_decline.mp3',
+  './audio/scenario_emergency.mp3',
   './icons/icon-192.png',
   './icons/icon-512.png'
 ];
