@@ -815,9 +815,23 @@
       }
     }
 
+    // Global Audio & Speech Exclusive Controller (음성 겹침 및 중복 발화 원천 차단)
+    function stopAllSpeech() {
+      if (currentAudio) {
+        currentAudio.pause();
+        currentAudio.currentTime = 0;
+        currentAudio = null;
+      }
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+      }
+      isAiSpeaking = false;
+    }
+
     // Accept Incoming Call
     function acceptCall() {
       stopRingtone();
+      stopAllSpeech();
       isCalling = true;
       secondsElapsed = 0;
 
@@ -839,22 +853,18 @@
       // Grandchild Opening Speech (ElevenLabs tone)
       const opening = "할머니, 안녕하세요! 손주 지찬이에요. 오늘 날씨가 부쩍 쌀쌀하던데, 점심 진지는 따뜻하게 잘 챙겨 드셨어요? 어제 드셨던 국은 뭐였는지 기억나셔요?";
       appendChat("지찬 (온콜 AI · ElevenLabs)", opening, "ai");
+      
+      // 오프닝 음성이 완전히 끝난 뒤에만 STT 마이크를 켜서 스피커 소리가 마이크로 재인식되는 하울링 방지!
       playElevenLabsAudioKey("opening", opening, () => {
         if (recognition && isCalling) {
           try { recognition.start(); } catch(e){}
         }
       });
-
-      // 빠른 음성 인식 활성화 백업 (1.5초 후 STT 즉시 가동)
-      setTimeout(() => {
-        if (recognition && isCalling) {
-          try { recognition.start(); } catch(e){}
-        }
-      }, 1500);
     }
 
     function rejectCall() {
       stopRingtone();
+      stopAllSpeech();
       alert('안부 전화가 거절되었습니다. 15분 후 다시 자동 안부 콜이 예약됩니다.');
     }
 
@@ -864,12 +874,10 @@
       isSeniorSpeaking = false;
       stopRingtone();
       stopSilenceWatchdog();
+      stopAllSpeech();
       clearInterval(timerInterval);
       if (recognition) {
         try { recognition.stop(); } catch(e){}
-      }
-      if ('speechSynthesis' in window) {
-        window.speechSynthesis.cancel();
       }
 
       document.getElementById('screen-incoming').classList.remove('hidden');
@@ -971,10 +979,19 @@
 
       recognition.onresult = function(e) {
         isSeniorSpeaking = false;
-        const result = e.results[e.results.length - 1];
-        if (result.isFinal) {
-          const text = result[0].transcript.trim();
-          if (text) handleVoiceInput(text);
+        // AI가 발화 중일 때는 스피커 소리가 마이크로 재유입되는 에코/하울링을 100% 원천 차단!
+        if (isAiSpeaking || (currentAudio && !currentAudio.paused)) {
+          return;
+        }
+
+        for (let i = e.resultIndex; i < e.results.length; ++i) {
+          if (e.results[i].isFinal) {
+            const text = e.results[i][0].transcript.trim();
+            if (text) {
+              handleVoiceInput(text);
+              break;
+            }
+          }
         }
       };
 
@@ -1176,8 +1193,24 @@
       };
     }
 
-    // Process Senior Speech or Text Input
+    // Process Senior Speech or Text Input (중복 처리 및 에코 루프 방지)
+    let lastProcessedText = "";
+    let lastProcessedTime = 0;
+    let isHandlingInput = false;
+
     function handleVoiceInput(text) {
+      const now = Date.now();
+      // AI가 발화 중이거나 직전 처리 중이면 입력 무시
+      if (isAiSpeaking || isHandlingInput) return;
+      // 3초 내 동일한 텍스트 중복 유입 무시
+      if (text === lastProcessedText && (now - lastProcessedTime < 3000)) return;
+      // 0.8초 이내 빠른 연타 무시
+      if (now - lastProcessedTime < 800) return;
+
+      lastProcessedText = text;
+      lastProcessedTime = now;
+      isHandlingInput = true;
+
       resetSilenceWatchdog();
       appendChat("김순자 어르신", text, "senior");
 
@@ -1188,8 +1221,10 @@
 
       setTimeout(() => {
         appendChat("지찬 (온콜 AI · ElevenLabs)", analysis.reply, "ai");
-        playElevenLabsAudioKey(analysis.key, analysis.reply);
-      }, 450);
+        playElevenLabsAudioKey(analysis.key, analysis.reply, () => {
+          setTimeout(() => { isHandlingInput = false; }, 300);
+        });
+      }, 350);
     }
 
     // Gauge Updater
@@ -1248,10 +1283,8 @@
     function playElevenLabsAudioKey(key, fallbackText, callback) {
       document.getElementById('audio-state-text').innerText = "🎙️ 지찬이 음성 출력 중...";
       
-      if (currentAudio) {
-        currentAudio.pause();
-        currentAudio.currentTime = 0;
-      }
+      // 기존 재생 중인 모든 오디오/TTS 즉시 중단 (단일 목소리 보장)
+      stopAllSpeech();
 
       const audioSrc = key ? audioMap[key] : null;
       if (audioSrc) {
@@ -1261,9 +1294,11 @@
           isAiSpeaking = true;
         };
         currentAudio.onended = function() {
-          isAiSpeaking = false;
-          document.getElementById('audio-state-text').innerText = "어르신 말씀을 귀 기울여 듣고 있어요 (마이크 활성)";
-          if (callback) callback();
+          setTimeout(() => {
+            isAiSpeaking = false;
+            document.getElementById('audio-state-text').innerText = "어르신 말씀을 귀 기울여 듣고 있어요 (마이크 활성)";
+            if (callback) callback();
+          }, 350);
         };
         currentAudio.onerror = function(err) {
           isAiSpeaking = false;
@@ -1286,7 +1321,9 @@
         if (callback) callback();
         return;
       }
-      window.speechSynthesis.cancel();
+      stopAllSpeech();
+      isAiSpeaking = true;
+
       const utter = new SpeechSynthesisUtterance(text);
       utter.lang = 'ko-KR';
       utter.rate = 0.94;
@@ -1301,9 +1338,11 @@
         isAiSpeaking = true;
       };
       utter.onend = function() {
-        isAiSpeaking = false;
-        document.getElementById('audio-state-text').innerText = "어르신 말씀을 귀 기울여 듣고 있어요 (마이크 활성)";
-        if (callback) callback();
+        setTimeout(() => {
+          isAiSpeaking = false;
+          document.getElementById('audio-state-text').innerText = "어르신 말씀을 귀 기울여 듣고 있어요 (마이크 활성)";
+          if (callback) callback();
+        }, 350);
       };
       utter.onerror = function() {
         isAiSpeaking = false;
