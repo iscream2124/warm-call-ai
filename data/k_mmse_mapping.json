@@ -1,0 +1,37 @@
+{
+  "title": "K-MMSE-2 임상 표준 기반 일상 대화형 인지 평가 매핑표",
+  "reference": "중앙치매센터 K-MMSE-2 (한국형 간이정신상태검사) 표준 문항",
+  "dimensions": [
+    {
+      "dimension": "시간 지남력 (Time Orientation)",
+      "kMmseScore": 5,
+      "clinicalQuestion": "올해는 몇 년도입니까? 지금은 무슨 계절입니까? 오늘은 며칠, 무슨 요일입니까?",
+      "conversationalPrompt": "어르신, 오늘 아침에 창밖 보셨어요? 요즘 날씨가 부쩍 쌀쌀해졌는데, 오늘이 몇 월 며칠, 무슨 요일인지 아셔요?",
+      "evaluationLogic": "년/월/일/요일/계절 중 정확히 인지한 항목당 20점 환산 (총 100점)",
+      "latencyWeight": "3초 이내 즉답(정상), 5초 이상 머뭇거림(지연 감지)"
+    },
+    {
+      "dimension": "단기 및 일화 기억 회상 (Memory Recall)",
+      "kMmseScore": 3,
+      "clinicalQuestion": "조금 전에 제가 말씀드린 세 가지 단어(나무, 자동차, 모자)를 다시 말씀해 보세요.",
+      "conversationalPrompt": "어르신, 어제 점심에 드셨던 따뜻한 국 반찬이 뭐였는지 기억나세요? 지난주에 물리치료 받으러 가신다던 병원 이름 기억나셔요?",
+      "evaluationLogic": "최근 24~48시간 내 실제 경험한 일상 이벤트 자발적 인출 여부 (80점 이상 정상, 50점 이하 주의)",
+      "latencyWeight": "반복 회상 실패 시 힌트 1회 제공 후 재평가"
+    },
+    {
+      "dimension": "언어 유창성 및 단어 인출 (Language Fluency)",
+      "kMmseScore": 4,
+      "clinicalQuestion": "1분 동안 생각나는 동물(또는 과일) 이름을 최대한 많이 말씀해 보세요.",
+      "conversationalPrompt": "어르신, 요즘 시장이나 마트 가시면 좋아하시는 반찬거리나 과일 뭐뭐 주로 사 오셔요?",
+      "evaluationLogic": "발화 내 고유 명사 인출 개수 및 어휘 다양성(TTR) 측정 (분당 8개 이상 정상)",
+      "latencyWeight": "말문 막힘(Word-finding difficulty) 빈도 측정"
+    },
+    {
+      "dimension": "정서 및 우울 스크리닝 (GDS-K 연계)",
+      "kMmseScore": "보조",
+      "clinicalQuestion": "현재 생활에 대체로 만족하십니까? 자주 마음이 헛헛하고 불안하십니까?",
+      "conversationalPrompt": "오늘 혼자 계시면서 적적하거나 답답하진 않으셨어요? 기분이 좀 어떠셔요?",
+      "evaluationLogic": "부정적 정서 단어(우울, 외로움, 무기력, 눈물) 빈도 분석"
+    }
+  ]
+}
