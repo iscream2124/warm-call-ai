@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>온콜 AI (溫-Call AI) - 어르신 24시간 인바운드 말벗 전화</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif; }
+    @keyframes pulse-ring {
+      0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7); }
+      70% { transform: scale(1); box-shadow: 0 0 0 20px rgba(34, 197, 94, 0); }
+      100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); }
+    }
+    .calling-pulse { animation: pulse-ring 2s infinite; }
+  </style>
+</head>
+<body class="bg-amber-50/40 text-slate-900 min-h-screen flex flex-col">
+
+  <!-- Top Navigation Bar -->
+  <header class="bg-white border-b border-amber-200/80 sticky top-0 z-40 shadow-sm">
+    <div class="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 bg-amber-500 rounded-xl flex items-center justify-center text-white text-xl shadow-md">
+          📞
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <h1 class="font-extrabold text-lg text-slate-900 tracking-tight">온콜 AI <span class="text-amber-600 font-semibold text-sm">(溫-Call)</span></h1>
+            <span class="text-xs bg-amber-100 text-amber-800 px-2 py-0.5 rounded-full font-bold">인바운드 말벗 전화</span>
+          </div>
+          <p class="text-xs text-slate-500">외로울 땐 언제든 거는 손주 같은 24시간 AI 전화</p>
+        </div>
+      </div>
+
+      <!-- Mode Switcher Tabs -->
+      <div class="flex bg-slate-100 p-1 rounded-xl border border-slate-200 text-xs font-bold">
+        <button onclick="switchTab('senior')" id="tab-btn-senior" class="px-3.5 py-1.5 rounded-lg bg-white text-slate-900 shadow-sm transition">
+          👵 어르신 전화기
+        </button>
+        <button onclick="switchTab('welfare')" id="tab-btn-welfare" class="px-3.5 py-1.5 rounded-lg text-slate-500 hover:text-slate-800 transition">
+          📊 복지사 안심 모니터링
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="flex-1 max-w-5xl mx-auto w-full p-4 md:p-6">
+    
+    <!-- ========================================== -->
+    <!-- TAB 1: Senior Phone Call Interface         -->
+    <!-- ========================================== -->
+    <div id="tab-senior" class="flex flex-col gap-5 max-w-xl mx-auto">
+      
+      <!-- Core Phone Unit Card -->
+      <div class="bg-white rounded-3xl border-2 border-amber-300/80 shadow-xl p-6 md:p-8 flex flex-col items-center text-center">
+        
+        <!-- Senior Greeting Banner -->
+        <div class="inline-flex items-center gap-2 px-4 py-1.5 bg-amber-100/70 border border-amber-300 rounded-full text-amber-900 text-sm font-bold mb-4">
+          <span>👵 김순자 어르신 댁 전용 안심 수화기</span>
+        </div>
+
+        <h2 id="call-status-heading" class="text-2xl md:text-3xl font-extrabold text-slate-800 mb-2">
+          "적적할 땐 언제든 눌러주세요"
+        </h2>
+        <p id="call-status-sub" class="text-sm text-slate-600 mb-6">
+          초록색 버튼을 누르면 손주 지찬이와 바로 전화가 연결됩니다.
+        </p>
+
+        <!-- Big Phone Action Button -->
+        <div class="my-4 flex flex-col items-center">
+          <button id="call-btn" onclick="toggleCall()" class="w-36 h-36 md:w-40 md:h-40 rounded-full bg-emerald-500 hover:bg-emerald-600 text-white flex flex-col items-center justify-center gap-1 shadow-2xl transition transform active:scale-95 focus:outline-none">
+            <span id="call-btn-icon" class="text-5xl">📞</span>
+            <span id="call-btn-text" class="text-base font-extrabold tracking-wide mt-1">전화 걸기</span>
+          </button>
+          
+          <div id="call-timer-box" class="hidden mt-4 flex items-center gap-2 px-4 py-1 bg-emerald-50 border border-emerald-300 rounded-full text-emerald-800 text-sm font-bold">
+            <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-ping"></span>
+            <span>통화 중 : <span id="call-timer">00:00</span></span>
+          </div>
+        </div>
+
+        <!-- Live Waveform & Speaking Status -->
+        <div id="call-indicator" class="hidden w-full max-w-sm mt-3 p-3 bg-slate-50 border border-slate-200 rounded-2xl flex items-center justify-center gap-3">
+          <div class="flex items-center gap-1 h-6">
+            <span class="w-1.5 h-3 bg-emerald-500 rounded-full animate-bounce"></span>
+            <span class="w-1.5 h-5 bg-emerald-500 rounded-full animate-bounce [animation-delay:0.15s]"></span>
+            <span class="w-1.5 h-6 bg-emerald-500 rounded-full animate-bounce [animation-delay:0.3s]"></span>
+            <span class="w-1.5 h-4 bg-emerald-500 rounded-full animate-bounce [animation-delay:0.45s]"></span>
+            <span class="w-1.5 h-2 bg-emerald-500 rounded-full animate-bounce [animation-delay:0.6s]"></span>
+          </div>
+          <span id="speaker-status-text" class="text-xs font-bold text-slate-700">손주 지찬이가 말씀드리는 중...</span>
+        </div>
+
+      </div>
+
+      <!-- Dialogue History Card (Large Font for Seniors) -->
+      <div class="bg-white rounded-2xl border border-amber-200 shadow-md p-5 flex flex-col gap-3">
+        <div class="flex items-center justify-between border-b border-slate-100 pb-2">
+          <span class="text-xs font-bold text-amber-800 flex items-center gap-1.5">
+            <span>💬 실시간 대화 내용 (큰 글씨)</span>
+          </span>
+          <span class="text-[11px] text-slate-400">자막 및 음성 동시 지원</span>
+        </div>
+
+        <div id="dialogue-box" class="flex flex-col gap-3 max-h-64 overflow-y-auto pr-1">
+          <div class="bg-amber-50/70 border border-amber-200/60 p-3.5 rounded-2xl text-slate-800 text-sm leading-relaxed">
+            <strong class="text-amber-800 block text-xs mb-1">🤖 손주 지찬이 (온콜 AI)</strong>
+            "전화를 걸어주시면 반갑게 인사드릴게요. 언제든 편히 말씀하세요!"
+          </div>
+        </div>
+      </div>
+
+      <!-- Demo Quick Test Prompts (For Contest Judges) -->
+      <div class="bg-white/80 rounded-2xl border border-slate-200 p-4 shadow-sm flex flex-col gap-2.5">
+        <div class="flex items-center justify-between">
+          <span class="text-xs font-bold text-slate-700">💡 심사위원 시연용 빠른 발화 테스트</span>
+          <span class="text-[10px] text-slate-400">클릭 시 어르신 음성 자동 입력</span>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+          <button onclick="simulateElderInput('어, 지찬아. 오늘 그냥 집이 너무 적적해서 걸어봤다.')" class="p-2.5 rounded-xl text-left bg-slate-50 hover:bg-amber-50 hover:border-amber-300 border border-slate-200 text-slate-700 transition">
+            1. "집이 적적해서 걸어봤다" <span class="block text-[10px] text-slate-400">(외로움 공감형 대화)</span>
+          </button>
+          <button onclick="simulateElderInput('요즘 무릎이 좀 쑤시고 기운이 없네.')" class="p-2.5 rounded-xl text-left bg-slate-50 hover:bg-amber-50 hover:border-amber-300 border border-slate-200 text-slate-700 transition">
+            2. "무릎이 좀 쑤시고 기운이 없네" <span class="block text-[10px] text-slate-400">(건강 기억 연계)</span>
+          </button>
+          <button onclick="simulateElderInput('오늘 복지관에서 친구들이랑 트로트 부르고 왔다.')" class="p-2.5 rounded-xl text-left bg-slate-50 hover:bg-amber-50 hover:border-amber-300 border border-slate-200 text-slate-700 transition">
+            3. "복지관에서 노래 부르고 왔다" <span class="block text-[10px] text-slate-400">(일상 긍정 맞장구)</span>
+          </button>
+          <button onclick="simulateElderInput('요즘 가슴이 너무 답답하고 어지러워서 털썩 주저앉았어.')" class="p-2.5 rounded-xl text-left bg-red-50 hover:bg-red-100 hover:border-red-300 border border-red-200 text-red-800 font-medium transition">
+            4. "가슴 답답하고 어지러워 주저앉았다" <span class="block text-[10px] text-red-500">(🚨 위기 감지 가드레일)</span>
+          </button>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ========================================== -->
+    <!-- TAB 2: Social Worker Monitoring Dashboard -->
+    <!-- ========================================== -->
+    <div id="tab-welfare" class="hidden flex flex-col gap-6">
+      
+      <!-- Top Stats Row -->
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex flex-col">
+          <span class="text-xs text-slate-500 font-medium">관리 대상 독거 어르신</span>
+          <span class="text-2xl font-black text-slate-800 mt-1">24명</span>
+          <span class="text-[11px] text-emerald-600 font-semibold mt-1">연수구 관내 배포</span>
+        </div>
+        <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex flex-col">
+          <span class="text-xs text-slate-500 font-medium">오늘 인바운드 수신 건수</span>
+          <span class="text-2xl font-black text-amber-600 mt-1">18건</span>
+          <span class="text-[11px] text-slate-400 mt-1">어르신이 먼저 발신</span>
+        </div>
+        <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex flex-col">
+          <span class="text-xs text-slate-500 font-medium">평균 말벗 통화 시간</span>
+          <span class="text-2xl font-black text-slate-800 mt-1">7분 12초</span>
+          <span class="text-[11px] text-emerald-600 font-semibold mt-1">자발적 발화량 증가</span>
+        </div>
+        <div class="bg-white p-4 rounded-2xl border border-red-200 bg-red-50/40 shadow-sm flex flex-col">
+          <span class="text-xs text-red-600 font-bold">긴급 확인 필요 알림</span>
+          <span id="stat-alert-count" class="text-2xl font-black text-red-600 mt-1">1건</span>
+          <span class="text-[11px] text-red-500 font-semibold mt-1">낙상/건강 이상 의심</span>
+        </div>
+      </div>
+
+      <!-- Real-time Emergency Banner -->
+      <div id="emergency-alert-card" class="bg-red-50 border-2 border-red-300 rounded-2xl p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-md">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-red-600 text-white flex items-center justify-center text-xl shrink-0">
+            🚨
+          </div>
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="text-xs font-black bg-red-600 text-white px-2 py-0.5 rounded">긴급 모니터링</span>
+              <strong class="text-sm text-red-900">김순자 어르신 (81세 · 연수동) 건강 이상 발화 감지</strong>
+            </div>
+            <p class="text-xs text-red-700 mt-0.5">
+              "가슴이 너무 답답하고 어지러워서 털썩 주저앉았어" ➔ 낙상 및 심혈관계 위험 키워드 자동 검출
+            </p>
+          </div>
+        </div>
+        <button onclick="alert('김순자 어르신 비상 연락망(자녀 및 관할 119/복지관)으로 출동 알림이 전송되었습니다.')" class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-xl text-xs font-bold shadow transition shrink-0">
+          안심 확인 및 긴급 조치
+        </button>
+      </div>
+
+      <!-- Seniors Table -->
+      <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden flex flex-col">
+        <div class="p-4 border-b border-slate-100 flex items-center justify-between">
+          <h3 class="text-sm font-bold text-slate-800">어르신별 최근 인바운드 통화 내역 및 기억(Memory) 현황</h3>
+          <span class="text-xs text-slate-400">실시간 연동</span>
+        </div>
+        
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs">
+            <thead class="bg-slate-50 text-slate-500 font-bold border-b border-slate-200">
+              <tr>
+                <th class="p-3">어르신</th>
+                <th class="p-3">최근 통화 시각</th>
+                <th class="p-3">통화 시간</th>
+                <th class="p-3">감정 상태</th>
+                <th class="p-3">AI가 기억 중인 일상 키워드 (Memory)</th>
+                <th class="p-3">상태</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100 text-slate-700">
+              <tr class="bg-red-50/30">
+                <td class="p-3 font-bold text-slate-900">김순자 (81세)</td>
+                <td class="p-3 text-red-700 font-semibold">방금 전 (10:31)</td>
+                <td class="p-3">3분 40초</td>
+                <td class="p-3"><span class="px-2 py-0.5 rounded-full bg-red-100 text-red-800 font-bold">⚠️ 위기 감지</span></td>
+                <td class="p-3 text-slate-600">무릎 관절염 약 복용, 어지러움 호소, 나훈아 노래 좋아하심</td>
+                <td class="p-3"><span class="text-red-600 font-bold">확인 요망</span></td>
+              </tr>
+              <tr>
+                <td class="p-3 font-bold text-slate-900">박영복 (78세)</td>
+                <td class="p-3">오늘 08:45</td>
+                <td class="p-3">8분 15초</td>
+                <td class="p-3"><span class="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-bold">평온함</span></td>
+                <td class="p-3 text-slate-600">아침 산책 다녀오심, 손녀 대학 입학 이야기 나눔</td>
+                <td class="p-3"><span class="text-emerald-600 font-semibold">정상 안심</span></td>
+              </tr>
+              <tr>
+                <td class="p-3 font-bold text-slate-900">이정숙 (84세)</td>
+                <td class="p-3">어제 21:20</td>
+                <td class="p-3">12분 50초</td>
+                <td class="p-3"><span class="px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 font-bold">적적함 해소</span></td>
+                <td class="p-3 text-slate-600">비 오는 날 외로움 호소, 옛날 고향 이야기 나눔</td>
+                <td class="p-3"><span class="text-emerald-600 font-semibold">정상 안심</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- Script for Speech, Calling & UI Interactions -->
+  <script>
+    let isCalling = false;
+    let timerInterval = null;
+    let callSeconds = 0;
+    let recognition = null;
+    let isSpeaking = false;
+
+    // Check Speech Recognition support
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (SpeechRecognition) {
+      recognition = new SpeechRecognition();
+      recognition.lang = 'ko-KR';
+      recognition.interimResults = false;
+      recognition.continuous = true;
+
+      recognition.onresult = function(event) {
+        const lastResult = event.results[event.results.length - 1];
+        if (lastResult.isFinal) {
+          const text = lastResult[0].transcript.trim();
+          if (text) {
+            handleElderVoice(text);
+          }
+        }
+      };
+
+      recognition.onerror = function(err) {
+        console.warn('Speech Recognition error:', err);
+      };
+    }
+
+    function switchTab(mode) {
+      const tabSenior = document.getElementById('tab-senior');
+      const tabWelfare = document.getElementById('tab-welfare');
+      const btnSenior = document.getElementById('tab-btn-senior');
+      const btnWelfare = document.getElementById('tab-btn-welfare');
+
+      if (mode === 'senior') {
+        tabSenior.classList.remove('hidden');
+        tabWelfare.classList.add('hidden');
+        btnSenior.className = "px-3.5 py-1.5 rounded-lg bg-white text-slate-900 shadow-sm transition";
+        btnWelfare.className = "px-3.5 py-1.5 rounded-lg text-slate-500 hover:text-slate-800 transition";
+      } else {
+        tabSenior.classList.add('hidden');
+        tabWelfare.classList.remove('hidden');
+        btnWelfare.className = "px-3.5 py-1.5 rounded-lg bg-white text-slate-900 shadow-sm transition";
+        btnSenior.className = "px-3.5 py-1.5 rounded-lg text-slate-500 hover:text-slate-800 transition";
+      }
+    }
+
+    function toggleCall() {
+      if (!isCalling) {
+        startCall();
+      } else {
+        endCall();
+      }
+    }
+
+    function startCall() {
+      isCalling = true;
+      callSeconds = 0;
+      document.getElementById('call-btn').className = "w-36 h-36 md:w-40 md:h-40 rounded-full bg-red-500 hover:bg-red-600 text-white flex flex-col items-center justify-center gap-1 shadow-2xl transition transform active:scale-95 focus:outline-none";
+      document.getElementById('call-btn-icon').innerText = "📴";
+      document.getElementById('call-btn-text').innerText = "전화 끊기";
+      document.getElementById('call-status-heading').innerText = "손주 지찬이와 통화 중입니다";
+      document.getElementById('call-status-sub').innerText = "편안하게 목소리로 말씀하세요. 손주가 귀 기울여 듣고 있어요.";
+      document.getElementById('call-timer-box').classList.remove('hidden');
+      document.getElementById('call-indicator').classList.remove('hidden');
+
+      // Start timer
+      timerInterval = setInterval(() => {
+        callSeconds++;
+        const mins = String(Math.floor(callSeconds / 60)).padStart(2, '0');
+        const secs = String(callSeconds % 60).padStart(2, '0');
+        document.getElementById('call-timer').innerText = `${mins}:${secs}`;
+      }, 1000);
+
+      // Initial Warm Greeting
+      const initialGreeting = "어르신, 안녕하세요! 손주 지찬이에요. 오늘 날씨가 꽤 쌀쌀하던데, 점심 진지는 따뜻하게 잘 챙겨 드셨어요?";
+      appendDialogue("🤖 손주 지찬이 (온콜 AI)", initialGreeting, "ai");
+      speakVoice(initialGreeting, () => {
+        if (recognition && isCalling) {
+          try { recognition.start(); } catch(e){}
+        }
+      });
+    }
+
+    function endCall() {
+      isCalling = false;
+      clearInterval(timerInterval);
+      if (recognition) {
+        try { recognition.stop(); } catch(e){}
+      }
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+      }
+
+      document.getElementById('call-btn').className = "w-36 h-36 md:w-40 md:h-40 rounded-full bg-emerald-500 hover:bg-emerald-600 text-white flex flex-col items-center justify-center gap-1 shadow-2xl transition transform active:scale-95 focus:outline-none";
+      document.getElementById('call-btn-icon').innerText = "📞";
+      document.getElementById('call-btn-text').innerText = "전화 걸기";
+      document.getElementById('call-status-heading').innerText = "적적할 땐 언제든 눌러주세요";
+      document.getElementById('call-status-sub').innerText = "초록색 버튼을 누르면 손주 지찬이와 바로 전화가 연결됩니다.";
+      document.getElementById('call-timer-box').classList.add('hidden');
+      document.getElementById('call-indicator').classList.add('hidden');
+    }
+
+    function simulateElderInput(text) {
+      if (!isCalling) {
+        startCall();
+        setTimeout(() => {
+          handleElderVoice(text);
+        }, 1500);
+      } else {
+        handleElderVoice(text);
+      }
+    }
+
+    function handleElderVoice(text) {
+      appendDialogue("👵 김순자 어르신", text, "elder");
+
+      // Check risk keywords (Emergency Guardrail)
+      const isRisk = text.includes("가슴") || text.includes("답답") || text.includes("어지러") || text.includes("주저앉") || text.includes("쓰러") || text.includes("살아서");
+
+      let responseText = "";
+      if (isRisk) {
+        responseText = "어르신, 가슴이 답답하고 어지러우세요? 많이 놀라셨겠어요. 지금 어디 기대서 편하게 앉아 계셔요. 제가 바로 복지사 선생님과 가족분께 연락드려 찾아뵙도록 할게요. 저랑 계속 통화하고 계세요, 네?";
+        // Highlight Emergency Dashboard
+        document.getElementById('emergency-alert-card').classList.remove('hidden');
+        document.getElementById('stat-alert-count').innerText = "1건 (긴급)";
+      } else if (text.includes("적적") || text.includes("외로") || text.includes("혼자")) {
+        responseText = "아이고, 오늘 혼자 계시느라 마음이 많이 적적하셨군요. 이렇게 전화 주셔서 제가 얼마나 반가운지 몰라요. 저한테 재미있는 옛날이야기 하나만 들려주세요, 어르신!";
+      } else if (text.includes("무릎") || text.includes("아프") || text.includes("쑤시") || text.includes("병원")) {
+        responseText = "아이고, 무릎이 또 쑤시셔요? 지난번에 정형외과 물리치료 받으셨을 때는 좀 덜하다 하셨는데... 오늘은 찬 바람 쐬지 마시고 따뜻한 찜질 꼭 챙겨 하셔요!";
+      } else if (text.includes("복지관") || text.includes("노래") || text.includes("친구") || text.includes("트로트")) {
+        responseText = "와, 복지관에서 친구분들이랑 노래 부르고 오셨어요? 어르신 좋아하시는 나훈아 노래 부르셨나요? 어르신 목소리 들으니 저까지 덩달아 기분이 좋아져요!";
+      } else {
+        responseText = "네, 어르신 말씀 들으니 참 좋아요. 오늘 하루 보내시면서 또 무슨 일 있으셨는지 천천히 편하게 들려주세요.";
+      }
+
+      setTimeout(() => {
+        appendDialogue("🤖 손주 지찬이 (온콜 AI)", responseText, "ai");
+        speakVoice(responseText);
+      }, 600);
+    }
+
+    function appendDialogue(sender, message, type) {
+      const box = document.getElementById('dialogue-box');
+      const div = document.createElement('div');
+      
+      if (type === 'ai') {
+        div.className = "bg-amber-50/80 border border-amber-200 p-3.5 rounded-2xl text-slate-800 text-sm leading-relaxed";
+        div.innerHTML = `<strong class="text-amber-800 block text-xs mb-1">${sender}</strong>${message}`;
+      } else {
+        div.className = "bg-indigo-50/80 border border-indigo-200 p-3.5 rounded-2xl text-slate-900 text-sm leading-relaxed ml-4";
+        div.innerHTML = `<strong class="text-indigo-800 block text-xs mb-1">${sender}</strong>${message}`;
+      }
+      
+      box.appendChild(div);
+      box.scrollTop = box.scrollHeight;
+    }
+
+    function speakVoice(text, callback) {
+      if (!('speechSynthesis' in window)) {
+        if (callback) callback();
+        return;
+      }
+
+      window.speechSynthesis.cancel();
+      const utter = new SpeechSynthesisUtterance(text);
+      utter.lang = 'ko-KR';
+      utter.rate = 0.88; // 12% slower for elderly comprehension
+      utter.pitch = 1.05; // Slightly warm and youthful tone
+
+      document.getElementById('speaker-status-text').innerText = "손주 지찬이가 말씀드리는 중...";
+
+      utter.onend = function() {
+        document.getElementById('speaker-status-text').innerText = "어르신 말씀을 귀 기울여 듣고 있어요 (마이크 활성)...";
+        if (callback) callback();
+      };
+
+      utter.onerror = function() {
+        if (callback) callback();
+      };
+
+      window.speechSynthesis.speak(utter);
+    }
+  </script>
+</body>
+</html>
