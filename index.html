@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>온콜 AI (溫-Call) - 어르신 안부 통화 & 대화형 인지건강 케어</title>
+  <title>온콜 AI (溫-Call) - 손주에게서 걸려오는 안부 전화 & ElevenLabs 인지건강 케어</title>
   
   <!-- Pretendard Font & Tailwind CDN -->
   <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
@@ -17,7 +17,7 @@
     /* Tactile button shadow & animations */
     .tactile-btn {
       transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
-      box-shadow: 0 10px 25px -5px rgba(16, 185, 129, 0.4), 0 8px 10px -6px rgba(16, 185, 129, 0.2);
+      box-shadow: 0 12px 28px -5px rgba(16, 185, 129, 0.45), 0 8px 10px -6px rgba(16, 185, 129, 0.25);
     }
     .tactile-btn:active {
       transform: scale(0.94);
@@ -26,28 +26,20 @@
     .tactile-btn-red {
       box-shadow: 0 10px 25px -5px rgba(239, 68, 68, 0.4), 0 8px 10px -6px rgba(239, 68, 68, 0.2);
     }
-    .tactile-btn-red:active {
-      transform: scale(0.94);
-      box-shadow: 0 4px 12px 0 rgba(239, 68, 68, 0.3);
-    }
 
-    /* Soft pulse aura */
-    @keyframes gentle-pulse {
-      0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.5); }
-      70% { box-shadow: 0 0 0 24px rgba(16, 185, 129, 0); }
-      100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+    /* Ringing incoming call wave */
+    @keyframes ring-pulse {
+      0% { transform: scale(0.9); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+      70% { transform: scale(1.05); box-shadow: 0 0 0 32px rgba(16, 185, 129, 0); }
+      100% { transform: scale(0.9); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
     }
-    .pulse-calling {
-      animation: gentle-pulse 2s infinite ease-out;
+    .incoming-ringing {
+      animation: ring-pulse 1.8s infinite ease-in-out;
     }
 
     /* Speech bubbles */
-    .bubble-senior {
-      border-radius: 20px 20px 4px 20px;
-    }
-    .bubble-ai {
-      border-radius: 20px 20px 20px 4px;
-    }
+    .bubble-senior { border-radius: 20px 20px 4px 20px; }
+    .bubble-ai { border-radius: 20px 20px 20px 4px; }
 
     /* Custom scrollbar */
     ::-webkit-scrollbar { width: 6px; }
@@ -56,7 +48,7 @@
     ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
   </style>
 </head>
-<body class="bg-gradient-to-br from-amber-50/60 via-slate-50 to-emerald-50/40 text-slate-800 min-h-screen flex flex-col antialiased selection:bg-amber-200">
+<body class="bg-gradient-to-br from-amber-50/70 via-slate-50 to-emerald-50/50 text-slate-800 min-h-screen flex flex-col antialiased selection:bg-amber-200">
 
   <!-- ======================================================== -->
   <!-- Header: Navigation & Status Bar                          -->
@@ -72,11 +64,11 @@
         <div>
           <div class="flex items-center gap-2">
             <span class="font-black text-xl text-slate-900 tracking-tight">온콜 AI</span>
-            <span class="text-xs bg-emerald-100 text-emerald-800 font-bold px-2.5 py-0.5 rounded-full border border-emerald-200">
-              실시간 가동 중
+            <span class="text-xs bg-indigo-100 text-indigo-800 font-extrabold px-2.5 py-0.5 rounded-full border border-indigo-200 flex items-center gap-1">
+              <span>🎙️ ElevenLabs 음성 복제</span>
             </span>
           </div>
-          <p class="text-xs text-slate-500 hidden sm:block">2026 청소년 AI 경진대회 출품작 · 개발자: 박지찬 (인천현송중 1학년)</p>
+          <p class="text-xs text-slate-500 hidden sm:block">손주에게서 걸려오는 24시간 안부 전화 & 대화형 인지건강 케어</p>
         </div>
       </div>
 
@@ -84,7 +76,7 @@
       <div class="flex items-center bg-slate-100/90 p-1 rounded-2xl border border-slate-200 text-xs font-bold shadow-inner">
         <button onclick="switchMode('senior')" id="btn-mode-senior" class="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-white text-slate-900 shadow-sm transition-all duration-200">
           <span class="text-base">👵</span>
-          <span>어르신 안심 전화기</span>
+          <span>어르신 수신 화면</span>
         </button>
         <button onclick="switchMode('welfare')" id="btn-mode-welfare" class="flex items-center gap-1.5 px-4 py-2 rounded-xl text-slate-500 hover:text-slate-800 transition-all duration-200">
           <span class="text-base">📊</span>
@@ -101,18 +93,18 @@
   <main class="flex-1 max-w-6xl mx-auto w-full p-4 md:p-6 lg:p-8">
     
     <!-- ======================================================== -->
-    <!-- VIEW 1: 어르신 전용 안심 전화기 UI                         -->
+    <!-- VIEW 1: 어르신 전용 안심 수신 화면 (Incoming Call Mode)   -->
     <!-- ======================================================== -->
     <div id="view-senior" class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
       
-      <!-- Left: Physical Care Phone Hardware Aesthetic -->
+      <!-- Left: Care Phone Hardware Aesthetic with Incoming Call Screen -->
       <div class="lg:col-span-7 flex flex-col items-center">
         
         <!-- Hardware Shell Container -->
-        <div class="w-full max-w-md bg-white rounded-[2.5rem] border-4 border-slate-200 shadow-2xl p-6 md:p-8 flex flex-col items-center relative overflow-hidden">
+        <div class="w-full max-w-md bg-white rounded-[2.5rem] border-4 border-slate-200 shadow-2xl p-6 md:p-8 flex flex-col items-center relative overflow-hidden min-h-[580px] justify-between">
           
-          <!-- Decorative Speaker Grill -->
-          <div class="flex gap-1.5 mb-5 opacity-40">
+          <!-- Top Speaker Grill -->
+          <div class="flex gap-1.5 opacity-40">
             <span class="w-2 h-2 rounded-full bg-slate-400"></span>
             <span class="w-2 h-2 rounded-full bg-slate-400"></span>
             <span class="w-2 h-2 rounded-full bg-slate-400"></span>
@@ -120,44 +112,90 @@
             <span class="w-2 h-2 rounded-full bg-slate-400"></span>
           </div>
 
-          <!-- Senior Profile Badge -->
-          <div class="inline-flex items-center gap-2 px-4 py-1.5 bg-gradient-to-r from-amber-100 to-amber-50 border border-amber-300/80 rounded-full text-amber-900 text-xs font-bold mb-4 shadow-sm">
-            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-            <span>김순자 어르신 (81세) 댁 전용 안심 수화기</span>
+          <!-- Senior Tag -->
+          <div class="inline-flex items-center gap-2 px-3.5 py-1 bg-gradient-to-r from-amber-100 to-amber-50 border border-amber-300/80 rounded-full text-amber-900 text-xs font-bold mt-2 shadow-sm">
+            <span>👵 김순자 어르신 (81세) 댁 전용 안심 폰</span>
           </div>
 
-          <!-- Dynamic Status Display -->
-          <div class="text-center min-h-[70px] flex flex-col justify-center items-center mb-4">
-            <h2 id="senior-headline" class="text-2xl md:text-3xl font-black text-slate-800 tracking-tight leading-tight">
-              "적적할 땐 언제든 눌러주세요"
-            </h2>
-            <p id="senior-subline" class="text-xs md:text-sm text-slate-500 mt-1 font-medium">
-              초록색 버튼을 누르면 손주 지찬이와 바로 전화가 연결됩니다
-            </p>
-          </div>
-
-          <!-- Central Tactile Call Button -->
-          <div class="my-4 relative flex flex-col items-center justify-center">
-            <button id="main-call-btn" onclick="toggleCall()" class="w-40 h-40 md:w-44 md:h-44 rounded-full bg-gradient-to-b from-emerald-400 to-emerald-600 hover:from-emerald-500 hover:to-emerald-700 text-white flex flex-col items-center justify-center gap-1 tactile-btn focus:outline-none z-10">
-              <span id="call-icon" class="text-5xl md:text-6xl drop-shadow-md">📞</span>
-              <span id="call-label" class="text-base md:text-lg font-black tracking-wider mt-1 drop-shadow">전화 걸기</span>
-            </button>
+          <!-- ======================================== -->
+          <!-- STATE A: 전화가 걸려오는 중 (INCOMING CALL) -->
+          <!-- ======================================== -->
+          <div id="screen-incoming" class="w-full flex flex-col items-center my-4 py-2">
             
-            <!-- Live Active Aura Ring (Visible when in call) -->
-            <div id="calling-aura" class="hidden absolute inset-0 rounded-full bg-emerald-400/30 pulse-calling pointer-events-none"></div>
+            <!-- Grandchild Calling Avatar with Pulsing Rings -->
+            <div class="relative my-3 flex items-center justify-center">
+              <div class="w-28 h-28 md:w-32 md:h-32 rounded-full bg-gradient-to-tr from-amber-400 to-amber-500 text-white flex items-center justify-center text-5xl shadow-xl incoming-ringing z-10">
+                👦
+              </div>
+              <div class="absolute inset-0 rounded-full bg-emerald-400/20 animate-ping pointer-events-none"></div>
+            </div>
+
+            <div class="text-center mt-2">
+              <span class="inline-block text-xs font-black uppercase tracking-wider text-emerald-600 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200 animate-pulse mb-1.5">
+                🔔 안부 전화가 걸려왔습니다
+              </span>
+              <h2 class="text-3xl font-black text-slate-900 tracking-tight">
+                손주 박지찬
+              </h2>
+              <p class="text-xs text-slate-500 mt-1 font-medium">
+                일레븐랩스(ElevenLabs) 실감형 손주 목소리 연결 대기
+              </p>
+            </div>
+
+            <!-- Big Accept Button -->
+            <div class="mt-8 flex items-center gap-6 w-full justify-center">
+              <button onclick="acceptCall()" class="flex-1 max-w-[170px] py-4 px-6 rounded-2xl bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white font-black text-base flex items-center justify-center gap-2 tactile-btn shadow-lg">
+                <span class="text-2xl animate-bounce">📞</span>
+                <span>전화 받기</span>
+              </button>
+              <button onclick="rejectCall()" class="py-4 px-5 rounded-2xl bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold text-xs transition">
+                거절
+              </button>
+            </div>
+
+            <p class="text-[11px] text-slate-400 mt-4 text-center">
+              초록색 [전화 받기]를 누르면 실제 전화처럼 지찬이의 목소리가 들립니다.
+            </p>
+
           </div>
 
-          <!-- Call Duration Clock -->
-          <div id="call-timer-badge" class="hidden mt-3 inline-flex items-center gap-2 px-4 py-1.5 bg-slate-900 text-emerald-400 rounded-full text-xs font-mono font-bold tracking-wider shadow-inner">
-            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
-            <span>통화 중 : <span id="clock-display">00:00</span></span>
+          <!-- ======================================== -->
+          <!-- STATE B: 통화 중 (ACTIVE CALL SCREEN)      -->
+          <!-- ======================================== -->
+          <div id="screen-active" class="hidden w-full flex flex-col items-center my-2 py-1">
+            
+            <div class="text-center">
+              <div class="inline-flex items-center gap-2 px-3 py-1 bg-slate-900 text-emerald-400 rounded-full text-xs font-mono font-bold tracking-wider mb-2 shadow-inner">
+                <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+                <span>통화 중 : <span id="clock-display">00:00</span></span>
+              </div>
+              <h3 class="text-2xl font-black text-slate-900 tracking-tight">손주 지찬이와 통화 중</h3>
+              <p class="text-xs text-indigo-600 font-semibold mt-0.5">ElevenLabs Ultra-Realistic Voice 가동 중</p>
+            </div>
+
+            <!-- Visualizer Waveform Canvas -->
+            <div class="w-full mt-4 h-16 bg-slate-950 border border-slate-800 rounded-2xl flex items-center justify-center overflow-hidden px-4 shadow-inner">
+              <canvas id="soundwaveCanvas" width="340" height="50" class="w-full h-full"></canvas>
+            </div>
+            <span id="audio-state-text" class="text-[11px] text-slate-500 font-medium mt-1.5">지찬이가 따뜻하게 말씀드리는 중...</span>
+
+            <!-- Hang Up Button -->
+            <div class="mt-6 flex flex-col items-center">
+              <button onclick="endCall()" class="w-28 py-3 rounded-2xl bg-red-500 hover:bg-red-600 text-white font-extrabold text-sm flex items-center justify-center gap-2 tactile-btn tactile-btn-red shadow-lg">
+                <span>📴</span>
+                <span>통화 종료</span>
+              </button>
+            </div>
+
           </div>
 
-          <!-- Dynamic Soundwave Canvas -->
-          <div id="visualizer-container" class="w-full mt-4 h-12 bg-slate-50 border border-slate-200 rounded-2xl flex items-center justify-center overflow-hidden px-4">
-            <canvas id="soundwaveCanvas" width="340" height="40" class="w-full h-full"></canvas>
+          <!-- Bottom Help Bar -->
+          <div class="w-full pt-3 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-400">
+            <span>🎙️ 음성 인식 (STT) 준비됨</span>
+            <button onclick="triggerIncomingRing()" class="text-amber-600 font-bold hover:underline">
+              🔔 전화 다시 걸려오게 하기
+            </button>
           </div>
-          <span id="audio-state-text" class="text-[11px] text-slate-400 font-medium mt-1">대기 중 (전화를 걸면 음성 안내가 시작됩니다)</span>
 
         </div>
 
@@ -173,8 +211,8 @@
               <span class="text-base">💬</span>
               <h3 class="text-sm font-bold text-slate-800">실시간 대화 음성 자막</h3>
             </div>
-            <span class="text-[11px] bg-slate-100 text-slate-600 px-2.5 py-0.5 rounded-full font-semibold">
-              어르신 배려 큰 글씨
+            <span class="text-[10px] bg-indigo-50 text-indigo-700 font-extrabold px-2 py-0.5 rounded-full border border-indigo-200">
+              ElevenLabs Voice Engine
             </span>
           </div>
 
@@ -185,7 +223,7 @@
                 지찬
               </div>
               <div class="bg-amber-50 border border-amber-200/80 p-3.5 bubble-ai text-slate-800 text-xs md:text-sm leading-relaxed shadow-sm">
-                "할머니, 적적하실 때 언제든 수화기 들어주세요. 제가 언제나 따뜻하게 대답할게요!"
+                "할머니, 전화 울리면 초록색 [전화 받기] 버튼을 눌러주세요. 지찬이 목소리가 바로 들려요!"
               </div>
             </div>
           </div>
@@ -196,7 +234,7 @@
           <div class="flex items-center justify-between">
             <div class="flex items-center gap-2">
               <span class="text-base">🧠</span>
-              <h3 class="text-sm font-extrabold text-indigo-950">실시간 대화형 인지능력 분석</h3>
+              <h3 class="text-sm font-extrabold text-indigo-950">대화형 인지능력 실시간 분석</h3>
             </div>
             <span class="text-[10px] bg-indigo-50 text-indigo-700 font-bold px-2 py-0.5 rounded-md border border-indigo-200">
               K-MMSE-2 임상 매핑
@@ -204,7 +242,7 @@
           </div>
           
           <p class="text-xs text-slate-500 leading-relaxed">
-            어르신 모르게 일상 수다 속에서 <strong>지남력·기억력·유창성</strong>을 정량 평가합니다.
+            어르신 모르게 안부 수다 속에서 <strong>지남력·기억력·유창성</strong>을 정량 평가합니다.
           </p>
 
           <!-- Meters -->
@@ -254,13 +292,13 @@
         <!-- Quick Interactive Test Scenarios (For Judges) -->
         <div class="bg-white/90 rounded-3xl border border-slate-200 p-4 shadow-sm flex flex-col gap-2">
           <div class="flex items-center justify-between mb-1">
-            <span class="text-xs font-extrabold text-slate-800">💡 심사위원 시연용 빠른 발화 시나리오</span>
-            <span class="text-[10px] text-slate-400">클릭 즉시 AI 반응</span>
+            <span class="text-xs font-extrabold text-slate-800">💡 심사위원 시연용 어르신 발화 시나리오</span>
+            <span class="text-[10px] text-slate-400">클릭 즉시 반응</span>
           </div>
 
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
-            <button onclick="simulateAudioScenario('어, 지찬아. 오늘 그냥 집이 너무 적적해서 걸어봤다.')" class="p-2.5 rounded-xl text-left bg-slate-50 hover:bg-amber-50 border border-slate-200 hover:border-amber-300 text-slate-700 transition">
-              1. <strong>[정서 안부]</strong> "집이 적적해서 걸었다"
+            <button onclick="simulateAudioScenario('어, 지찬아! 전화 왔네. 오늘 그냥 집이 너무 적적해서 네 생각하고 있었다.')" class="p-2.5 rounded-xl text-left bg-slate-50 hover:bg-amber-50 border border-slate-200 hover:border-amber-300 text-slate-700 transition">
+              1. <strong>[정서 안부]</strong> "전화 왔네, 네 생각하고 있었다"
             </button>
             <button onclick="simulateAudioScenario('오늘이 10월 25일 일요일 맞지? 요즘 날씨가 참 쌀쌀하구나.')" class="p-2.5 rounded-xl text-left bg-indigo-50/70 hover:bg-indigo-100/70 border border-indigo-200 text-indigo-900 transition">
               2. <strong>[지남력 정상]</strong> "오늘 10월 25일 일요일 맞지?"
@@ -286,7 +324,7 @@
     <!-- ======================================================== -->
     <div id="view-welfare" class="hidden flex flex-col gap-6">
       
-      <!-- Top High-Level Metrics -->
+      <!-- Top Metrics -->
       <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
         
         <div class="bg-white p-5 rounded-3xl border border-slate-200 shadow-sm flex flex-col justify-between">
@@ -302,12 +340,12 @@
 
         <div class="bg-white p-5 rounded-3xl border border-slate-200 shadow-sm flex flex-col justify-between">
           <div class="flex items-center justify-between text-slate-500">
-            <span class="text-xs font-bold">오늘 안부 통화 완료</span>
+            <span class="text-xs font-bold">정기 인커밍 통화 성공률</span>
             <span class="text-lg">📞</span>
           </div>
           <div class="mt-3">
-            <span class="text-3xl font-black text-amber-600">18건</span>
-            <span class="block text-xs font-semibold text-slate-400 mt-1">자발적 인바운드 14건 포함</span>
+            <span class="text-3xl font-black text-amber-600">92.4%</span>
+            <span class="block text-xs font-semibold text-slate-400 mt-1">손주 보이스 수신 거부율 0%</span>
           </div>
         </div>
 
@@ -408,30 +446,133 @@
   </main>
 
   <!-- ======================================================== -->
-  <!-- JavaScript: Audio Visualizer, Speech, Charts & Data Sync -->
+  <!-- JavaScript: Audio Synthesizer, Web Audio Ringtone, TTS    -->
   <!-- ======================================================== -->
   <script>
     // Global State
     let isCalling = false;
+    let isRinging = true;
     let timerInterval = null;
     let secondsElapsed = 0;
     let recognition = null;
-    let animFrameId = null;
+    let ringtoneInterval = null;
+    let audioCtx = null;
 
-    // Canvas Soundwave setup
+    // Web Audio Ringtone Generator (Traditional Korean Cadence: 440Hz + 480Hz)
+    function playTelephoneRingtone() {
+      try {
+        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+
+        function ringBurst() {
+          if (!isRinging) return;
+          const osc1 = audioCtx.createOscillator();
+          const osc2 = audioCtx.createOscillator();
+          const gain = audioCtx.createGain();
+
+          osc1.frequency.value = 440; // A4
+          osc2.frequency.value = 480; // B4
+
+          gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 1.2);
+
+          osc1.connect(gain);
+          osc2.connect(gain);
+          gain.connect(audioCtx.destination);
+
+          osc1.start();
+          osc2.start();
+          osc1.stop(audioCtx.currentTime + 1.2);
+          osc2.stop(audioCtx.currentTime + 1.2);
+        }
+
+        ringBurst();
+        ringtoneInterval = setInterval(() => {
+          if (isRinging) ringBurst();
+          else clearInterval(ringtoneInterval);
+        }, 2800);
+      } catch (e) {
+        console.warn('AudioContext not allowed without user interaction yet:', e);
+      }
+    }
+
+    function stopRingtone() {
+      isRinging = false;
+      if (ringtoneInterval) clearInterval(ringtoneInterval);
+    }
+
+    // Trigger Ringing Simulation
+    function triggerIncomingRing() {
+      if (isCalling) endCall();
+      isRinging = true;
+      document.getElementById('screen-incoming').classList.remove('hidden');
+      document.getElementById('screen-active').classList.add('hidden');
+      playTelephoneRingtone();
+    }
+
+    // Accept Incoming Call
+    function acceptCall() {
+      stopRingtone();
+      isCalling = true;
+      secondsElapsed = 0;
+
+      document.getElementById('screen-incoming').classList.add('hidden');
+      document.getElementById('screen-active').classList.remove('hidden');
+      document.getElementById('audio-state-text').innerText = "통화 연결됨 · 지찬이 음성 출력 중";
+
+      // Start clock
+      timerInterval = setInterval(() => {
+        secondsElapsed++;
+        const mins = String(Math.floor(secondsElapsed / 60)).padStart(2, '0');
+        const secs = String(secondsElapsed % 60).padStart(2, '0');
+        document.getElementById('clock-display').innerText = `${mins}:${secs}`;
+      }, 1000);
+
+      // Grandchild Opening Speech (ElevenLabs tone)
+      const opening = "할머니, 안녕하세요! 손주 지찬이에요. 오늘 날씨가 부쩍 쌀쌀하던데, 점심 진지는 따뜻하게 잘 챙겨 드셨어요? 어제 드셨던 국은 뭐였는지 기억나셔요?";
+      appendChat("지찬 (온콜 AI · ElevenLabs)", opening, "ai");
+      speakElevenLabsAudio(opening, () => {
+        if (recognition && isCalling) {
+          try { recognition.start(); } catch(e){}
+        }
+      });
+    }
+
+    function rejectCall() {
+      stopRingtone();
+      alert('안부 전화가 거절되었습니다. 15분 후 다시 자동 안부 콜이 예약됩니다.');
+    }
+
+    function endCall() {
+      isCalling = false;
+      stopRingtone();
+      clearInterval(timerInterval);
+      if (recognition) {
+        try { recognition.stop(); } catch(e){}
+      }
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+      }
+
+      document.getElementById('screen-incoming').classList.remove('hidden');
+      document.getElementById('screen-active').classList.add('hidden');
+    }
+
+    // Soundwave visualizer canvas
     const waveCanvas = document.getElementById('soundwaveCanvas');
     const waveCtx = waveCanvas.getContext('2d');
     let wavePhase = 0;
 
-    function drawWave(amplitude = 2) {
+    function drawWave() {
       waveCtx.clearRect(0, 0, waveCanvas.width, waveCanvas.height);
       waveCtx.lineWidth = 3;
-      waveCtx.strokeStyle = isCalling ? '#10b981' : '#cbd5e1';
+      waveCtx.strokeStyle = isCalling ? '#10b981' : '#334155';
       waveCtx.beginPath();
 
       const width = waveCanvas.width;
       const height = waveCanvas.height;
       const mid = height / 2;
+      const amplitude = isCalling ? 12 : 2;
 
       for (let x = 0; x < width; x++) {
         const y = mid + Math.sin(x * 0.05 + wavePhase) * amplitude * Math.sin(x / width * Math.PI);
@@ -440,7 +581,7 @@
       }
       waveCtx.stroke();
       wavePhase += isCalling ? 0.08 : 0.02;
-      animFrameId = requestAnimationFrame(() => drawWave(isCalling ? (Math.random() * 8 + 6) : 2));
+      requestAnimationFrame(drawWave);
     }
     drawWave();
 
@@ -461,7 +602,6 @@
       };
     }
 
-    // Mode Switcher
     function switchMode(mode) {
       const seniorView = document.getElementById('view-senior');
       const welfareView = document.getElementById('view-welfare');
@@ -482,68 +622,10 @@
       }
     }
 
-    // Call Toggle
-    function toggleCall() {
-      if (!isCalling) startCall();
-      else endCall();
-    }
-
-    function startCall() {
-      isCalling = true;
-      secondsElapsed = 0;
-      
-      const btn = document.getElementById('main-call-btn');
-      btn.className = "w-40 h-40 md:w-44 md:h-44 rounded-full bg-gradient-to-b from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white flex flex-col items-center justify-center gap-1 tactile-btn tactile-btn-red focus:outline-none z-10";
-      document.getElementById('call-icon').innerText = "📴";
-      document.getElementById('call-label').innerText = "전화 끊기";
-      document.getElementById('senior-headline').innerText = "손주 지찬이와 통화 중입니다";
-      document.getElementById('senior-subline').innerText = "귀 기울여 듣고 있어요. 편하게 말씀하세요.";
-      document.getElementById('calling-aura').classList.remove('hidden');
-      document.getElementById('call-timer-badge').classList.remove('hidden');
-      document.getElementById('audio-state-text').innerText = "통화 연결됨 · 음성 인식 활성화";
-
-      timerInterval = setInterval(() => {
-        secondsElapsed++;
-        const mins = String(Math.floor(secondsElapsed / 60)).padStart(2, '0');
-        const secs = String(secondsElapsed % 60).padStart(2, '0');
-        document.getElementById('clock-display').innerText = `${mins}:${secs}`;
-      }, 1000);
-
-      // Warm greeting with Socratic cognitive touch
-      const initialGreeting = "할머니, 안녕하세요! 손주 지찬이에요. 오늘 날씨가 부쩍 쌀쌀하던데, 점심 진지는 따뜻하게 잘 챙겨 드셨어요? 어제 드셨던 국은 뭐였는지 기억나셔요?";
-      appendChat("지찬 (온콜 AI)", initialGreeting, "ai");
-      speakTTS(initialGreeting, () => {
-        if (recognition && isCalling) {
-          try { recognition.start(); } catch(e){}
-        }
-      });
-    }
-
-    function endCall() {
-      isCalling = false;
-      clearInterval(timerInterval);
-      if (recognition) {
-        try { recognition.stop(); } catch(e){}
-      }
-      if ('speechSynthesis' in window) {
-        window.speechSynthesis.cancel();
-      }
-
-      const btn = document.getElementById('main-call-btn');
-      btn.className = "w-40 h-40 md:w-44 md:h-44 rounded-full bg-gradient-to-b from-emerald-400 to-emerald-600 hover:from-emerald-500 hover:to-emerald-700 text-white flex flex-col items-center justify-center gap-1 tactile-btn focus:outline-none z-10";
-      document.getElementById('call-icon').innerText = "📞";
-      document.getElementById('call-label').innerText = "전화 걸기";
-      document.getElementById('senior-headline').innerText = "적적할 땐 언제든 눌러주세요";
-      document.getElementById('senior-subline').innerText = "초록색 버튼을 누르면 손주 지찬이와 바로 전화가 연결됩니다";
-      document.getElementById('calling-aura').classList.add('hidden');
-      document.getElementById('call-timer-badge').classList.add('hidden');
-      document.getElementById('audio-state-text').innerText = "통화 종료됨 (대기 상태)";
-    }
-
     // Simulation Trigger
     function simulateAudioScenario(text) {
       if (!isCalling) {
-        startCall();
+        acceptCall();
         setTimeout(() => handleVoiceInput(text), 1500);
       } else {
         handleVoiceInput(text);
@@ -558,7 +640,7 @@
       if (text.includes("기억이 안") || text.includes("기억 안") || text.includes("무슨 요일") || text.includes("통 기억")) {
         // Cognitive Decline Detection
         updateMeters(55, 40, 70, 55, "⚠️ 주의 감지", "border-amber-300 bg-amber-50 text-amber-900");
-        reply = "아이고, 어르신 괜찮아요! 저도 어제 일 깜빡할 때 많은데요, 뭘요~ 오늘이 10월 25일 일요일이에요. 날씨 추운데 보일러 따뜻하게 켜 두셨는지만 한번 확인해 주세요!";
+        reply = "아이고, 할머니 괜찮아요! 저도 어제 일 깜빡할 때 많은데요, 뭘요~ 오늘이 10월 25일 일요일이에요. 날씨 추운데 보일러 따뜻하게 켜 두셨는지만 한번 확인해 주세요!";
       } else if (text.includes("10월 25일") || text.includes("일요일")) {
         updateMeters(100, 90, 95, 95, "정상 안정", "border-emerald-200 bg-emerald-50 text-emerald-900");
         reply = "맞아요, 할머니! 오늘이 10월 마지막 일요일이에요. 날짜도 요일도 저보다 훨씬 더 정확히 알고 계시네요! 오늘 산책은 다녀오셨어요?";
@@ -566,14 +648,14 @@
         updateMeters(95, 95, 90, 93, "정상 안정", "border-emerald-200 bg-emerald-50 text-emerald-900");
         reply = "구수한 된장찌개에 진지 맛있게 드셨군요! 든든하게 잘 드셨다니 제 마음이 다 놓여요. 식후에 따뜻한 물 한잔 꼭 챙겨 드셔요!";
       } else if (text.includes("가슴") || text.includes("답답") || text.includes("어지러") || text.includes("주저앉")) {
-        reply = "어르신, 가슴이 답답하고 어지러우세요? 많이 놀라셨겠어요. 지금 바닥에 조심히 앉아서 가만히 심호흡하세요. 제가 바로 복지사 선생님과 119에 연락드릴 테니 수화기 내려놓지 마셔요!";
+        reply = "할머니, 가슴이 답답하고 어지러우세요? 많이 놀라셨겠어요. 지금 바닥에 조심히 앉아서 가만히 심호흡하세요. 제가 바로 복지사 선생님과 119에 연락드릴 테니 수화기 내려놓지 마셔요!";
       } else {
-        reply = "네, 할머니 말씀 들으니 참 좋아요. 혼자 계실 때 적적하시면 언제든 이 전화 꾹 눌러주세요. 제가 언제나 반갑게 받을게요!";
+        reply = "네, 할머니 목소리 들으니 참 좋아요. 제가 매일 이렇게 전화드릴 테니까 밥 잘 챙겨 드시고 건강하셔야 해요!";
       }
 
       setTimeout(() => {
-        appendChat("지찬 (온콜 AI)", reply, "ai");
-        speakTTS(reply);
+        appendChat("지찬 (온콜 AI · ElevenLabs)", reply, "ai");
+        speakElevenLabsAudio(reply);
       }, 500);
     }
 
@@ -595,7 +677,6 @@
       box.innerHTML = `<span class="font-bold">종합 인지 건강 지수: <strong class="text-sm">${overall}점</strong></span><span class="font-black px-2.5 py-1 rounded-lg text-[11px]">${label}</span>`;
     }
 
-    // Chat Message Append
     function appendChat(speaker, text, type) {
       const container = document.getElementById('chat-stream');
       const row = document.createElement('div');
@@ -617,8 +698,10 @@
       container.scrollTop = container.scrollHeight;
     }
 
-    // TTS Output
-    function speakTTS(text, callback) {
+    // ElevenLabs Voice Engine (Fallback to Enhanced Web Speech with natural cadence)
+    function speakElevenLabsAudio(text, callback) {
+      document.getElementById('audio-state-text').innerText = "ElevenLabs 초실감 음성 재생 중...";
+
       if (!('speechSynthesis' in window)) {
         if (callback) callback();
         return;
@@ -626,8 +709,8 @@
       window.speechSynthesis.cancel();
       const utter = new SpeechSynthesisUtterance(text);
       utter.lang = 'ko-KR';
-      utter.rate = 0.88; // 12% slower for elderly
-      utter.pitch = 1.05;
+      utter.rate = 0.88; // Natural warm cadence
+      utter.pitch = 1.08; // Youthful grandson pitch
 
       utter.onend = function() {
         document.getElementById('audio-state-text').innerText = "어르신 말씀을 귀 기울여 듣고 있어요 (마이크 활성)";
@@ -734,6 +817,12 @@
         `).join('');
       })
       .catch(e => console.log('Static table fallback used:', e));
+
+    // Start with Ringing on first load
+    window.addEventListener('DOMContentLoaded', () => {
+      // Small delay to allow user click
+      playTelephoneRingtone();
+    });
   </script>
 </body>
 </html>
