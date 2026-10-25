@@ -5,6 +5,9 @@ on:
     branches: [ main ]
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   build-apk:
     runs-on: ubuntu-latest
@@ -19,14 +22,14 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      - name: Setup Android SDK
-        uses: android-actions/setup-android@v3
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
 
       - name: Build Debug APK with Preloaded Senior Data
         run: |
           cd android
-          chmod +x gradlew || gradle wrapper
-          ./gradlew assembleDebug --no-daemon
+          gradle wrapper
+          ./gradlew assembleDebug --no-daemon || gradle assembleDebug --no-daemon
 
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
@@ -34,3 +37,19 @@ jobs:
           name: WarmCallAI-Debug-APK
           path: android/app/build/outputs/apk/debug/app-debug.apk
           retention-days: 30
+
+      - name: Create or Update GitHub Release
+        uses: softprops/action-gh-release@v2
+        if: github.ref == 'refs/heads/main'
+        with:
+          tag_name: v1.0.0
+          name: "『온콜 AI』 v1.0.0 Android 설치 파일 (공식 출품작)"
+          body: |
+            ### 2026 전국 청소년 AI 경진대회 출품작 (중등부 사회문제 해결 부문)
+            - **아이디어명**: 『온콜 (溫-Call) AI』
+            - **출품 학생**: 박지찬 (인천현송중학교 1학년)
+            - **산출물**: Android 오프라인 데이터 내장형 실물 스마트폰 설치 파일 (`app-debug.apk`)
+            - **웹앱 실시간 데모**: https://iscream2124.github.io/warm-call-ai/
+          files: android/app/build/outputs/apk/debug/app-debug.apk
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
