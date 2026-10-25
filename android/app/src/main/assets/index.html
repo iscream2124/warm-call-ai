@@ -37,6 +37,32 @@
       animation: ring-pulse 1.8s infinite ease-in-out;
     }
 
+    /* Phone Console Hardware Styles */
+    .phone-chassis {
+      background: linear-gradient(145deg, #f8f6f0 0%, #ebe6da 100%);
+      box-shadow: 
+        0 25px 60px -15px rgba(15, 23, 42, 0.25),
+        0 10px 20px -5px rgba(15, 23, 42, 0.1),
+        inset 0 2px 4px rgba(255, 255, 255, 0.9),
+        inset 0 -4px 8px rgba(0, 0, 0, 0.08);
+      border: 5px solid #ded9cb;
+    }
+    .handset-body {
+      background: linear-gradient(135deg, #ffffff 0%, #ded7c8 50%, #eae5d8 100%);
+      box-shadow: 
+        -5px 12px 25px -4px rgba(0, 0, 0, 0.18),
+        inset 0 2px 3px rgba(255, 255, 255, 0.9),
+        inset 0 -2px 4px rgba(0, 0, 0, 0.15);
+    }
+    .hardware-key {
+      transition: all 0.12s ease-in-out;
+      box-shadow: 0 4px 0 rgba(0,0,0,0.08), 0 6px 12px rgba(0,0,0,0.05);
+    }
+    .hardware-key:active {
+      transform: translateY(3px);
+      box-shadow: 0 1px 0 rgba(0,0,0,0.1), 0 2px 4px rgba(0,0,0,0.05);
+    }
+
     /* Speech bubbles */
     .bubble-senior { border-radius: 20px 20px 4px 20px; }
     .bubble-ai { border-radius: 20px 20px 20px 4px; }
@@ -100,101 +126,218 @@
       <!-- Left: Care Phone Hardware Aesthetic with Incoming Call Screen -->
       <div class="lg:col-span-7 flex flex-col items-center">
         
-        <!-- Hardware Shell Container -->
-        <div class="w-full max-w-md bg-white rounded-[2.5rem] border-4 border-slate-200 shadow-2xl p-6 md:p-8 flex flex-col items-center relative overflow-hidden min-h-[580px] justify-between">
-          
-          <!-- Top Speaker Grill -->
-          <div class="flex gap-1.5 opacity-40">
-            <span class="w-2 h-2 rounded-full bg-slate-400"></span>
-            <span class="w-2 h-2 rounded-full bg-slate-400"></span>
-            <span class="w-2 h-2 rounded-full bg-slate-400"></span>
-            <span class="w-2 h-2 rounded-full bg-slate-400"></span>
-            <span class="w-2 h-2 rounded-full bg-slate-400"></span>
-          </div>
-
-          <!-- Senior Tag -->
-          <div class="inline-flex items-center gap-2 px-3.5 py-1 bg-gradient-to-r from-amber-100 to-amber-50 border border-amber-300/80 rounded-full text-amber-900 text-xs font-bold mt-2 shadow-sm">
-            <span>👵 김순자 어르신 (81세) 댁 전용 안심 폰</span>
-          </div>
-
-          <!-- ======================================== -->
-          <!-- STATE A: 전화가 걸려오는 중 (INCOMING CALL) -->
-          <!-- ======================================== -->
-          <div id="screen-incoming" class="w-full flex flex-col items-center my-4 py-2">
-            
-            <!-- Grandchild Calling Avatar with Pulsing Rings -->
-            <div class="relative my-3 flex items-center justify-center">
-              <div class="w-28 h-28 md:w-32 md:h-32 rounded-full bg-gradient-to-tr from-amber-400 to-amber-500 text-white flex items-center justify-center text-5xl shadow-xl incoming-ringing z-10">
-                👦
+        <!-- Scheduled Call Time Indicator & Demo Quick Timer -->
+        <div class="w-full max-w-xl bg-white/95 backdrop-blur-md rounded-2xl border border-slate-200/90 shadow-sm p-3 mb-3.5 flex items-center justify-between text-xs">
+          <div class="flex items-center gap-2.5">
+            <div class="w-8 h-8 rounded-xl bg-amber-100 text-amber-800 flex items-center justify-center text-sm font-bold border border-amber-200">
+              ⏰
+            </div>
+            <div>
+              <div class="flex items-center gap-1.5">
+                <span class="font-extrabold text-slate-800 text-xs">설정 시각 자동 안부전화</span>
+                <span class="text-[9px] bg-emerald-100 text-emerald-800 font-black px-1.5 py-0.2 rounded border border-emerald-200">정시 자동 발신</span>
               </div>
-              <div class="absolute inset-0 rounded-full bg-emerald-400/20 animate-ping pointer-events-none"></div>
+              <p class="text-[10px] text-slate-500 mt-0.5">할머니 식사·복약 시간에 맞춰 벨이 자동으로 울립니다</p>
             </div>
-
-            <div class="text-center mt-2">
-              <span class="inline-block text-xs font-black uppercase tracking-wider text-emerald-600 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200 animate-pulse mb-1.5">
-                🔔 안부 전화가 걸려왔습니다
-              </span>
-              <h2 class="text-3xl font-black text-slate-900 tracking-tight">
-                손주 박지찬
-              </h2>
-              <p class="text-xs text-slate-500 mt-1 font-medium">
-                일레븐랩스(ElevenLabs) 실감형 손주 목소리 연결 대기
-              </p>
-            </div>
-
-            <!-- Big Accept Button -->
-            <div class="mt-8 flex items-center gap-6 w-full justify-center">
-              <button onclick="acceptCall()" class="flex-1 max-w-[170px] py-4 px-6 rounded-2xl bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white font-black text-base flex items-center justify-center gap-2 tactile-btn shadow-lg">
-                <span class="text-2xl animate-bounce">📞</span>
-                <span>전화 받기</span>
-              </button>
-              <button onclick="rejectCall()" class="py-4 px-5 rounded-2xl bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold text-xs transition">
-                거절
-              </button>
-            </div>
-
-            <p class="text-[11px] text-slate-400 mt-4 text-center">
-              초록색 [전화 받기]를 누르면 실제 전화처럼 지찬이의 목소리가 들립니다.
-            </p>
-
           </div>
-
-          <!-- ======================================== -->
-          <!-- STATE B: 통화 중 (ACTIVE CALL SCREEN)      -->
-          <!-- ======================================== -->
-          <div id="screen-active" class="hidden w-full flex flex-col items-center my-2 py-1">
-            
-            <div class="text-center">
-              <div class="inline-flex items-center gap-2 px-3 py-1 bg-slate-900 text-emerald-400 rounded-full text-xs font-mono font-bold tracking-wider mb-2 shadow-inner">
-                <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
-                <span>통화 중 : <span id="clock-display">00:00</span></span>
-              </div>
-              <h3 class="text-2xl font-black text-slate-900 tracking-tight">손주 지찬이와 통화 중</h3>
-              <p class="text-xs text-indigo-600 font-semibold mt-0.5">ElevenLabs Ultra-Realistic Voice 가동 중</p>
-            </div>
-
-            <!-- Visualizer Waveform Canvas -->
-            <div class="w-full mt-4 h-16 bg-slate-950 border border-slate-800 rounded-2xl flex items-center justify-center overflow-hidden px-4 shadow-inner">
-              <canvas id="soundwaveCanvas" width="340" height="50" class="w-full h-full"></canvas>
-            </div>
-            <span id="audio-state-text" class="text-[11px] text-slate-500 font-medium mt-1.5">지찬이가 따뜻하게 말씀드리는 중...</span>
-
-            <!-- Hang Up Button -->
-            <div class="mt-6 flex flex-col items-center">
-              <button onclick="endCall()" class="w-28 py-3 rounded-2xl bg-red-500 hover:bg-red-600 text-white font-extrabold text-sm flex items-center justify-center gap-2 tactile-btn tactile-btn-red shadow-lg">
-                <span>📴</span>
-                <span>통화 종료</span>
-              </button>
-            </div>
-
-          </div>
-
-          <!-- Bottom Help Bar -->
-          <div class="w-full pt-3 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-400">
-            <span>🎙️ 음성 인식 (STT) 준비됨</span>
-            <button onclick="triggerIncomingRing()" class="text-amber-600 font-bold hover:underline">
-              🔔 전화 다시 걸려오게 하기
+          <div class="flex items-center gap-1.5">
+            <button onclick="scheduleCallInSeconds(5)" id="btn-quick-schedule" class="bg-gradient-to-r from-indigo-600 to-indigo-700 hover:from-indigo-700 hover:to-indigo-800 text-white font-black px-3 py-1.5 rounded-xl text-xs transition flex items-center gap-1 shadow-md shadow-indigo-500/20 active:scale-95">
+              <span>⚡ 5초 뒤 자동 수신</span>
             </button>
+          </div>
+        </div>
+
+        <!-- Real Telephone Console Frame (Hardware Chassis) -->
+        <div class="phone-chassis w-full max-w-xl rounded-[3rem] p-4 sm:p-6 shadow-2xl relative">
+          
+          <div class="grid grid-cols-12 gap-3 sm:gap-4 items-stretch">
+            
+            <!-- LEFT (Col 3): Classic Handset & Coiled Cable (전화기 수화기 모양 틀) -->
+            <div class="col-span-3 hidden sm:flex flex-col items-center justify-between py-1 relative">
+              <!-- Handset Upper Earpiece -->
+              <div class="handset-body w-full max-w-[80px] h-24 rounded-t-3xl rounded-b-xl border-2 border-[#d5cfc0] flex flex-col items-center justify-center shadow-md">
+                <!-- Earpiece Speaker Grill -->
+                <div class="grid grid-cols-3 gap-1 opacity-40">
+                  <span class="w-1.5 h-1.5 rounded-full bg-slate-600"></span>
+                  <span class="w-1.5 h-1.5 rounded-full bg-slate-600"></span>
+                  <span class="w-1.5 h-1.5 rounded-full bg-slate-600"></span>
+                  <span class="w-1.5 h-1.5 rounded-full bg-slate-600"></span>
+                  <span class="w-1.5 h-1.5 rounded-full bg-slate-600"></span>
+                  <span class="w-1.5 h-1.5 rounded-full bg-slate-600"></span>
+                </div>
+                <span class="text-[9px] font-black text-slate-400 mt-2 tracking-tighter">RECEIVER</span>
+              </div>
+
+              <!-- Handset Grip Bridge -->
+              <div class="w-10 flex-1 my-1.5 bg-gradient-to-r from-[#d8d2c2] via-[#faf8f4] to-[#d8d2c2] rounded-md border-x-2 border-[#cec7b6] shadow-inner flex items-center justify-center">
+                <span class="text-[9px] font-bold text-slate-400/80 -rotate-90 tracking-widest uppercase">溫-CALL</span>
+              </div>
+
+              <!-- Handset Lower Mouthpiece -->
+              <div class="handset-body w-full max-w-[80px] h-24 rounded-t-xl rounded-b-3xl border-2 border-[#d5cfc0] flex flex-col items-center justify-center shadow-md">
+                <div class="w-2.5 h-2.5 rounded-full bg-slate-500 opacity-50 shadow-inner mb-1"></div>
+                <span class="text-[9px] font-black text-slate-400 tracking-tighter">MIC</span>
+              </div>
+
+              <!-- Spring Coiled Wire Effect -->
+              <div class="w-full flex justify-center py-1">
+                <svg class="w-10 h-8 text-slate-400 opacity-60" viewBox="0 0 60 40" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round">
+                  <path d="M10,5 Q30,0 30,15 Q30,30 50,25 Q30,20 30,35 Q10,40 20,40" />
+                </svg>
+              </div>
+            </div>
+
+            <!-- RIGHT (Col 9 / Col 12 on mobile): Smart Console Screen + Tactile Keypad -->
+            <div class="col-span-12 sm:col-span-9 flex flex-col gap-3">
+              
+              <!-- Screen Console Bezel -->
+              <div class="bg-slate-900 rounded-[2.2rem] p-3 sm:p-3.5 shadow-2xl border-4 border-slate-800 flex flex-col">
+                
+                <!-- Console Top Indicator Bar -->
+                <div class="flex items-center justify-between px-3 pb-2 text-[10px] text-slate-400 font-mono">
+                  <div class="flex items-center gap-1.5">
+                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+                    <span class="text-emerald-400 font-extrabold tracking-wider">ON-CALL CARE CONSOLE</span>
+                  </div>
+                  <span class="text-slate-400 font-semibold">LTE 안심망 · 24H LIVE</span>
+                </div>
+
+                <!-- White Inner Interactive Touch Screen -->
+                <div class="bg-white rounded-2xl p-4 sm:p-5 flex flex-col items-center relative overflow-hidden min-h-[460px] justify-between shadow-inner">
+                  
+                  <!-- Senior House Tag -->
+                  <div class="inline-flex items-center gap-2 px-3 py-0.5 bg-gradient-to-r from-amber-100 to-amber-50 border border-amber-300/80 rounded-full text-amber-900 text-xs font-bold shadow-sm">
+                    <span>👵 김순자 어르신 (81세) 댁 전용 안심 폰</span>
+                  </div>
+
+                  <!-- ======================================== -->
+                  <!-- STATE A: 전화가 걸려오는 중 (INCOMING CALL) -->
+                  <!-- ======================================== -->
+                  <div id="screen-incoming" class="w-full flex flex-col items-center my-3 py-1">
+                    
+                    <!-- Real Grandchild Calling Avatar with Pulsing Rings -->
+                    <div class="relative my-2 flex items-center justify-center">
+                      <div class="w-24 h-24 md:w-28 md:h-28 rounded-full overflow-hidden border-4 border-amber-400 shadow-2xl incoming-ringing z-10 bg-slate-100">
+                        <img src="images/grandson_avatar.jpg" alt="손주 박지찬 실제 사진" class="w-full h-full object-cover">
+                      </div>
+                      <div class="absolute inset-0 rounded-full bg-emerald-400/20 animate-ping pointer-events-none"></div>
+                    </div>
+
+                    <div class="text-center mt-1">
+                      <span class="inline-block text-xs font-black uppercase tracking-wider text-emerald-600 bg-emerald-50 px-3 py-0.5 rounded-full border border-emerald-200 animate-pulse mb-1">
+                        🔔 안부 전화가 걸려왔습니다
+                      </span>
+                      <h2 class="text-2xl md:text-3xl font-black text-slate-900 tracking-tight">
+                        손주 박지찬
+                      </h2>
+                      <div class="flex items-center justify-center gap-2 mt-1">
+                        <span class="text-[11px] text-indigo-700 bg-indigo-50 font-bold px-2 py-0.5 rounded-md border border-indigo-200">
+                          🎙️ 친숙한 목소리
+                        </span>
+                        <span class="text-[11px] text-amber-800 bg-amber-50 font-bold px-2 py-0.5 rounded-md border border-amber-200">
+                          🌸 꽃 사진 도착
+                        </span>
+                      </div>
+                    </div>
+
+                    <!-- Big Accept Button -->
+                    <div class="mt-6 flex items-center gap-4 w-full justify-center">
+                      <button onclick="acceptCall()" class="flex-1 max-w-[160px] py-3.5 px-5 rounded-2xl bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white font-black text-base flex items-center justify-center gap-2 tactile-btn shadow-lg">
+                        <span class="text-2xl animate-bounce">📞</span>
+                        <span>전화 받기</span>
+                      </button>
+                      <button onclick="rejectCall()" class="py-3.5 px-4 rounded-2xl bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold text-xs transition">
+                        거절
+                      </button>
+                    </div>
+
+                    <p class="text-[11px] text-slate-400 mt-3 text-center">
+                      초록색 [전화 받기]를 누르면 실제 전화처럼 지찬이의 목소리가 들립니다.
+                    </p>
+
+                  </div>
+
+                  <!-- ======================================== -->
+                  <!-- STATE B: 통화 중 (ACTIVE CALL SCREEN)      -->
+                  <!-- ======================================== -->
+                  <div id="screen-active" class="hidden w-full flex flex-col items-center my-1 py-1">
+                    
+                    <div class="text-center">
+                      <div class="inline-flex items-center gap-2 px-3 py-0.5 bg-slate-900 text-emerald-400 rounded-full text-xs font-mono font-bold tracking-wider mb-1 shadow-inner">
+                        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+                        <span>통화 중 : <span id="clock-display">00:00</span></span>
+                      </div>
+                      <h3 class="text-xl font-black text-slate-900 tracking-tight">손주 지찬이와 통화 중</h3>
+                      <p class="text-[11px] text-indigo-600 font-semibold">ElevenLabs Ultra-Realistic Voice 가동 중</p>
+                    </div>
+
+                    <!-- Visualizer Waveform Canvas -->
+                    <div class="w-full mt-2.5 h-12 bg-slate-950 border border-slate-800 rounded-2xl flex items-center justify-center overflow-hidden px-4 shadow-inner">
+                      <canvas id="soundwaveCanvas" width="340" height="40" class="w-full h-full"></canvas>
+                    </div>
+                    <span id="audio-state-text" class="text-[10px] text-slate-500 font-medium mt-1">지찬이의 친숙한 목소리가 말씀드리는 중...</span>
+
+                    <!-- Grandchild Daily Real Photo Shared (Visual Stimulation & Rapport) -->
+                    <div class="w-full mt-2.5 bg-white/95 border-2 border-amber-300 rounded-2xl p-2.5 flex items-center gap-3 shadow-md">
+                      <div class="relative w-16 h-16 rounded-xl overflow-hidden shrink-0 border-2 border-amber-400 shadow-inner bg-slate-100">
+                        <img id="grandson-photo-img" src="images/daily_flower.jpg" alt="할머니를 위한 화사한 꽃 사진" class="w-full h-full object-cover">
+                      </div>
+                      <div class="flex-1 min-w-0">
+                        <div class="flex items-center justify-between">
+                          <span class="text-[9px] font-black bg-amber-500 text-white px-1.5 py-0.5 rounded-full shadow-sm">🌸 지찬이가 보낸 꽃 사진</span>
+                          <button onclick="cycleGrandsonPhoto()" class="text-xs text-amber-800 font-black hover:underline flex items-center gap-0.5">다음 사진 ❯</button>
+                        </div>
+                        <p id="grandson-photo-caption" class="text-xs font-bold text-slate-900 truncate mt-1 leading-snug">"할머니! 오늘 등굣길에 활짝 핀 꽃이 너무 예뻐서 찍었어요!"</p>
+                        <p class="text-[10px] text-slate-500">할머니가 좋아하시는 자연·꽃 사진을 보며 나누는 대화</p>
+                      </div>
+                    </div>
+
+                    <!-- Hang Up Button -->
+                    <div class="mt-3 flex flex-col items-center">
+                      <button onclick="endCall()" class="w-28 py-2 rounded-2xl bg-red-500 hover:bg-red-600 text-white font-extrabold text-xs flex items-center justify-center gap-1.5 tactile-btn tactile-btn-red shadow-lg">
+                        <span>📴</span>
+                        <span>통화 종료</span>
+                      </button>
+                    </div>
+
+                  </div>
+
+                  <!-- Bottom Help Bar -->
+                  <div class="w-full pt-2 border-t border-slate-100 flex items-center justify-between text-[10px] text-slate-400">
+                    <span>🎙️ 음성 인식 (STT) 준비됨</span>
+                    <button onclick="triggerIncomingRing()" class="text-amber-600 font-bold hover:underline">
+                      🔔 전화 다시 걸려오게 하기
+                    </button>
+                  </div>
+
+                </div>
+
+              </div>
+
+              <!-- Hardware Tactile Direct Keys (전화기 하단 물리 단축 버튼 패드) -->
+              <div class="grid grid-cols-3 gap-2 pt-0.5">
+                <!-- Direct Key 1: 손주 지찬이 직통 -->
+                <button onclick="scheduleCallInSeconds(2)" class="hardware-key bg-amber-50 hover:bg-amber-100 border-2 border-amber-300 rounded-2xl p-2.5 flex flex-col items-center text-center shadow-md active:scale-95 transition">
+                  <span class="text-lg">👦</span>
+                  <span class="text-xs font-black text-amber-950 mt-0.5">손주 지찬이</span>
+                  <span class="text-[9px] text-amber-700 font-bold">1번 직통키</span>
+                </button>
+                <!-- Direct Key 2: 복지사 치매안심센터 -->
+                <button onclick="switchMode('welfare')" class="hardware-key bg-indigo-50 hover:bg-indigo-100 border-2 border-indigo-300 rounded-2xl p-2.5 flex flex-col items-center text-center shadow-md active:scale-95 transition">
+                  <span class="text-lg">👩‍⚕️</span>
+                  <span class="text-xs font-black text-indigo-950 mt-0.5">전담 복지사</span>
+                  <span class="text-[9px] text-indigo-700 font-bold">2번 복지센터</span>
+                </button>
+                <!-- Direct Key 3: 긴급 119 -->
+                <button onclick="simulateAudioScenario('요즘 가슴이 너무 답답하고 어지러워서 털썩 주저앉았어.')" class="hardware-key bg-red-50 hover:bg-red-100 border-2 border-red-300 rounded-2xl p-2.5 flex flex-col items-center text-center shadow-md active:scale-95 transition">
+                  <span class="text-lg animate-pulse">🚨</span>
+                  <span class="text-xs font-black text-red-950 mt-0.5">119 긴급출동</span>
+                  <span class="text-[9px] text-red-700 font-bold">3번 안심벨</span>
+                </button>
+              </div>
+
+            </div>
+
           </div>
 
         </div>
@@ -219,8 +362,8 @@
           <!-- Scrollable Chat Area -->
           <div id="chat-stream" class="flex-1 overflow-y-auto pr-2 space-y-3">
             <div class="flex items-start gap-2.5">
-              <div class="w-8 h-8 rounded-full bg-amber-500 text-white flex items-center justify-center text-sm font-bold shrink-0 shadow-sm">
-                지찬
+              <div class="w-9 h-9 rounded-full overflow-hidden border-2 border-amber-400 shrink-0 shadow-sm bg-slate-100">
+                <img src="images/grandson_avatar.jpg" alt="지찬" class="w-full h-full object-cover">
               </div>
               <div class="bg-amber-50 border border-amber-200/80 p-3.5 bubble-ai text-slate-800 text-xs md:text-sm leading-relaxed shadow-sm">
                 "할머니, 전화 울리면 초록색 [전화 받기] 버튼을 눌러주세요. 지찬이 목소리가 바로 들려요!"
@@ -307,11 +450,50 @@
               3. <strong>[기억회상 정상]</strong> "어제 점심 된장찌개 먹었지"
             </button>
             <button onclick="simulateAudioScenario('어제 점심에 뭘 먹었더라... 영 기억이 안 나네. 오늘이 무슨 요일이었지?')" class="p-2.5 rounded-xl text-left bg-amber-50 hover:bg-amber-100 border border-amber-300 text-amber-950 font-bold transition">
-              4. <strong>[⚠️ 인지 저하 의심]</strong> "어제 메뉴도 잊고 오늘 요일도 헷갈려"
+              4. <strong>[⚠️ 인지 저하 의심]</strong> "어제 메뉴도 잊고 요일도 헷갈려"
+            </button>
+            <button onclick="simulateAudioScenario('지찬아, 방금 화면에 뜬 꽃 사진 봤다! 꽃이 참 화사하고 곱구나!')" class="p-2.5 rounded-xl text-left bg-emerald-50 hover:bg-emerald-100 border border-emerald-300 text-emerald-950 font-bold transition">
+              5. <strong>[🌸 자연·꽃 사진 대화]</strong> "꽃 사진 봤다! 참 화사하고 곱네"
             </button>
             <button onclick="simulateAudioScenario('요즘 가슴이 너무 답답하고 어지러워서 털썩 주저앉았어.')" class="p-2.5 rounded-xl text-left sm:col-span-2 bg-red-50 hover:bg-red-100 border border-red-200 text-red-900 font-bold transition">
-              5. <strong>[🚨 긴급 위기 가드레일]</strong> "가슴이 너무 답답하고 어지러워 주저앉았다"
+              6. <strong>[🚨 긴급 위기 가드레일]</strong> "가슴이 너무 답답하고 어지러워 주저앉았다"
             </button>
+          </div>
+        </div>
+
+        <!-- Personalized Senior Memory Bank (Life-Log Engine) -->
+        <div class="bg-white rounded-3xl border border-amber-200/80 shadow-lg p-5 flex flex-col gap-3">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <span class="text-base">🗂️</span>
+              <h3 class="text-sm font-extrabold text-amber-950">할머니 맞춤 기억 장부 (Life-Log Memory)</h3>
+            </div>
+            <span class="text-[10px] bg-amber-100 text-amber-900 font-black px-2 py-0.5 rounded-md border border-amber-300">
+              대화 누적 초개별화
+            </span>
+          </div>
+          
+          <p class="text-xs text-slate-500 leading-relaxed">
+            통화를 거듭할수록 AI가 할머니의 일상 정보를 축적하여 <strong>"손주의 친숙한 목소리로 나를 온전히 기억해 주는"</strong> 맞춤 대화를 나눕니다.
+          </p>
+
+          <div class="grid grid-cols-2 gap-2 text-xs">
+            <div class="bg-amber-50/50 border border-amber-200/60 rounded-xl p-2.5">
+              <span class="text-[10px] text-amber-800 font-bold block">🍲 좋아하시는 음식</span>
+              <span class="font-extrabold text-slate-800">시원한 콩나물국 · 갈치조림</span>
+            </div>
+            <div class="bg-amber-50/50 border border-amber-200/60 rounded-xl p-2.5">
+              <span class="text-[10px] text-amber-800 font-bold block">👵 단골 친구 / 이웃</span>
+              <span class="font-extrabold text-slate-800">경로당 영자 할머니 (화/목)</span>
+            </div>
+            <div class="bg-amber-50/50 border border-amber-200/60 rounded-xl p-2.5">
+              <span class="text-[10px] text-amber-800 font-bold block">🪴 일상 취미 루틴</span>
+              <span class="font-extrabold text-slate-800">베란다 상추 화분 물주기</span>
+            </div>
+            <div class="bg-amber-50/50 border border-amber-200/60 rounded-xl p-2.5">
+              <span class="text-[10px] text-amber-800 font-bold block">🎯 개인 맞춤 인지 기준선</span>
+              <span class="font-extrabold text-emerald-700">평소 기억력 94% (안정 유지)</span>
+            </div>
           </div>
         </div>
 
@@ -458,6 +640,19 @@
     let ringtoneInterval = null;
     let audioCtx = null;
 
+    // Real Photos Shared by Grandchild (Flowers, Nature, Awards, Pet)
+    const grandsonPhotos = [
+      { img: "images/daily_flower.jpg", caption: '"할머니! 오늘 등굣길에 활짝 핀 꽃이 예뻐서 할머니 보여드리려고 찍었어요!"' },
+      { img: "images/daily_award.jpg", caption: '"할머니! 오늘 학교 과학대회에서 상장 탔어요!"' },
+      { img: "images/daily_dog.jpg", caption: '"할머니, 우리 강아지 복실이랑 공원 산책 다녀왔어요!"' }
+    ];
+    let currentPhotoIndex = 0;
+    function cycleGrandsonPhoto() {
+      currentPhotoIndex = (currentPhotoIndex + 1) % grandsonPhotos.length;
+      document.getElementById('grandson-photo-img').src = grandsonPhotos[currentPhotoIndex].img;
+      document.getElementById('grandson-photo-caption').innerText = grandsonPhotos[currentPhotoIndex].caption;
+    }
+
     // Web Audio Ringtone Generator (Traditional Korean Cadence: 440Hz + 480Hz)
     function playTelephoneRingtone() {
       try {
@@ -499,6 +694,57 @@
     function stopRingtone() {
       isRinging = false;
       if (ringtoneInterval) clearInterval(ringtoneInterval);
+    }
+
+    // Scheduled Call Timer Engine
+    let scheduleCountdownTimer = null;
+    function scheduleCallInSeconds(sec) {
+      if (isCalling) endCall();
+      stopRingtone();
+
+      const btn = document.getElementById('btn-quick-schedule');
+      let remain = sec;
+      btn.disabled = true;
+      btn.innerText = `⏳ ${remain}초 뒤 수신 예정...`;
+
+      document.getElementById('screen-incoming').classList.add('hidden');
+      document.getElementById('screen-active').classList.add('hidden');
+      
+      let waitNotice = document.getElementById('screen-scheduled-wait');
+      if (!waitNotice) {
+        waitNotice = document.createElement('div');
+        waitNotice.id = 'screen-scheduled-wait';
+        waitNotice.className = 'w-full flex flex-col items-center justify-center my-10 text-center py-6';
+        waitNotice.innerHTML = `
+          <div class="w-20 h-20 rounded-full bg-indigo-50 border-2 border-indigo-200 flex items-center justify-center text-3xl mb-3 shadow-inner">
+            ⏰
+          </div>
+          <span class="text-xs font-black text-indigo-700 bg-indigo-100 px-3 py-1 rounded-full border border-indigo-200 mb-2">
+            설정 시각 안부전화 대기 중
+          </span>
+          <h3 class="text-xl font-black text-slate-800">지정된 예약 시각에 전화가 걸려옵니다</h3>
+          <p id="countdown-text" class="text-sm font-extrabold text-amber-600 mt-2">${remain}초 후 전화벨이 울립니다...</p>
+        `;
+        document.getElementById('screen-incoming').parentNode.insertBefore(waitNotice, document.getElementById('screen-incoming'));
+      } else {
+        waitNotice.classList.remove('hidden');
+        document.getElementById('countdown-text').innerText = `${remain}초 후 전화벨이 울립니다...`;
+      }
+
+      if (scheduleCountdownTimer) clearInterval(scheduleCountdownTimer);
+      scheduleCountdownTimer = setInterval(() => {
+        remain--;
+        if (remain > 0) {
+          btn.innerText = `⏳ ${remain}초 뒤 수신 예정...`;
+          document.getElementById('countdown-text').innerText = `${remain}초 후 전화벨이 울립니다...`;
+        } else {
+          clearInterval(scheduleCountdownTimer);
+          btn.disabled = false;
+          btn.innerText = "⚡ 5초 뒤 자동 수신";
+          if (waitNotice) waitNotice.classList.add('hidden');
+          triggerIncomingRing();
+        }
+      }, 1000);
     }
 
     // Trigger Ringing Simulation
@@ -647,6 +893,10 @@
       } else if (text.includes("된장찌개") || text.includes("나물") || text.includes("밥 잘")) {
         updateMeters(95, 95, 90, 93, "정상 안정", "border-emerald-200 bg-emerald-50 text-emerald-900");
         reply = "구수한 된장찌개에 진지 맛있게 드셨군요! 든든하게 잘 드셨다니 제 마음이 다 놓여요. 식후에 따뜻한 물 한잔 꼭 챙겨 드셔요!";
+      } else if (text.includes("꽃") || text.includes("자연") || text.includes("화사") || text.includes("사진") || text.includes("상장")) {
+        updateMeters(98, 95, 96, 96, "정상 안정", "border-emerald-200 bg-emerald-50 text-emerald-900");
+        reply = "헤헤 할머니가 꽃 좋아하시잖아요! 길 가다 꽃 보는데 우리 할머니 생각나서 얼른 찍었어요. 오늘 꽃 보시고 활짝 웃으시는 하루 보내셔요!";
+        audioKey = "mem_ok";
       } else if (text.includes("가슴") || text.includes("답답") || text.includes("어지러") || text.includes("주저앉")) {
         reply = "할머니, 가슴이 답답하고 어지러우세요? 많이 놀라셨겠어요. 지금 바닥에 조심히 앉아서 가만히 심호흡하세요. 제가 바로 복지사 선생님과 119에 연락드릴 테니 수화기 내려놓지 마셔요!";
       } else {
@@ -659,6 +909,10 @@
       } else if (text.includes("10월 25일") || text.includes("일요일")) {
         audioKey = "orient_ok";
       } else if (text.includes("된장찌개") || text.includes("나물") || text.includes("밥 잘")) {
+        audioKey = "mem_ok";
+      } else if (text.includes("꽃") || text.includes("자연") || text.includes("화사") || text.includes("사진") || text.includes("상장")) {
+        updateMeters(98, 95, 96, 96, "정상 안정", "border-emerald-200 bg-emerald-50 text-emerald-900");
+        reply = "헤헤 할머니가 꽃 좋아하시잖아요! 길 가다 꽃 보는데 우리 할머니 생각나서 얼른 찍었어요. 오늘 꽃 보시고 활짝 웃으시는 하루 보내셔요!";
         audioKey = "mem_ok";
       } else if (text.includes("가슴") || text.includes("답답") || text.includes("어지러") || text.includes("주저앉")) {
         audioKey = "emergency";
@@ -695,7 +949,9 @@
 
       if (type === 'ai') {
         row.innerHTML = `
-          <div class="w-8 h-8 rounded-full bg-amber-500 text-white flex items-center justify-center text-sm font-bold shrink-0 shadow-sm">지찬</div>
+          <div class="w-8 h-8 rounded-full overflow-hidden border-2 border-amber-400 shrink-0 shadow-sm bg-slate-100">
+            <img src="images/grandson_avatar.jpg" alt="지찬" class="w-full h-full object-cover">
+          </div>
           <div class="bg-amber-50 border border-amber-200/80 p-3.5 bubble-ai text-slate-800 text-xs md:text-sm leading-relaxed shadow-sm">${text}</div>
         `;
       } else {
