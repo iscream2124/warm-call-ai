@@ -948,7 +948,7 @@
     if (SpeechRecognition) {
       recognition = new SpeechRecognition();
       recognition.lang = 'ko-KR';
-      recognition.interimResults = false;
+      recognition.interimResults = true;
       recognition.continuous = true;
 
       recognition.onstart = function() {
@@ -959,6 +959,7 @@
 
       recognition.onspeechstart = function() {
         isSeniorSpeaking = true;
+        resetSilenceWatchdog();
       };
 
       recognition.onspeechend = function() {
@@ -967,6 +968,7 @@
 
       recognition.onaudiostart = function() {
         isSeniorSpeaking = true;
+        resetSilenceWatchdog();
       };
 
       recognition.onaudioend = function() {
@@ -974,20 +976,29 @@
       };
 
       recognition.onresult = function(e) {
-        isSeniorSpeaking = false;
         // AI가 발화 중일 때는 스피커 소리가 마이크로 재유입되는 에코/하울링을 100% 원천 차단!
         if (isAiSpeaking || (currentAudio && !currentAudio.paused)) {
           return;
         }
 
+        let interimText = '';
         for (let i = e.resultIndex; i < e.results.length; ++i) {
           if (e.results[i].isFinal) {
-            const text = e.results[i][0].transcript.trim();
-            if (text) {
-              handleVoiceInput(text);
-              break;
+            const finalText = e.results[i][0].transcript.trim();
+            if (finalText) {
+              isSeniorSpeaking = false;
+              handleVoiceInput(finalText);
+              return;
             }
+          } else {
+            interimText += e.results[i][0].transcript;
           }
+        }
+
+        if (interimText.trim()) {
+          isSeniorSpeaking = true;
+          resetSilenceWatchdog(); // 할머니가 말씀하시는 중에는 침묵 타이머 즉시 리셋!
+          document.getElementById('audio-state-text').innerText = `👂 할머니 말씀 듣는 중: "${interimText.trim()}"`;
         }
       };
 
@@ -998,13 +1009,13 @@
       recognition.onend = function() {
         const ind = document.getElementById('btn-mic-indicator');
         if (ind) ind.classList.remove('text-emerald-500', 'animate-pulse');
-        // 통화 중이면 음성 인식이 끊기지 않도록 자동 재시작
+        // 통화 중이면 음성 인식이 끊기지 않도록 즉시 재시작
         if (isCalling) {
           setTimeout(() => {
-            if (isCalling) {
+            if (isCalling && !isAiSpeaking) {
               try { recognition.start(); } catch(e){}
             }
-          }, 350);
+          }, 150);
         }
       };
     }
@@ -1074,7 +1085,7 @@
       const norm = text.replace(/[\s\.\?!,]/g, '');
 
       // 1. 응급 / 낙상 / 극심한 신체 위기
-      if (/(가슴.*(답답|아파|통증)|어지러|쓰러|주저앉|숨.*차|119|살려|구급차|숨을못|넘어졌|다쳤|큰일)/i.test(text)) {
+      if (/(가슴.*(답답|아파|통증)|어지러|쓰러|주저앉|숨.*차|119|살려|구급차|숨을못|넘어졌|다쳤|큰일|살려줘)/i.test(text)) {
         return {
           key: 'emergency',
           reply: "할머니, 가슴이 답답하고 어지러우세요? 많이 놀라셨겠어요. 지금 바닥에 조심히 앉아서 가만히 심호흡하세요. 제가 바로 복지사 선생님과 119에 연락드릴 테니 수화기 내려놓지 마셔요!",
@@ -1082,8 +1093,44 @@
         };
       }
 
-      // 2. K-MMSE 기억 장애 / 시간 지남력 혼란 (주의 감지 시나리오)
-      if (/(기억이\s*안|기억\s*안|기억\s*못|통\s*기억|무슨\s*요일|몇\s*월|며칠인지|오늘이\s*언제|깜빡|어제\s*일도|내가\s*왜\s*이러|가물가물|모르겠어)/i.test(text)) {
+      // 2. 할머니가 손주(지찬이) 안부/식사/학교 물어보실 때 ("너 밥 먹었니?", "지찬이 밥은?", "공부 잘 하니?")
+      if (/(너.*(밥|식사|진지|먹었)|지찬.*(밥|먹었)|밥은.*먹었|밥.*먹었니|학교.*(어때|재밌|잘)|공부.*(열심|잘)|바쁘니|힘들지)/i.test(text)) {
+        return {
+          key: null,
+          reply: "네 할머니! 저도 점심에 따뜻한 급식 배부르게 잘 챙겨 먹었어요. 할머니께서 챙겨주시니 학교생활도 정말 씩씩하게 잘하고 있어요! 할머니도 오늘 진지 꼭꼭 챙겨 드셔야 해요!",
+          metrics: [96, 95, 95, 95, "정상 안정", "border-emerald-200 bg-emerald-50 text-emerald-900"]
+        };
+      }
+
+      // 3. 할머니가 식사하셨다고 대답하실 때 ("된장찌개 먹었어", "밥 먹었다", "김치랑 밥", "진지 먹었지")
+      if (/(된장|김치|찌개|나물|국|밥\s*(먹었|잘\s*먹)|진지.*(잡수|먹었|들었)|생선|불고기|잡곡|미역국|계란|반찬|맛있게.*먹|배부르게)/i.test(text)) {
+        return {
+          key: 'mem_ok',
+          reply: "구수한 된장찌개에 진지 맛있게 드셨군요! 든든하게 잘 드셨다니 제 마음이 다 놓여요. 식후에 따뜻한 물 한잔 꼭 챙겨 드셔요!",
+          metrics: [95, 95, 90, 93, "정상 안정", "border-emerald-200 bg-emerald-50 text-emerald-900"]
+        };
+      }
+
+      // 4. 할머니가 아직 식사 안 하셨거나 입맛 없다고 하실 때 ("안 먹었어", "입맛 없다", "귀찮다", "생각 없다")
+      if (/(안\s*먹|입맛.*(없|안)|생각.*없|귀찮|혼자.*먹|아직\s*안|안\s*배고)/i.test(text)) {
+        return {
+          key: null,
+          reply: "아이고 할머니, 입맛이 없으셔도 진지 거르시면 기운 빠져요. 부드러운 죽이나 따뜻한 누룽지라도 조금만 꼭 챙겨 드셔요. 제가 이따가 전화로 또 확인할 거예요!",
+          metrics: [90, 88, 92, 90, "영양 돌봄 필요", "border-amber-200 bg-amber-50 text-amber-900"]
+        };
+      }
+
+      // 5. 날씨 / 추위 / 보일러 / 외출 ("춥다", "바람 많이 분다", "쌀쌀해", "보일러", "비 온다")
+      if (/(춥다|추워|쌀쌀|바람|비\s*온|눈\s*온|날씨|보일러|겨울|가을.*추|따뜻하게)/i.test(text)) {
+        return {
+          key: null,
+          reply: "맞아요 할머니, 요즘 찬 바람이 제법 쌀쌀해졌어요! 방 보일러 따뜻하게 켜 두시고, 밖에 나가실 때는 두꺼운 외투랑 목도리 꼭 챙겨 입으셔요!",
+          metrics: [96, 94, 95, 95, "정상 안정", "border-emerald-200 bg-emerald-50 text-emerald-900"]
+        };
+      }
+
+      // 6. K-MMSE 날짜 기억 혼란 / 깜빡거림 ("오늘이 며칠이지?", "기억이 안 난다", "깜빡했어", "가물가물")
+      if (/(기억이\s*안|기억\s*안|기억\s*못|통\s*기억|무슨\s*요일|몇\s*월|며칠인지|오늘이\s*언제|깜빡|어제\s*일도|내가\s*왜\s*이러|가물가물|모르겠어|잘\s*몰라)/i.test(text)) {
         return {
           key: 'decline',
           reply: "아이고, 할머니 괜찮아요! 저도 어제 일 깜빡할 때 많은데요, 뭘요~ 오늘이 10월 25일 일요일이에요. 날씨 추운데 보일러 따뜻하게 켜 두셨는지만 한번 확인해 주세요!",
@@ -1091,7 +1138,7 @@
         };
       }
 
-      // 3. K-MMSE 시간 지남력 정답 발화 (정상 안정 시나리오)
+      // 7. K-MMSE 시간 지남력 정답 ("오늘 10월 25일이지", "일요일이야", "주말이야")
       if (/(10월|시월|25일|이십오일|일요일|주말이야|가을이야|오늘\s*일요일)/i.test(text)) {
         return {
           key: 'orient_ok',
@@ -1100,16 +1147,16 @@
         };
       }
 
-      // 4. K-MMSE 일화/식단 기억 정답 발화
-      if (/(된장|김치|찌개|나물|국|밥\s*잘|진지|생선|불고기|잡곡|미역국|계란|반찬|맛있게|배부르게)/i.test(text)) {
+      // 8. 사랑 / 감사 / 칭찬 표현 ("사랑해", "고맙다", "착한 놈", "내 새끼", "지찬이 최고")
+      if (/(사랑|고마워|고맙|감사|이쁜\s*놈|내\s*새끼|착하|기특|대견|멋지|최고)/i.test(text)) {
         return {
-          key: 'mem_ok',
-          reply: "구수한 된장찌개에 진지 맛있게 드셨군요! 든든하게 잘 드셨다니 제 마음이 다 놓여요. 식후에 따뜻한 물 한잔 꼭 챙겨 드셔요!",
-          metrics: [95, 95, 90, 93, "정상 안정", "border-emerald-200 bg-emerald-50 text-emerald-900"]
+          key: null,
+          reply: "헤헤 저도 세상에서 우리 할머니를 제일 많이 사랑해요! 언제나 제 편이 되어 주셔서 감사해요. 이번 주말에 할머니 꼭 뵈러 갈게요!",
+          metrics: [98, 96, 97, 97, "정상 안정", "border-emerald-200 bg-emerald-50 text-emerald-900"]
         };
       }
 
-      // 5. 외로움 / 적적함 토로
+      // 9. 외로움 / 적적함 ("혼자 있으니 적적해", "외롭다", "보고싶다", "쓸쓸해")
       if (/(적적|혼자\s*있|외롭|쓸쓸|심심|울적|눈물|보고\s*싶|네\s*생각|답답해)/i.test(text)) {
         return {
           key: 'lonely',
@@ -1118,73 +1165,37 @@
         };
       }
 
-      // 6. 손주 안부 / 밥 먹었니? / 학교 생활 질문
-      if (/(너\s*밥|지찬이\s*밥|밥은\s*먹었|밥\s*먹었|진지\s*잡|학교.*(어때|재밌|잘)|공부.*(열심|잘)|키.*컸|시험|바쁘니|힘들지)/i.test(text)) {
+      // 10. 건강 / 병원 / 약 복용 ("감기", "혈압약", "병원 다녀왔다", "허리", "다리", "아프지 마라")
+      if (/(건강|아픈\s*데|감기|약\s*먹|혈압약|병원|다리|허리|무릎|몸살|소화|주사)/i.test(text)) {
         return {
-          key: 'mem_ok',
-          reply: "구수한 된장찌개에 진지 맛있게 드셨군요! 든든하게 잘 드셨다니 제 마음이 다 놓여요. 식후에 따뜻한 물 한잔 꼭 챙겨 드셔요!",
-          metrics: [95, 95, 95, 95, "정상 안정", "border-emerald-200 bg-emerald-50 text-emerald-900"]
-        };
-      }
-
-      // 7. 사진 / 꽃 / 칭찬 피드백
-      if (/(꽃|사진|상장|이쁘|예쁘|잘했|대견|기특|멋지|보았|봤어|강아지|복실|산책)/i.test(text)) {
-        return {
-          key: 'orient_ok',
-          reply: "맞아요, 할머니! 오늘이 10월 마지막 일요일이에요. 날짜도 요일도 저보다 훨씬 더 정확히 알고 계시네요! 오늘 산책은 다녀오셨어요?",
-          metrics: [98, 95, 96, 96, "정상 안정", "border-emerald-200 bg-emerald-50 text-emerald-900"]
-        };
-      }
-
-      // 8. 건강 / 약 복용 / 병원
-      if (/(건강|아픈\s*데\s*없|괜찮아|감기|약\s*먹|혈압약|병원|다리|허리|무릎|몸살|소화)/i.test(text)) {
-        return {
-          key: 'decline',
-          reply: "아이고, 할머니 괜찮아요! 저도 어제 일 깜빡할 때 많은데요, 뭘요~ 오늘이 10월 25일 일요일이에요. 날씨 추운데 보일러 따뜻하게 켜 두셨는지만 한번 확인해 주세요!",
+          key: null,
+          reply: "할머니, 다리랑 허리 아프실 땐 무리해서 일하지 마시고 편히 쉬셔야 해요. 챙겨 드시는 혈압약도 잊지 마시고, 물 많이 드셔요!",
           metrics: [95, 92, 94, 94, "정상 안정", "border-emerald-200 bg-emerald-50 text-emerald-900"]
         };
       }
 
-      // 9. 날씨 / 외출 / 경로당
-      if (/(춥다|추워|쌀쌀|바람|비\s*온|눈\s*온|날씨|따뜻|경로당|복지관|시장|마실|친구)/i.test(text)) {
-        return {
-          key: 'decline',
-          reply: "아이고, 할머니 괜찮아요! 저도 어제 일 깜빡할 때 많은데요, 뭘요~ 오늘이 10월 25일 일요일이에요. 날씨 추운데 보일러 따뜻하게 켜 두셨는지만 한번 확인해 주세요!",
-          metrics: [96, 94, 95, 95, "정상 안정", "border-emerald-200 bg-emerald-50 text-emerald-900"]
-        };
-      }
-
-      // 10. 인사 / 반가움 / 호칭
+      // 11. 손주 부름 / 반가움 / 인사 ("지찬아", "어 지찬이니", "오냐", "그래", "여보세요", "안녕")
       if (/(안녕|지찬아|오냐|반갑|목소리.*좋|그래|여보세요|전화\s*왔|누구니|손주)/i.test(text)) {
         return {
-          key: 'lonely',
-          reply: "할머니, 혼자 계셔서 많이 적적하셨죠? 제가 매일 이렇게 전화드려서 말벗해 드릴 테니까 외로워 마셔요. 할머니 사랑해요!",
+          key: null,
+          reply: "네, 할머니! 저 손주 지찬이에요. 할머니 다정한 목소리 들으니까 오늘 피로가 싹 풀려요. 오늘 하루 별일 없이 편안하게 잘 보내셨어요?",
           metrics: [95, 95, 95, 95, "정상 안정", "border-emerald-200 bg-emerald-50 text-emerald-900"]
         };
       }
 
-      // 11. 사랑 / 감사 표현
-      if (/(사랑|고마워|고맙|감사|이쁜\s*놈|내\s*새끼|착하)/i.test(text)) {
+      // 12. 긍정 단답 ("응", "어", "그래", "맞아", "알았다")
+      if (/^(응|어|그래|오냐|맞아|좋다|알았다)$/.test(norm)) {
         return {
-          key: 'lonely',
-          reply: "할머니, 혼자 계셔서 많이 적적하셨죠? 제가 매일 이렇게 전화드려서 말벗해 드릴 테니까 외로워 마셔요. 할머니 사랑해요!",
-          metrics: [98, 96, 97, 97, "정상 안정", "border-emerald-200 bg-emerald-50 text-emerald-900"]
-        };
-      }
-
-      // 12. 긍정 단답 (응, 그래, 맞아, 먹었어 등)
-      if (/^(응|어|그래|오냐|맞아|먹었어|좋다|알았다)$/.test(norm)) {
-        return {
-          key: 'orient_ok',
-          reply: "맞아요, 할머니! 오늘이 10월 마지막 일요일이에요. 날짜도 요일도 저보다 훨씬 더 정확히 알고 계시네요! 오늘 산책은 다녀오셨어요?",
+          key: null,
+          reply: "헤헤, 할머니 목소리 들으니 참 좋아요. 참 할머니, 오늘 저녁엔 따뜻한 국에 진지 든든하게 드실 생각이죠?",
           metrics: [94, 90, 92, 92, "정상 안정", "border-emerald-200 bg-emerald-50 text-emerald-900"]
         };
       }
 
       // 13. 범용 일상 대화 (Fallback)
       return {
-        key: 'lonely',
-        reply: "할머니, 혼자 계셔서 많이 적적하셨죠? 제가 매일 이렇게 전화드려서 말벗해 드릴 테니까 외로워 마셔요. 할머니 사랑해요!",
+        key: null,
+        reply: "네 할머니, 말씀 잘 들었어요! 할머니 목소리가 밝으셔서 제 마음이 다 든든해요. 오늘 보일러 따뜻하게 켜 두셨는지 한번 확인해 보세요!",
         metrics: [92, 90, 92, 91, "정상 안정", "border-emerald-200 bg-emerald-50 text-emerald-900"]
       };
     }
@@ -1196,12 +1207,10 @@
 
     function handleVoiceInput(text) {
       const now = Date.now();
-      // AI가 발화 중이거나 직전 처리 중이면 입력 무시
-      if (isAiSpeaking || isHandlingInput) return;
-      // 3초 내 동일한 텍스트 중복 유입 무시
-      if (text === lastProcessedText && (now - lastProcessedTime < 3000)) return;
-      // 0.8초 이내 빠른 연타 무시
-      if (now - lastProcessedTime < 800) return;
+      // AI가 발화 중이면 입력 대기
+      if (isAiSpeaking) return;
+      // 0.8초 이내 동일 텍스트 중복 유입만 방지
+      if (text === lastProcessedText && (now - lastProcessedTime < 800)) return;
 
       lastProcessedText = text;
       lastProcessedTime = now;
@@ -1218,9 +1227,9 @@
       setTimeout(() => {
         appendChat("지찬 (온콜 AI · ElevenLabs)", analysis.reply, "ai");
         playElevenLabsAudioKey(analysis.key, analysis.reply, () => {
-          setTimeout(() => { isHandlingInput = false; }, 300);
+          setTimeout(() => { isHandlingInput = false; }, 200);
         });
-      }, 350);
+      }, 300);
     }
 
     // Gauge Updater
