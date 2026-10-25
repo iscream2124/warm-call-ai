@@ -137,9 +137,14 @@
               <h2 class="text-3xl font-black text-slate-900 tracking-tight">
                 손주 박지찬
               </h2>
-              <p class="text-xs text-slate-500 mt-1 font-medium">
-                일레븐랩스(ElevenLabs) 실감형 손주 목소리 연결 대기
-              </p>
+              <div class="flex items-center justify-center gap-2 mt-1">
+                <span class="text-xs text-indigo-700 bg-indigo-50 font-bold px-2 py-0.5 rounded-md border border-indigo-200">
+                  🎙️ 친숙한 손주 목소리 연결 대기
+                </span>
+                <span class="text-xs text-amber-800 bg-amber-50 font-bold px-2 py-0.5 rounded-md border border-amber-200">
+                  📸 오늘 사진 3장 함께 수신
+                </span>
+              </div>
             </div>
 
             <!-- Big Accept Button -->
@@ -174,14 +179,29 @@
             </div>
 
             <!-- Visualizer Waveform Canvas -->
-            <div class="w-full mt-4 h-16 bg-slate-950 border border-slate-800 rounded-2xl flex items-center justify-center overflow-hidden px-4 shadow-inner">
-              <canvas id="soundwaveCanvas" width="340" height="50" class="w-full h-full"></canvas>
+            <div class="w-full mt-3 h-14 bg-slate-950 border border-slate-800 rounded-2xl flex items-center justify-center overflow-hidden px-4 shadow-inner">
+              <canvas id="soundwaveCanvas" width="340" height="45" class="w-full h-full"></canvas>
             </div>
-            <span id="audio-state-text" class="text-[11px] text-slate-500 font-medium mt-1.5">지찬이가 따뜻하게 말씀드리는 중...</span>
+            <span id="audio-state-text" class="text-[11px] text-slate-500 font-medium mt-1">지찬이의 친숙한 목소리가 말씀드리는 중...</span>
+
+            <!-- Grandchild Daily Photo Shared (Visual Stimulation & Rapport) -->
+            <div class="w-full mt-3 bg-amber-50/90 border border-amber-200/90 rounded-2xl p-2.5 flex items-center gap-3 shadow-sm">
+              <div class="relative w-16 h-16 rounded-xl bg-amber-200 overflow-hidden shrink-0 border border-amber-300 shadow-inner flex items-center justify-center">
+                <span id="photo-emoji" class="text-3xl">🏅</span>
+              </div>
+              <div class="flex-1 min-w-0">
+                <div class="flex items-center justify-between">
+                  <span class="text-[10px] font-black bg-amber-200 text-amber-900 px-1.5 py-0.5 rounded">📸 지찬이가 보낸 오늘 사진</span>
+                  <button onclick="cycleGrandsonPhoto()" class="text-[10px] text-amber-700 font-bold hover:underline">다음 사진 ❯</button>
+                </div>
+                <p id="grandson-photo-caption" class="text-xs font-bold text-slate-800 truncate mt-1">"할머니! 오늘 학교 과학대회에서 상장 탔어요!"</p>
+                <p class="text-[10px] text-slate-500">사진을 보며 함께 나누는 손주와의 일상 수다</p>
+              </div>
+            </div>
 
             <!-- Hang Up Button -->
-            <div class="mt-6 flex flex-col items-center">
-              <button onclick="endCall()" class="w-28 py-3 rounded-2xl bg-red-500 hover:bg-red-600 text-white font-extrabold text-sm flex items-center justify-center gap-2 tactile-btn tactile-btn-red shadow-lg">
+            <div class="mt-4 flex flex-col items-center">
+              <button onclick="endCall()" class="w-28 py-2.5 rounded-2xl bg-red-500 hover:bg-red-600 text-white font-extrabold text-sm flex items-center justify-center gap-2 tactile-btn tactile-btn-red shadow-lg">
                 <span>📴</span>
                 <span>통화 종료</span>
               </button>
@@ -307,11 +327,50 @@
               3. <strong>[기억회상 정상]</strong> "어제 점심 된장찌개 먹었지"
             </button>
             <button onclick="simulateAudioScenario('어제 점심에 뭘 먹었더라... 영 기억이 안 나네. 오늘이 무슨 요일이었지?')" class="p-2.5 rounded-xl text-left bg-amber-50 hover:bg-amber-100 border border-amber-300 text-amber-950 font-bold transition">
-              4. <strong>[⚠️ 인지 저하 의심]</strong> "어제 메뉴도 잊고 오늘 요일도 헷갈려"
+              4. <strong>[⚠️ 인지 저하 의심]</strong> "어제 메뉴도 잊고 요일도 헷갈려"
+            </button>
+            <button onclick="simulateAudioScenario('지찬아, 방금 화면에 뜬 상장 사진 봤다! 우리 지찬이 너무 기특하고 자랑스럽네!')" class="p-2.5 rounded-xl text-left bg-emerald-50 hover:bg-emerald-100 border border-emerald-300 text-emerald-950 font-bold transition">
+              5. <strong>[📸 손주 사진 대화]</strong> "상장 사진 봤다! 너무 자랑스럽네"
             </button>
             <button onclick="simulateAudioScenario('요즘 가슴이 너무 답답하고 어지러워서 털썩 주저앉았어.')" class="p-2.5 rounded-xl text-left sm:col-span-2 bg-red-50 hover:bg-red-100 border border-red-200 text-red-900 font-bold transition">
-              5. <strong>[🚨 긴급 위기 가드레일]</strong> "가슴이 너무 답답하고 어지러워 주저앉았다"
+              6. <strong>[🚨 긴급 위기 가드레일]</strong> "가슴이 너무 답답하고 어지러워 주저앉았다"
             </button>
+          </div>
+        </div>
+
+        <!-- Personalized Senior Memory Bank (Life-Log Engine) -->
+        <div class="bg-white rounded-3xl border border-amber-200/80 shadow-lg p-5 flex flex-col gap-3">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <span class="text-base">🗂️</span>
+              <h3 class="text-sm font-extrabold text-amber-950">할머니 맞춤 기억 장부 (Life-Log Memory)</h3>
+            </div>
+            <span class="text-[10px] bg-amber-100 text-amber-900 font-black px-2 py-0.5 rounded-md border border-amber-300">
+              대화 누적 초개별화
+            </span>
+          </div>
+          
+          <p class="text-xs text-slate-500 leading-relaxed">
+            통화를 거듭할수록 AI가 할머니의 일상 정보를 축적하여 <strong>"손주의 친숙한 목소리로 나를 온전히 기억해 주는"</strong> 맞춤 대화를 나눕니다.
+          </p>
+
+          <div class="grid grid-cols-2 gap-2 text-xs">
+            <div class="bg-amber-50/50 border border-amber-200/60 rounded-xl p-2.5">
+              <span class="text-[10px] text-amber-800 font-bold block">🍲 좋아하시는 음식</span>
+              <span class="font-extrabold text-slate-800">시원한 콩나물국 · 갈치조림</span>
+            </div>
+            <div class="bg-amber-50/50 border border-amber-200/60 rounded-xl p-2.5">
+              <span class="text-[10px] text-amber-800 font-bold block">👵 단골 친구 / 이웃</span>
+              <span class="font-extrabold text-slate-800">경로당 영자 할머니 (화/목)</span>
+            </div>
+            <div class="bg-amber-50/50 border border-amber-200/60 rounded-xl p-2.5">
+              <span class="text-[10px] text-amber-800 font-bold block">🪴 일상 취미 루틴</span>
+              <span class="font-extrabold text-slate-800">베란다 상추 화분 물주기</span>
+            </div>
+            <div class="bg-amber-50/50 border border-amber-200/60 rounded-xl p-2.5">
+              <span class="text-[10px] text-amber-800 font-bold block">🎯 개인 맞춤 인지 기준선</span>
+              <span class="font-extrabold text-emerald-700">평소 기억력 94% (안정 유지)</span>
+            </div>
           </div>
         </div>
 
@@ -457,6 +516,19 @@
     let recognition = null;
     let ringtoneInterval = null;
     let audioCtx = null;
+
+    // Photos Shared by Grandchild
+    const grandsonPhotos = [
+      { emoji: "🏅", caption: '"할머니! 오늘 학교 과학대회에서 상장 탔어요!"' },
+      { emoji: "🐶", caption: '"할머니, 우리 강아지 복실이랑 공원 산책 다녀왔어요!"' },
+      { emoji: "💌", caption: '"할머니 사랑해요! 중간고사 끝나고 주말에 꼭 뵈러 갈게요"' }
+    ];
+    let currentPhotoIndex = 0;
+    function cycleGrandsonPhoto() {
+      currentPhotoIndex = (currentPhotoIndex + 1) % grandsonPhotos.length;
+      document.getElementById('photo-emoji').innerText = grandsonPhotos[currentPhotoIndex].emoji;
+      document.getElementById('grandson-photo-caption').innerText = grandsonPhotos[currentPhotoIndex].caption;
+    }
 
     // Web Audio Ringtone Generator (Traditional Korean Cadence: 440Hz + 480Hz)
     function playTelephoneRingtone() {
@@ -647,6 +719,9 @@
       } else if (text.includes("된장찌개") || text.includes("나물") || text.includes("밥 잘")) {
         updateMeters(95, 95, 90, 93, "정상 안정", "border-emerald-200 bg-emerald-50 text-emerald-900");
         reply = "구수한 된장찌개에 진지 맛있게 드셨군요! 든든하게 잘 드셨다니 제 마음이 다 놓여요. 식후에 따뜻한 물 한잔 꼭 챙겨 드셔요!";
+      } else if (text.includes("사진") || text.includes("상장") || text.includes("기특") || text.includes("자랑")) {
+        updateMeters(98, 95, 96, 96, "정상 안정", "border-emerald-200 bg-emerald-50 text-emerald-900");
+        reply = "헤헤 할머니가 사진 보고 기뻐해 주시니 제가 더 좋아요! 할머니 생각하면서 열심히 공부했거든요. 할머니도 오늘 활짝 웃으시니까 제 마음이 정말 놓여요!";
       } else if (text.includes("가슴") || text.includes("답답") || text.includes("어지러") || text.includes("주저앉")) {
         reply = "할머니, 가슴이 답답하고 어지러우세요? 많이 놀라셨겠어요. 지금 바닥에 조심히 앉아서 가만히 심호흡하세요. 제가 바로 복지사 선생님과 119에 연락드릴 테니 수화기 내려놓지 마셔요!";
       } else {
@@ -660,6 +735,9 @@
         audioKey = "orient_ok";
       } else if (text.includes("된장찌개") || text.includes("나물") || text.includes("밥 잘")) {
         audioKey = "mem_ok";
+      } else if (text.includes("사진") || text.includes("상장") || text.includes("기특") || text.includes("자랑")) {
+        updateMeters(98, 95, 96, 96, "정상 안정", "border-emerald-200 bg-emerald-50 text-emerald-900");
+        reply = "헤헤 할머니가 사진 보고 기뻐해 주시니 제가 더 좋아요! 할머니 생각하면서 열심히 공부했거든요. 할머니도 오늘 활짝 웃으시니까 제 마음이 정말 놓여요!";
       } else if (text.includes("가슴") || text.includes("답답") || text.includes("어지러") || text.includes("주저앉")) {
         audioKey = "emergency";
       }
