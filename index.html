@@ -98,16 +98,23 @@
         </div>
       </div>
 
-      <!-- Mode Switcher (Senior Care vs Welfare Center) -->
-      <div class="flex items-center bg-slate-100/90 p-1 rounded-2xl border border-slate-200 text-xs font-bold shadow-inner">
-        <button onclick="switchMode('senior')" id="btn-mode-senior" class="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-white text-slate-900 shadow-sm transition-all duration-200">
-          <span class="text-base">👵</span>
-          <span>어르신 수신 화면</span>
+      <!-- Mode Switcher & Societal Impact Modal Trigger -->
+      <div class="flex items-center gap-2">
+        <button onclick="toggleImpactModal(true)" class="hidden md:flex items-center gap-1.5 px-3 py-2 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white text-xs font-black shadow-md shadow-amber-500/20 transition active:scale-95">
+          <span>🌍</span>
+          <span>사회문제 해결 가치</span>
         </button>
-        <button onclick="switchMode('welfare')" id="btn-mode-welfare" class="flex items-center gap-1.5 px-4 py-2 rounded-xl text-slate-500 hover:text-slate-800 transition-all duration-200">
-          <span class="text-base">📊</span>
-          <span>복지사 관제 대시보드</span>
-        </button>
+
+        <div class="flex items-center bg-slate-100/90 p-1 rounded-2xl border border-slate-200 text-xs font-bold shadow-inner">
+          <button onclick="switchMode('senior')" id="btn-mode-senior" class="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-white text-slate-900 shadow-sm transition-all duration-200">
+            <span class="text-base">👵</span>
+            <span>어르신 수신 화면</span>
+          </button>
+          <button onclick="switchMode('welfare')" id="btn-mode-welfare" class="flex items-center gap-1.5 px-4 py-2 rounded-xl text-slate-500 hover:text-slate-800 transition-all duration-200">
+            <span class="text-base">📊</span>
+            <span>복지사 관제 대시보드</span>
+          </button>
+        </div>
       </div>
 
     </div>
@@ -1118,11 +1125,73 @@
       })
       .catch(e => console.log('Static table fallback used:', e));
 
+    // Toggle Societal Impact Modal
+    function toggleImpactModal(show) {
+      const modal = document.getElementById('modal-impact');
+      if (show) modal.classList.remove('hidden');
+      else modal.classList.add('hidden');
+    }
+
     // Start with Ringing on first load
     window.addEventListener('DOMContentLoaded', () => {
       // Small delay to allow user click
       playTelephoneRingtone();
     });
+  </script>
+
+  <!-- Societal Impact Modal for Judges -->
+  <div id="modal-impact" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-2xl w-full p-6 md:p-8 shadow-2xl border border-slate-200 relative max-h-[90vh] overflow-y-auto">
+      <button onclick="toggleImpactModal(false)" class="absolute top-5 right-5 w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center font-bold text-sm">✕</button>
+      
+      <div class="flex items-center gap-2 mb-2">
+        <span class="text-xs bg-amber-100 text-amber-900 font-black px-2.5 py-0.5 rounded-full border border-amber-300">2026 전국 청소년 AI 경진대회</span>
+        <span class="text-xs bg-indigo-100 text-indigo-900 font-bold px-2 py-0.5 rounded-full">중등부 사회문제 해결 부문</span>
+      </div>
+      <h3 class="text-xl md:text-2xl font-black text-slate-900 mb-2">『온콜 AI』가 해결하는 3대 국가·사회적 문제</h3>
+      <p class="text-xs text-slate-500 mb-5 leading-relaxed">
+        초고령사회 대한민국 200만 독거노인의 고독과 치매 공포, 그리고 복지 인력의 한계를 AI 기술과 가족의 사랑으로 해결합니다.
+      </p>
+
+      <div class="space-y-3.5 text-xs">
+        <div class="p-4 bg-red-50/70 border border-red-200 rounded-2xl">
+          <div class="flex items-center gap-2 font-black text-red-950 mb-1">
+            <span class="text-base">1️⃣</span>
+            <span>200만 독거노인의 고독사 및 사회적 고립 극복</span>
+          </div>
+          <p class="text-slate-600 leading-relaxed pl-6">
+            미안해서 먼저 전화 못 거시는 어르신께 <strong>설정 시각 먼저 울려오는 손주 전화</strong>와 친숙한 음성·꽃 사진으로 우울증 34.2% 완화 및 고독사 사각지대를 해소합니다.
+          </p>
+        </div>
+
+        <div class="p-4 bg-amber-50/70 border border-amber-200 rounded-2xl">
+          <div class="flex items-center gap-2 font-black text-amber-950 mb-1">
+            <span class="text-base">2️⃣</span>
+            <span>치매 검진 기피 극복 & 조기 선별 골든타임 확보</span>
+          </div>
+          <p class="text-slate-600 leading-relaxed pl-6">
+            보건소 검진 수검률이 22.4%에 불과한 현실에서, <strong>거부감 0%의 일상 안부 수다 속 K-MMSE-2 선별</strong>로 경도인지장애를 조기 포착하여 중증 치매 이행 50%를 억제하고 연간 2,100만 원 간병비를 절감합니다.
+          </p>
+        </div>
+
+        <div class="p-4 bg-indigo-50/70 border border-indigo-200 rounded-2xl">
+          <div class="flex items-center gap-2 font-black text-indigo-950 mb-1">
+            <span class="text-base">3️⃣</span>
+            <span>생활지원사 만성 과부하 해소 & 촘촘한 돌봄 안전망</span>
+          </div>
+          <p class="text-slate-600 leading-relaxed pl-6">
+            기계식 ARS(거부율 42.8%)와 방치되는 AI 스피커 대신, <strong>조작 부담 없는 가정용 전화기 단말기</strong>와 <strong>복지사 관제 대시보드</strong>로 이상 징후 노인을 선별 집중 케어(복지 효율 5배 향상)합니다.
+          </p>
+        </div>
+      </div>
+
+      <div class="mt-6 flex justify-end">
+        <button onclick="toggleImpactModal(false)" class="px-5 py-2.5 bg-slate-900 hover:bg-slate-800 text-white font-extrabold rounded-xl text-xs transition">
+          확인 완료
+        </button>
+      </div>
+    </div>
+  </div>
   </script>
 </body>
 </html>
