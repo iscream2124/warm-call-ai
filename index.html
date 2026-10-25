@@ -276,6 +276,11 @@
                   <canvas id="soundwaveCanvas" width="320" height="36" class="w-full h-full relative z-10"></canvas>
                 </div>
                 <span id="audio-state-text" class="text-[10px] text-cyan-300/80 font-medium mt-1">지찬이가 말씀드리는 중...</span>
+                <button id="btn-active-mic" type="button" onclick="toggleMicManual()" aria-pressed="false"
+                  class="mt-2 min-h-11 px-4 rounded-xl border border-cyan-400/50 bg-cyan-950/60 text-cyan-100 text-xs font-bold transition hover:bg-cyan-900/70 focus:outline-none focus:ring-2 focus:ring-cyan-300">
+                  🎙️ 마이크 켜고 말씀하기
+                </button>
+                <p id="voice-help-text" class="mt-1 text-center text-[10px] text-slate-400">처음 한 번만 마이크를 허용하면, 말씀하신 뒤 지찬이가 음성으로 답해요.</p>
 
                 <!-- Grandchild Daily Real Photo Shared (Visual Stimulation & Rapport) -->
                 <div class="w-full mt-2.5 bg-slate-900/90 border border-amber-500/40 rounded-2xl p-2 flex items-center gap-2.5 shadow-xl">
@@ -665,6 +670,9 @@
     let ringtoneInterval = null;
     let audioCtx = null;
     let currentAudio = null;
+    let microphoneStream = null;
+    let recognitionActive = false;
+    let microphonePermissionRequested = false;
 
     // Real Photos Shared by Grandchild (Flowers, Nature, Awards, Pet)
     const grandsonPhotos = [
@@ -860,6 +868,47 @@
       isAiSpeaking = false;
     }
 
+    function setVoiceHelp(text) {
+      const help = document.getElementById('voice-help-text');
+      if (help) help.innerText = text;
+    }
+
+    function updateMicButton(isListening) {
+      const button = document.getElementById('btn-active-mic');
+      if (!button) return;
+      button.setAttribute('aria-pressed', String(isListening));
+      button.innerText = isListening ? '🎙️ 듣는 중 · 말씀을 마치면 자동 응답' : '🎙️ 마이크 켜고 말씀하기';
+      button.classList.toggle('bg-cyan-800/80', isListening);
+      button.classList.toggle('animate-pulse', isListening);
+    }
+
+    async function requestMicrophoneAccess() {
+      if (!navigator.mediaDevices?.getUserMedia || microphonePermissionRequested) return;
+      microphonePermissionRequested = true;
+      try {
+        microphoneStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        setVoiceHelp('마이크가 준비되었습니다. 지찬이의 말이 끝나면 편하게 말씀해 주세요.');
+      } catch (error) {
+        microphonePermissionRequested = false;
+        setVoiceHelp('마이크를 허용하지 않으셨습니다. 아래 입력창으로도 대화할 수 있어요.');
+        console.warn('Microphone permission was not granted:', error);
+      }
+    }
+
+    function startRecognition() {
+      if (!recognition || !isCalling || isAiSpeaking || recognitionActive) return;
+      try {
+        recognition.start();
+      } catch (error) {
+        console.warn('Speech recognition could not start:', error);
+      }
+    }
+
+    function stopRecognition() {
+      if (!recognition || !recognitionActive) return;
+      try { recognition.stop(); } catch (error) { console.warn('Speech recognition could not stop:', error); }
+    }
+
     // Accept Incoming Call (완벽한 무결성 보장)
     function acceptCall(e) {
       if (e && e.preventDefault) e.preventDefault();
@@ -875,6 +924,7 @@
 
       isCalling = true;
       secondsElapsed = 0;
+      requestMicrophoneAccess();
 
       // 1. 화면 즉시 전환 (클래스 + 인라인 스타일 2중 적용으로 100% 즉시 전환)
       const incScreen = document.getElementById('screen-incoming');
@@ -914,7 +964,7 @@
       try {
         speakGrandsonVoice(opening, () => {
           if (recognition && isCalling) {
-            try { recognition.start(); } catch(err){}
+            startRecognition();
           }
         });
       } catch(err) {
@@ -944,8 +994,14 @@
       stopAllSpeech();
       clearInterval(timerInterval);
       if (recognition) {
-        try { recognition.stop(); } catch(e){}
+        stopRecognition();
       }
+      if (microphoneStream) {
+        microphoneStream.getTracks().forEach(track => track.stop());
+        microphoneStream = null;
+        microphonePermissionRequested = false;
+      }
+      updateMicButton(false);
 
       const incScreen = document.getElementById('screen-incoming');
       if (incScreen) {
@@ -1055,8 +1111,10 @@
       recognition.continuous = true;
 
       recognition.onstart = function() {
+        recognitionActive = true;
         const ind = document.getElementById('btn-mic-indicator');
         if (ind) ind.classList.add('text-cyan-400', 'animate-pulse');
+        updateMicButton(true);
         if (!isSeniorSpeaking && !isAiSpeaking) {
           document.getElementById('audio-state-text').innerText = "🎤 어르신 말씀을 귀 기울여 듣고 있어요 (마이크 활성)";
         }
@@ -1114,16 +1172,21 @@
 
       recognition.onerror = function(err) {
         console.warn('STT Event Error:', err);
+        if (err.error === 'not-allowed' || err.error === 'service-not-allowed') {
+          setVoiceHelp('마이크 권한이 필요합니다. 브라우저 주소창의 마이크를 허용한 뒤 다시 눌러주세요.');
+        }
       };
 
       recognition.onend = function() {
+        recognitionActive = false;
         const ind = document.getElementById('btn-mic-indicator');
         if (ind) ind.classList.remove('text-cyan-400', 'animate-pulse');
+        updateMicButton(false);
         // 통화 중이면 음성 인식이 끊기지 않도록 즉시 재시작
         if (isCalling) {
           setTimeout(() => {
             if (isCalling && !isAiSpeaking) {
-              try { recognition.start(); } catch(e){}
+              startRecognition();
             }
           }, 150);
         }
@@ -1152,7 +1215,8 @@
         return;
       }
       try {
-        recognition.start();
+        requestMicrophoneAccess();
+        startRecognition();
         document.getElementById('audio-state-text').innerText = "🎤 마이크 활성화됨: 편하게 말씀해주세요...";
       } catch(e) {
         try { recognition.stop(); } catch(err){}
@@ -1253,7 +1317,7 @@
       if (/(기억이\s*안|기억\s*안|기억\s*못|통\s*기억|무슨\s*요일|몇\s*월|며칠인지|오늘이\s*언제|깜빡|어제\s*일도|내가\s*왜\s*이러|가물가물|모르겠어|잘\s*몰라)/i.test(text)) {
         return {
           key: 'decline',
-          reply: "아이고, 할머니 괜찮아요! 저도 어제 일 깜빡할 때 많은데요, 뭘요~ 오늘이 10월 25일 일요일이에요. 날씨 추운데 보일러 따뜻하게 켜 두셨는지만 한번 확인해 주세요!",
+          reply: `아이고, 할머니 괜찮아요! 저도 어제 일 깜빡할 때 많은데요, 뭘요~ 오늘은 ${new Intl.DateTimeFormat('ko-KR', { month: 'long', day: 'numeric', weekday: 'long' }).format(new Date())}이에요. 날씨 추운데 보일러 따뜻하게 켜 두셨는지만 한번 확인해 주세요!`,
           metrics: [55, 40, 70, 55, "⚠️ 주의 감지 (기억력 감퇴)", "border-amber-500/50 bg-amber-950/60 text-amber-200"]
         };
       }
@@ -1262,7 +1326,7 @@
       if (/(10월|시월|25일|이십오일|일요일|주말이야|가을이야|오늘\s*일요일)/i.test(text)) {
         return {
           key: 'orient_ok',
-          reply: "맞아요, 할머니! 오늘이 10월 마지막 일요일이에요. 날짜도 요일도 저보다 훨씬 더 정확히 알고 계시네요! 오늘 산책은 다녀오셨어요?",
+          reply: "맞아요, 할머니! 날짜도 요일도 저보다 훨씬 더 정확히 알고 계시네요! 오늘 산책은 다녀오셨어요?",
           metrics: [100, 90, 95, 95, "정상 안정", "border-emerald-500/40 bg-emerald-950/60 text-emerald-200"]
         };
       }
@@ -1472,6 +1536,7 @@
       }
 
       stopAllSpeech();
+      stopRecognition();
       isAiSpeaking = true;
       document.getElementById('audio-state-text').innerText = "🎙️ 지찬이가 말씀드리는 중...";
 
@@ -1499,6 +1564,7 @@
           isAiSpeaking = false;
           if (isCalling) {
             document.getElementById('audio-state-text').innerText = "👂 어르신 말씀을 귀 기울여 듣고 있어요 (마이크 활성)";
+            startRecognition();
           }
           if (callback) callback();
         }, 300);
